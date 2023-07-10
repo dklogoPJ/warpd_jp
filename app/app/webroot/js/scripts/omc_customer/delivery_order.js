@@ -37,9 +37,9 @@ var Order = {
 				{display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
                 {display:'Order Quantity', name:'order_quantity', width:100, sortable:true, align:'left', hide:false},
                 {display:'Delivery Quantity', name:'delivery_quantity', width:120, sortable:true, align:'left', hide:false},
-                {display:'Received Quantity', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'empty,numeric',bclass:'quantity-class',defval:'',options:volumes}},
-                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Delivery Date', name:'delivery_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}}
+                {display:'Received Quantity', name:'received_quantity', width:150, sortable:true, align:'left', hide:false},
+                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false},
+                {display:'Delivery Date', name:'delivery_date', width:100, sortable:false, align:'left', hide:false}
 
             ],
             formFields:btn_actions,

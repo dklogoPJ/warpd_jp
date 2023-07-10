@@ -40,15 +40,14 @@ var Order = {
                 {display:'Truck Arrival Date', name:'truck_arrival_date', width:120, sortable:false},
                 {display:'Transporter', name:'transporter', width:100, sortable:false, align:'left', hide:false},
                 {display:'Tank No', name:'tank_no', width:80, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Product Density Depot', name:'product_density', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Product Density Depot', name:'product_density_depot', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Temp-Depot', name:'product_temp_depot', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Product Density Station', name:'product_density_st', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Product Density Station', name:'product_density_station', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Temp-Station', name:'product_temp_station', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Dipping Pre-Discharge (ltr)', name:'dipping_pre_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                // {display:'TM Approval', name:'tm_approval', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'empty,numeric',bclass:'quantity-class',defval:'',options:git_status}},
-                {display: 'TM Approval', name: 'tm_approval', width: 110, sortable: true, align: 'left', hide: false, editable:{form:'select', validate:'', defval:'', options:list_tm}},
+                {display: 'TM Approval', name: 'tm_approval', width: 140, sortable: true, align: 'left', hide: false, editable:{form:'select', validate:'', defval:'', options:list_tm}},
                 {display:'TM Comments', name:'tm_comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
-
             ],
             formFields:btn_actions,
             searchitems:[

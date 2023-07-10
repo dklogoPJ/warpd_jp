@@ -341,7 +341,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
                             $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
                             $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
-                            $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
+                            $delivery_date =  isset($obj['OmcCustomerOrder']['discharge_date']) ? $this->covertDate($obj['OmcCustomerOrder']['discharge_date'],'mysql_flip') : '';
 
                             $return_arr[] = array(
                                 'id' => $obj['OmcCustomerOrder']['id'],
@@ -996,24 +996,19 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['id'],
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'],'mysql_flip'),
                                     $obj['ProductType']['name'],
-                                    //$delivery_quantity,
-                                    //$received_quantity,
-                                    //$obj['OmcCustomerOrder']['comments'],
-                                    //$delivery_date,
-                                    //New List to populate --David klogo update
                                     $station_name[$obj['OmcCustomerOrder']['omc_customer_id']],
                                     $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
-                                    $loaded_quantity ='',
-                                   $this->covertDate($tr_date,'mysql_flip'),
-                                    $transporter ='',
-                                    $tank_no ='',
-                                    $product_density ='',
-                                    $product_temp_depot ='',
-                                    $product_density_st ='',
-                                    $product_temp_station ='',
-                                    $dipping_pre_discharge ='',
-                                    $tm_approval ='Pending',
-                                    $tm_comments =''
+                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'],'money',0),
+                                    $this->covertDate($tr_date,'mysql_flip'),
+                                    $obj['OmcCustomerOrder']['transporter'],
+                                    $obj['OmcCustomerOrder']['tank_no'],
+                                    $obj['OmcCustomerOrder']['product_density_depot'],
+                                    $obj['OmcCustomerOrder']['product_temp_depot'],
+                                    $obj['OmcCustomerOrder']['product_density_station'],
+                                    $obj['OmcCustomerOrder']['product_temp_station'],
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'],'money',0),
+                                    $obj['OmcCustomerOrder']['tm_approval'],
+                                    $obj['OmcCustomerOrder']['tm_comments']
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
                                     'order_status'=>$obj['OmcCustomerOrder']['order_status'],
@@ -1038,9 +1033,9 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data = array('OmcCustomerOrder' => $_POST);
                     $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
-                    $data['OmcCustomerOrder']['delivery_date'] = $this->covertDate($_POST['delivery_date'],'mysql').' '.date('H:i:s');
+                    //$data['OmcCustomerOrder']['delivery_date'] = $this->covertDate($_POST['delivery_date'],'mysql').' '.date('H:i:s');
                     $product_id = $_POST['extra']['product_id'];
-                    $delivery_quantity = $_POST['extra']['delivery_quantity'];
+                   /**  $delivery_quantity = $_POST['extra']['delivery_quantity'];
                     $received_quantity = $_POST['received_quantity'];
                     $shortage = $delivery_quantity - $received_quantity;
                     $data['OmcCustomerOrder']['shortage_quantity'] = $shortage;
@@ -1048,16 +1043,16 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $product_price = doubleval($price_change[$product_id]['price']);
                     $shortage_cost = $shortage * $product_price;
                     $data['OmcCustomerOrder']['shortage_cost'] = $shortage_cost;
-
-                    //New List to populate --David klogo update
+                    */
                     $station_name = $_POST['station_name'];
+                    $order_quantity = $_POST['order_quantity'];
                     $loaded_quantity = $_POST['loaded_quantity'];
                     $truck_arrival_date = $_POST['truck_arrival_date'];
                     $transporter = $_POST['transporter'];
                     $tank_no = $_POST['tank_no'];
-                    $product_density = $_POST['product_density'];
+                    $product_density_depot = $_POST['product_density_depot'];
                     $product_temp_depot = $_POST['product_temp_depot'];
-                    $product_density_st = $_POST['product_density_st'];
+                    $product_density_station = $_POST['product_density_station'];
                     $product_temp_station = $_POST['product_temp_station'];
                     $dipping_pre_discharge = $_POST['dipping_pre_discharge'];
                     $tm_approval = $_POST['tm_approval'];
@@ -1215,26 +1210,22 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['id'],
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'],'mysql_flip'),
                                     $obj['ProductType']['name'],
-                                    //$delivery_quantity,
-                                    //$received_quantity,
-                                    //$obj['OmcCustomerOrder']['comments'],
-                                    //$delivery_date,
-                                    //New List to populate --David klogo update
                                     $station_name[$obj['OmcCustomerOrder']['omc_customer_id']],
                                     $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
-                                    $loaded_quantity ='',
-                                    $truck_arrival_date ='',
-                                    $transporter ='',
-                                    $tank_no ='',
-                                    $product_density ='',
-                                    $product_temp_depot ='',
-                                    $product_density_st ='',
-                                    $product_temp_station ='',
-                                    $dipping_pre_discharge ='',
-                                    $dipping_post_discharge ='',
-                                    $received_quantity ='',
-                                    $discharge_date ='',
-                                    $comments =''
+                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'],'money',0),
+                                    $this->covertDate($obj['OmcCustomerOrder']['truck_arrival_date'],'mysql_flip'),
+                                    $obj['OmcCustomerOrder']['transporter'],
+                                    $obj['OmcCustomerOrder']['tank_no'],
+                                    $obj['OmcCustomerOrder']['product_density_depot'],
+                                    $obj['OmcCustomerOrder']['product_temp_depot'],
+                                    $obj['OmcCustomerOrder']['product_density_station'],
+                                    $obj['OmcCustomerOrder']['product_temp_station'],
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_post_discharge'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0),
+                                    $this->covertDate($obj['OmcCustomerOrder']['discharge_date'],'mysql_flip'),
+                                    //$obj['OmcCustomerOrder']['discharge_date'],
+                                    $obj['OmcCustomerOrder']['comments']
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
                                     'order_status'=>$obj['OmcCustomerOrder']['order_status'],
@@ -1259,31 +1250,20 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data = array('OmcCustomerOrder' => $_POST);
                     $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
-                    $data['OmcCustomerOrder']['delivery_date'] = $this->covertDate($_POST['delivery_date'],'mysql').' '.date('H:i:s');
-                    $product_id = $_POST['extra']['product_id'];
-                    $delivery_quantity = $_POST['extra']['delivery_quantity'];
+                    //$data['OmcCustomerOrder']['delivery_date'] = $this->covertDate($_POST['delivery_date'],'mysql').' '.date('H:i:s');
+                    //$product_id = $_POST['extra']['product_id'];
+                    /** $delivery_quantity = $_POST['extra']['delivery_quantity'];
                     $received_quantity = $_POST['received_quantity'];
                     $shortage = $delivery_quantity - $received_quantity;
                     $data['OmcCustomerOrder']['shortage_quantity'] = $shortage;
                     $price_change = $this->getPriceChangeData();
                     $product_price = doubleval($price_change[$product_id]['price']);
                     $shortage_cost = $shortage * $product_price;
-                    $data['OmcCustomerOrder']['shortage_cost'] = $shortage_cost;
-                     //New List to populate --David klogo update
-                    $station_name = $_POST['station_name'];
+                    $data['OmcCustomerOrder']['shortage_cost'] = $shortage_cost;*/
+                    $dipping_post_discharge = $_POST['dipping_post_discharge'];
                     $loaded_quantity = $_POST['loaded_quantity'];
-                    $truck_arrival_date = $_POST['truck_arrival_date'];
-                    $transporter = $_POST['transporter'];
-                    $tank_no = $_POST['tank_no'];
-                    $product_density = $_POST['product_density'];
-                    $product_temp_depot = $_POST['product_temp_depot'];
-                    $product_density_st = $_POST['product_density_st'];
-                    $product_temp_station = $_POST['product_temp_station'];
-                    $dipping_pre_discharge = $_POST['dipping_pre_discharge'];
-                    $dipping_post_discharge = $_POST['dipping_post_discharge'];
-                    $dipping_post_discharge = $_POST['dipping_post_discharge'];
                     $received_quantity = $_POST['received_quantity'];
-                    $discharge_date = $_POST['discharge_date'];
+                    $data['OmcCustomerOrder']['discharge_date'] = $this->covertDate($_POST['discharge_date'],'mysql').' '.date('H:i:s');
                     $comments = $_POST['comments'];
 
                      
