@@ -1,0 +1,401 @@
+/********************************************************/
+/*                   21. Notifications                  */
+/********************************************************/
+.block-arrow {
+    display: block;
+    width: 0;
+    height: 0;
+    padding: 0;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin: 1px 0 0 -6px;
+    border: 6px solid transparent;
+    border-top-color: inherit;
+/*border-top-color:expression(this.parentNode.currentStyle['border-top-color']);*/
+    }
+.block-arrow > span {
+    display: block;
+    width: 0;
+    height: 0;
+    position: absolute;
+    margin: -7px -6px -5px -6px;
+    border: 6px solid transparent;
+    border-top-color: #e4e7eb;
+}
+.silver-gradient > .block-arrow > span			{ border-top-color: #d6dadf; }
+.translucid > .block-arrow > span, .notification > .block-arrow > span,
+.black-gradient > .block-arrow > span			{ border-top-color: #000000; }
+.anthracite-gradient > .block-arrow > span		{ border-top-color: #404040; }
+.grey-gradient > .block-arrow > span			{ border-top-color: #939393; }
+.red-gradient > .block-arrow > span				{ border-top-color: #d52607; }
+.orange-gradient > .block-arrow > span			{ border-top-color: #ff9e00; }
+.green-gradient > .block-arrow > span			{ border-top-color: #87ba17; }
+.blue-gradient > .block-arrow > span			{ border-top-color: #00438d; }
+
+.block-arrow.left {
+    top: 50%;
+    left: auto;
+    right: 100%;
+    margin: -6px 1px 0 0;
+    border-top-color: transparent;
+    border-right-color: inherit;
+/** border-right-color:expression(this.parentNode.currentStyle['border-right-color']);*/
+    }
+.block-arrow.left > span {
+    margin: -6px -7px -6px -5px;
+    border-top-color: transparent;
+    border-right-color: #eeeff2;
+}
+.silver-gradient > .block-arrow.left > span			{ border-right-color: #e3e4ea; }
+.translucid > .block-arrow.left > span, .notification > .block-arrow.left > span,
+.black-gradient > .block-arrow.left > span			{ border-right-color: #1a1a1a; }
+.anthracite-gradient > .block-arrow.left > span		{ border-right-color: #4b4b4b; }
+.grey-gradient > .block-arrow.left > span			{ border-right-color: #a3a3a3; }
+.red-gradient > .block-arrow.left > span			{ border-right-color: #db370c; }
+.orange-gradient > .block-arrow.left > span			{ border-right-color: #ffac00; }
+.green-gradient > .block-arrow.left > span			{ border-right-color: #97c526; }
+.blue-gradient > .block-arrow.left > span			{ border-right-color: #00569c; }
+
+
+/* Count & close */
+.count,
+.n_close {
+    position: absolute;
+    z-index: 88;
+    top: 0;
+    padding: 0 2px;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: bold;
+    height: 16px;
+    min-width: 12px;
+    text-align: center;
+    -webkit-background-clip: padding-box;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    border-width: 1px;
+    border-style: solid;
+    font-weight: bold;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.75);
+    -webkit-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    -moz-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.count.simpler,
+.n_close.simpler {
+    border-color: #808080;
+    background: #808080;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    -webkit-text-shadow: none;
+    -moz-text-shadow: none;
+    text-shadow: none;
+}
+.count {
+    right: 6%;
+    margin: -10px 0 0 0;
+}
+.n_close {
+    cursor: pointer;
+}
+.count.right,
+.count.inset,
+.n_close {
+    right: 0;
+    margin: -10px -10px 0 0;
+}
+.count.left,
+.n_close.left {
+    right: auto;
+    left: 0;
+    margin: -10px 0 0 -10px;
+}
+.count.inset,
+.n_close.inset {
+    margin: 4px 4px 0 0;
+}
+.count.left.inset,
+.n_close.left.inset {
+    margin: 4px 0 0 4px;
+}
+#access > li > .count,
+#access > li > a > .count {
+    right: 50%;
+    margin: 10px -25px 0 0;
+}
+#access > li > a > .count {
+    -webkit-transition: all 200ms;
+    -moz-transition: all 200ms;
+    -ms-transition: all 200ms;
+    -o-transition: all 200ms;
+    transition: all 200ms;
+}
+#access > li > a:hover > .count {
+    margin-top: 6px;
+}
+
+
+#top-notifications,
+#bottom-notifications {
+    position: absolute;	/* This is for older iOS devices that do not support position: fixed */
+    position: fixed;
+    z-index: 999400;
+    right: 0;
+    left: 0;
+    text-align: left;
+}
+#top-notifications {
+    top: 0;
+}
+#bottom-notifications {
+    bottom: 0;
+}
+#top-notifications > ul,
+#bottom-notifications > ul {
+    list-style-type: none;
+    margin: 0;
+}
+.notification {
+    border-width: 1px;
+    border-style: solid;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    margin: 5px;
+    position: relative;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 7px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 7px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 2px 7px rgba(0, 0, 0, 0.5);
+}
+.notification > .n_close {
+    margin: -3px -3px 0 0;
+}
+.notification > a,
+.notification > div {
+    display: block;
+    text-decoration: none;
+    padding: 6px 10px;
+    color: inherit;
+    margin: 0;
+}
+.notification.no-title > a,
+.notification.no-title > div {
+    color: white;
+}
+.notification > a > h3,
+.notification > div > h3 {
+    color: white;
+    font-size: 14px;
+    line-height: 19px;
+    margin: 0px 0px 4px 0px;
+}
+.notification > a > b,
+.notification > div > b,
+.notification > div > a {
+    color: white;
+    cursor: pointer;
+}
+.notification.silver-gradient.no-title > a, .notification.silver-gradient.no-title > div,
+.notification.silver-gradient > a > h3, .notification.silver-gradient > div > h3,
+.notification.white-gradient.no-title > a, .notification.white-gradient.no-title > div,
+.notification.white-gradient > a > h3, .notification.white-gradient > div > h3,
+.notification.silver-gradient > a > b, .notification.silver-gradient > div > b,
+.notification.white-gradient > a > b, .notification.white-gradient > div > b {
+    color: #333333;
+}
+
+.notification-icon {
+    float: left;
+    margin: 7px 6px 7px 8px;
+}
+
+.notification > .block-arrow {
+    display: none;
+}
+
+.extra-notifications {
+    padding: 2px 6px;
+    font-weight: bold;
+    -webkit-border-bottom-left-radius: 3px;
+    -webkit-border-bottom-right-radius: 3px;
+    -moz-border-radius: 0 0 3px 3px;
+    border-radius: 0 0 3px 3px;
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 -1px 0 rgba(0, 0, 0, 0.5);
+    margin-bottom: 0;
+}
+.more-notifications {
+    padding: 3px 7px;
+    cursor: pointer;
+}
+
+
+.translucid,
+.notification {
+    color: #bdbdbd;
+    background: #000 url(../img/old-browsers/colors/bg_translucid.png) repeat-x;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.2)), to(rgba(255, 255, 255, 0))), rgba(0, 0, 0, 0.75);
+    background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)), rgba(0, 0, 0, 0.75);
+    background: -moz-linear-gradient(top, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)), rgba(0, 0, 0, 0.75);
+    background: -ms-linear-gradient(top, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)), rgba(0, 0, 0, 0.75);
+    background: -o-linear-gradient(top, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)), rgba(0, 0, 0, 0.75);
+    background: linear-gradient(top, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0)), rgba(0, 0, 0, 0.75);
+    border-color: black;
+}
+
+
+
+/* Red */
+.count, .n_close,
+.extra-notifications,
+.more-notifications {
+    color: white;
+    background: #d52607 url(../img/old-browsers/colors/bg_count.png) repeat-x;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background: -webkit-gradient(linear, left top, left bottom, from(#e24913), to(#d52607));
+    background: -webkit-linear-gradient(top, #e24913, #d52607);
+    background: -moz-linear-gradient(top, #e24913, #d52607);
+    background: -ms-linear-gradient(top, #e24913, #d52607);
+    background: -o-linear-gradient(top, #e24913, #d52607);
+    background: linear-gradient(top, #e24913, #d52607);
+    border-color: #931a03;
+}
+a.count:hover, a.n_close:hover {
+    color: white;
+    background: #d12206 url(../img/old-browsers/colors/bg_a_count_hover.png) repeat-x;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background: -webkit-gradient(linear, left top, left bottom, from(#eb671d), to(#d12206));
+    background: -webkit-linear-gradient(top, #eb671d, #d12206);
+    background: -moz-linear-gradient(top, #eb671d, #d12206);
+    background: -ms-linear-gradient(top, #eb671d, #d12206);
+    background: -o-linear-gradient(top, #eb671d, #d12206);
+    background: linear-gradient(top, #eb671d, #d12206);
+    border-color: #931a03;
+}
+.count.glossy, .n_close.glossy {
+    background: #d42622 url(../img/old-browsers/colors/bg_count_glossy.png) repeat-x;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fd8383), to(#d42622), color-stop(0.5, #c30909), color-stop(0.5, #a70606));
+    background: -webkit-linear-gradient(top, #fd8383, #c30909 50%, #a70606 50%, #d42622);
+    background: -moz-linear-gradient(top, #fd8383, #c30909 50%, #a70606 50%, #d42622);
+    background: -ms-linear-gradient(top, #fd8383, #c30909 50%, #a70606 50%, #d42622);
+    background: -o-linear-gradient(top, #fd8383, #c30909 50%, #a70606 50%, #d42622);
+    background: linear-gradient(top, #fd8383, #c30909 50%, #a70606 50%, #d42622);
+}
+a.count.glossy:hover, a.n_close.glossy:hover {
+    background: #e94237 url(../img/old-browsers/colors/bg_a_count_glossy_hover.png) repeat-x;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fe9b96), to(#e94237), color-stop(0.5, #df1411), color-stop(0.5, #ce0d0c));
+    background: -webkit-linear-gradient(top, #fe9b96, #df1411 50%, #ce0d0c 50%, #e94237);
+    background: -moz-linear-gradient(top, #fe9b96, #df1411 50%, #ce0d0c 50%, #e94237);
+    background: -ms-linear-gradient(top, #fe9b96, #df1411 50%, #ce0d0c 50%, #e94237);
+    background: -o-linear-gradient(top, #fe9b96, #df1411 50%, #ce0d0c 50%, #e94237);
+    background: linear-gradient(top, #fe9b96, #df1411 50%, #ce0d0c 50%, #e94237);
+}
+a.count:active, a.count.active, a.count.glossy:active,
+a.n_close:active, a.n_close.active, a.n_close.glossy:active {
+    background: #e4360a url(../img/old-browsers/colors/bg_a_count_active.png) repeat-x;
+    -webkit-background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    background-size: 100% 100%;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ce1d06), to(#e4360a));
+    background: -webkit-linear-gradient(top, #ce1d06, #e4360a);
+    background: -moz-linear-gradient(top, #ce1d06, #e4360a);
+    background: -ms-linear-gradient(top, #ce1d06, #e4360a);
+    background: -o-linear-gradient(top, #ce1d06, #e4360a);
+    background: linear-gradient(top, #ce1d06, #e4360a);
+}
+
+/* 18. Notifications */
+#top-notifications > ul,
+#bottom-notifications > ul {
+    position: absolute;
+    width: 300px;
+}
+#notifications-top-left {
+    top: 0;
+    left: 0;
+}
+#notifications-top-center {
+    top: 0;
+    left: 50%;
+    margin-left: -150px !important;
+}
+#notifications-top-right {
+    top: 0;
+    right: 0;
+}
+#notifications-bottom-left {
+    bottom: 0;
+    left: 0;
+}
+#notifications-bottom-center {
+    bottom: 0;
+    left: 50%;
+    margin-left: -150px !important;
+}
+#notifications-bottom-right {
+    bottom: 0;
+    right: 0;
+}
+
+.notification {
+    margin: 20px 20px -10px 20px;
+}
+#bottom-notifications .notification {
+    margin: -10px 20px 20px 20px;
+}
+.notification > .n_close {
+    margin: -10px -10px 0 0;
+    opacity: 1;
+}
+.notification > a,
+.notification > div {
+    /*padding: 11px 15px;*/
+}
+
+.notification-icon {
+    margin: 11px 11px 11px 13px;
+}
+.notification-icon.outside {
+    float: none;
+    position: absolute;
+    top: 0;
+    right: 100%;
+    margin: 6px 12px 0 0;
+}
+#notifications-top-left .notification-icon.outside,
+#notifications-bottom-left .notification-icon.outside {
+    right: auto;
+    left: 100%;
+    margin: 6px 0 0 12px;
+}
+
+.notification > .block-arrow {
+    display: block;
+    top: 29px;
+}

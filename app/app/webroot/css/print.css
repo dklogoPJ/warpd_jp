@@ -1,0 +1,271 @@
+/* CSS Document */
+body{
+	color: #000000;
+    background-color: white;
+    font-size: 11px;
+    font-family: Verdana,Arial,sans-serif;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+
+html, body {
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+}
+
+.print_container {
+    
+    background-color: white;
+/*	border:1px solid #ddd;*/
+	position: relative; /* to avoid the IE peekabo bug*/
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 10px;
+	margin-bottom: 10px ;
+	width: 90%;
+	min-height: 320px;
+	padding:5px;
+}
+.print_container .header{
+    position: relative;
+    width: 300px;
+    left: 50%;
+    margin-left: -150px;  /***  width / 2   ***/
+    margin-bottom: 50px;
+    text-align: center;
+}
+.print_container .top{
+    position: relative;
+    width: 1000px;
+    left: 50%;
+    margin-left: -500px;  /***  width / 2   ***/
+    margin-bottom: 20px;
+    text-align: center;
+}
+.print_container .content{
+    position: relative;
+    width: 1000px;
+    left: 50%;
+    margin-left: -500px;  /***  width / 2   ***/
+    margin-bottom: 50px;
+}
+
+.print_container .content table div{
+    border-bottom: 1px solid #b0b0b0;
+}
+.data_table {
+	border-collapse: collapse;
+	padding: 5px;
+}
+.data_table th {
+	padding-right: 12px;
+	border: 1px solid gray;
+	background-color: #1C1C1C;
+}
+.data_table tr.row_odd {
+	background-color: #F2F2F2;
+}
+.data_table tr.row_odd:hover, .data_table tr.row_even:hover {
+	background-color: #E5EDF9;
+}
+.data_table tr.row_even {
+	background-color: #fff;
+}
+.data_table td {
+	padding: 5px;
+	vertical-align: top;
+	border-bottom: 1px solid #b0b0b0;
+	border-right: 1px dotted #e1e1e1;
+	border-left: 1px dotted #e1e1e1;
+}
+
+a{
+    text-decoration: none;
+}
+
+
+
+/** Table stlying **/
+
+.table {
+    width: 100%;
+    margin-bottom: 18px;
+    max-width: 100%;
+    background-color: transparent;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.table th,
+.table td {
+    padding: 1px;
+    /*line-height: 18px*/;
+    line-height: 10px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+.table th {
+    font-weight: bold;
+}
+
+.table thead th {
+    vertical-align: bottom;
+}
+
+.table caption + thead tr:first-child th,
+.table caption + thead tr:first-child td,
+.table colgroup + thead tr:first-child th,
+.table colgroup + thead tr:first-child td,
+.table thead:first-child tr:first-child th,
+.table thead:first-child tr:first-child td {
+    border-top: 0;
+}
+
+.table tbody + tbody {
+    /*border-top: 2px solid #dddddd;*/
+    border-top: 0px;
+}
+
+.table-condensed th,
+.table-condensed td {
+    padding: 4px 5px;
+}
+
+.table-bordered {
+    border: 1px solid #dddddd;
+    border-collapse: separate;
+    *border-collapse: collapsed;
+    border-left: 0;
+    /* -webkit-border-radius: 4px;
+   -moz-border-radius: 4px;
+   border-radius: 4px;*/
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-left: 1px solid #dddddd;
+}
+
+.table-bordered caption + thead tr:first-child th,
+.table-bordered caption + tbody tr:first-child th,
+.table-bordered caption + tbody tr:first-child td,
+.table-bordered colgroup + thead tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child th,
+.table-bordered colgroup + tbody tr:first-child td,
+.table-bordered thead:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child th,
+.table-bordered tbody:first-child tr:first-child td {
+    border-top: 0;
+}
+
+.table-bordered thead:first-child tr:first-child th:first-child,
+.table-bordered tbody:first-child tr:first-child td:first-child {
+    /*-webkit-border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+    -moz-border-radius-topleft: 4px;*/
+}
+
+.table-bordered thead:first-child tr:first-child th:last-child,
+.table-bordered tbody:first-child tr:first-child td:last-child {
+    /*-webkit-border-top-right-radius: 4px;
+    border-top-right-radius: 4px;
+    -moz-border-radius-topright: 4px;*/
+}
+
+.table-bordered thead:last-child tr:last-child th:first-child,
+.table-bordered tbody:last-child tr:last-child td:first-child {
+    /*-webkit-border-radius: 0 0 0 4px;
+    -moz-border-radius: 0 0 0 4px;
+    border-radius: 0 0 0 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;*/
+}
+
+.table-bordered thead:last-child tr:last-child th:last-child,
+.table-bordered tbody:last-child tr:last-child td:last-child {
+    /*-webkit-border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    -moz-border-radius-bottomright: 4px;*/
+}
+
+.table-striped tbody tr:nth-child(odd) td,
+.table-striped tbody tr:nth-child(odd) th {
+    background-color: #f9f9f9;
+}
+
+.table tbody tr:hover td,
+.table tbody tr:hover th {
+    background-color: #f5f5f5;
+    cursor:pointer;
+}
+
+
+.table_addr th,
+.table_addr td {
+    border:0px !important;
+}
+
+
+
+/**** For tables who needs big paddings ***/
+.tablep {
+    width: 100%;
+    margin-bottom: 18px;
+    max-width: 100%;
+    background-color: transparent;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.tablep th,
+.tablep td {
+    padding: 8px;
+    line-height: 18px;
+    line-height: 13px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+.tablep th.no-border, .tablep td.no-border {
+    border-top: 0px;
+}
+
+.tablep th {
+    font-weight: bold;
+    background: #d6dadf url(../img/old-browsers/colors/bg_button.png)
+}
+
+.tablep th.no-background {
+    background: none;
+}
+
+.tablep thead th {
+    vertical-align: bottom;
+}
+
+.tablep caption + thead tr:first-child th,
+.tablep caption + thead tr:first-child td,
+.tablep colgroup + thead tr:first-child th,
+.tablep colgroup + thead tr:first-child td,
+.tablep thead:first-child tr:first-child th,
+.tablep thead:first-child tr:first-child td {
+    border-top: 0;
+}
+
+.tablep tbody + tbody {
+    border-top: 2px solid #dddddd;
+    /*border-top: 0px;*/
+}
+
+.tablep tbody tr:hover td,
+.tablep tbody tr:hover th {
+    background-color: #f5f5f5;
+    cursor:pointer;
+}

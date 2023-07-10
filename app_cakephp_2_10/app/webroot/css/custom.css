@@ -1,0 +1,383 @@
+/** All Boostrap overide here  and custom css as well **/
+
+/*Showing the loader when there is an ajax call*/
+#loader_bar{
+    display: none;
+    width:152px;
+    position:fixed;
+    top: 0px;
+    left: 50%;
+    margin-left: -75px;  /***  width / 2   ***/
+    height:auto;
+    z-index: 999999;
+    /*background-color: #000000; */
+    padding: 2px 10px 2px 10px;
+    -webkit-border-radius:0 0 5px 5px;
+    -moz-border-radius:0 0 5px 5px;
+    border-radius:0 0 5px 5px;
+    /* opacity: 0.75;
+     filter: alpha(opacity=0.75);*/
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(25%, rgba(245,245,245,1)), color-stop(85%, rgba(201,201,201,1)));/* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(245,245,245,1) 25%,rgba(201,201,201,1) 85%); /* Chrome10+,Safari5.1+ */
+    background: -moz-linear-gradient(top , rgba(255,255,255,1) 0%, rgba(245,245,245,1) 25%, rgba(201,201,201,1) 85%);  /* FF3.6+ */
+    background: -o-linear-gradient(top , rgba(255,255,255,1) 0%, rgba(245,245,245,1) 25%, rgba(201,201,201,1) 85%);  /* Opera11.10+ */
+    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 25%, rgba(201,201,201,1) 85%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#c9c9c9',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, rgba(255,255,255,1) 0%, rgba(245,245,245,1) 25%, rgba(201,201,201,1) 85%); /* W3C */
+    text-shadow:0px 2px 1px #fff;
+    border-left:1px solid #b2b2b2;
+    border-right:1px solid #b2b2b2;
+    border-bottom:1px solid #b2b2b2;
+}
+
+#loader_bar #content{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    color:#5d5d5d;
+}
+
+#loader_bar #content #gif{
+    float: left;
+    margin-right: 15px;
+    opacity: 1;
+    filter: alpha(opacity=1);
+}
+
+#loader_bar #content #mesg{
+    float: right;
+    opacity: 1;
+    filter: alpha(opacity=1);
+}
+/** End of Loader */
+a.caption_addrbk {
+    float: right;
+    width: auto;
+    background-color: #fff;
+    color: #335A85;
+    text-align: center;
+    font-size: 11px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0px 5px;
+    margin: 6px 0px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -o-border-radius: 3px;
+    -ms-border-radius: 3px;
+    border-radius: 3px;
+    color: #fff;
+    margin-right: 5px;
+    border: 1px solid #143D6B;
+    background: #143D6B;
+    background: -moz-linear-gradient(top, #335A85 0%, #143D6B 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#335A85), color-stop(100%,#143D6B));
+    background: -webkit-linear-gradient(top, #335A85 0%,#143D6B 100%);
+    background: -o-linear-gradient(top, #335A85 0%,#143D6B 100%);
+    background: -ms-linear-gradient(top, #335A85 0%,#143D6B 100%);
+    background: linear-gradient(top, #335A85 0%,#143D6B 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#335A85', endColorstr='#143D6B',GradientType=0 );
+}
+
+a.address_book {
+    text-decoration: none;
+    border: 1px solid #AD6704;
+    background: #FBB450;
+    background: -moz-linear-gradient(top, #FBB450 0%, #F89406 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FBB450), color-stop(100%,#F89406));
+    background: -webkit-linear-gradient(top, #FBB450 0%,#F89406 100%);
+    background: -o-linear-gradient(top, #FBB450 0%,#F89406 100%);
+    background: -ms-linear-gradient(top, #FBB450 0%,#F89406 100%);
+    background: linear-gradient(top, #FBB450 0%,#F89406 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FBB450', endColorstr='#F89406',GradientType=0 );
+}
+
+a.brand{
+    font-family: Bookman Old Style, serif;
+    font-style: italic;
+    margin: 0px;
+    padding-bottom: 10px;
+    font-size: 30px;
+    text-decoration: none;
+    line-height: 35px;
+}
+
+div.address_book_contact:hover{
+    background: #E4E8ED;
+}
+
+/*** Tip Info ***/
+.demo-info{
+    background:#FFFEE6;
+    color:#8F5700;
+    padding:7px;
+}
+.demo-tip{
+    width:24px;
+    height:16px;
+    float:left;
+}
+.icon-tip{
+    background:url('../img/tip.png') no-repeat;
+}
+
+
+/* Stripes */
+.thin-stripes, .dark-thin-stripes,
+.stripes, .dark-stripes,
+.big-stripes, .dark-big-stripes {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    -webkit-border-radius: inherit;
+    -moz-border-radius: inherit;
+    border-radius: inherit;
+}
+.thin-stripes,
+.dark-thin-stripes {
+    -webkit-background-size: 10px 10px;
+    -moz-background-size: 10px 10px;
+    background-size: 10px 10px;
+}
+.stripes,
+.dark-stripes {
+    -webkit-background-size: 20px 20px;
+    -moz-background-size: 20px 20px;
+    background-size: 20px 20px;
+}
+.big-stripes,
+.dark-big-stripes {
+    -webkit-background-size: 40px 40px;
+    -moz-background-size: 40px 40px;
+    background-size: 40px 40px;
+}
+
+.thin-stripes,
+.stripes,
+.big-stripes {
+    background-image: -webkit-gradient(linear, left top, right bottom,
+    color-stop(0.25, rgba(255, 255, 255, 0.05)), color-stop(0.25, transparent),
+    color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.05)),
+    color-stop(0.75, rgba(255, 255, 255, 0.05)), color-stop(0.75, transparent),
+    to(transparent));
+    background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%,
+    transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%,
+    transparent 75%, transparent);
+    background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%,
+    transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%,
+    transparent 75%, transparent);
+    background-image: -ms-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%,
+    transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%,
+    transparent 75%, transparent);
+    background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%,
+    transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%,
+    transparent 75%, transparent);
+    background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%,
+    transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%,
+    transparent 75%, transparent);
+}
+.no-cssgradients .thin-stripes {
+    background-image: url(../img/old-browsers/stripes-white-10.png);
+}
+.no-cssgradients .stripes {
+    background-image: url(../img/old-browsers/stripes-white-20.png);
+}
+.no-cssgradients .big-stripes {
+    background-image: url(../img/old-browsers/stripes-white-40.png);
+}
+.dark-thin-stripes,
+.dark-stripes,
+.dark-big-stripes {
+    background-image: -webkit-gradient(linear, left top, right bottom,
+    color-stop(0.25, rgba(0, 0, 0, 0.05)), color-stop(0.25, transparent),
+    color-stop(0.5, transparent), color-stop(0.5, rgba(0, 0, 0, 0.05)),
+    color-stop(0.75, rgba(0, 0, 0, 0.05)), color-stop(0.75, transparent),
+    to(transparent));
+    background-image: -webkit-linear-gradient(135deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%,
+    transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%,
+    transparent 75%, transparent);
+    background-image: -moz-linear-gradient(135deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%,
+    transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%,
+    transparent 75%, transparent);
+    background-image: -ms-linear-gradient(135deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%,
+    transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%,
+    transparent 75%, transparent);
+    background-image: -o-linear-gradient(135deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%,
+    transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%,
+    transparent 75%, transparent);
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%,
+    transparent 50%, rgba(0, 0, 0, 0.05) 50%, rgba(0, 0, 0, 0.05) 75%,
+    transparent 75%, transparent);
+}
+.no-cssgradients .dark-thin-stripes {
+    background-image: url(../img/old-browsers/stripes-black-10.png);
+}
+.no-cssgradients .dark-stripes {
+    background-image: url(../img/old-browsers/stripes-black-20.png);
+}
+.no-cssgradients .dark-big-stripes {
+    background-image: url(../img/old-browsers/stripes-black-40.png);
+}
+
+/* Animated stripes */
+.thin-stripes.animated,
+.dark-thin-stripes.animated {
+    -webkit-animation: animate-thin-stripes 3s linear infinite;
+    -moz-animation: animate-thin-stripes 3s linear infinite;
+    -ms-animation: animate-thin-stripes 3s linear infinite;
+    -o-animation: animate-thin-stripes 3s linear infinite;
+}
+.stripes.animated,
+.dark-stripes.animated {
+    -webkit-animation: animate-stripes 4s linear infinite;
+    -moz-animation: animate-stripes 4s linear infinite;
+    -ms-animation: animate-stripes 4s linear infinite;
+    -o-animation: animate-stripes 4s linear infinite;
+}
+.big-stripes.animated,
+.dark-big-stripes.animated {
+    -webkit-animation: animate-big-stripes 5s linear infinite;
+    -moz-animation: animate-big-stripes 5s linear infinite;
+    -ms-animation: animate-big-stripes 5s linear infinite;
+    -o-animation: animate-big-stripes 5s linear infinite;
+}
+
+@-webkit-keyframes animate-thin-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -20px 0;	}
+}
+@-moz-keyframes animate-thin-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -20px 0;	}
+}
+@-ms-keyframes animate-thin-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -20px 0;	}
+}
+@-o-keyframes animate-thin-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -20px 0;	}
+}
+
+@-webkit-keyframes animate-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -40px 0;	}
+}
+@-moz-keyframes animate-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -40px 0;	}
+}
+@-ms-keyframes animate-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -40px 0;	}
+}
+@-o-keyframes animate-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -40px 0;	}
+}
+
+@-webkit-keyframes animate-big-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -80px 0;	}
+}
+@-moz-keyframes animate-big-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -80px 0;	}
+}
+@-ms-keyframes animate-big-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -80px 0;	}
+}
+@-o-keyframes animate-big-stripes {
+    from {		background-position: 0 0;		}
+    to {		background-position: -80px 0;	}
+}
+
+
+
+.arrow-n,
+.arrow-e,
+.arrow-s,
+.arrow-w {
+    /*
+     * In Internet Explorer, The"border-style: dashed" will never be
+     * rendered unless "(width * 5) >= border-width" is true.
+     * Since "width" is set to "0", the "dashed-border" remains
+     * invisible to the user, which renders the border just like how
+     * "border-color: transparent" renders.
+     */
+    border-style: dashed;
+    border-color: transparent;
+    border-width: 0.53em;
+    display: -moz-inline-box;
+    display: inline-block;
+    /* Use font-size to control the size of the arrow. */
+    font-size: 100px;
+    height: 0;
+    line-height: 0;
+    position: relative;
+    vertical-align: middle;
+    width: 0;
+}
+
+.arrow-n {
+    border-bottom-width: 1em;
+    border-bottom-style: solid;
+    border-bottom-color: #666;
+    bottom: 0.25em;
+}
+
+.arrow-e {
+    border-left-width: 1em;
+    border-left-style: solid;
+    border-left-color: #666;
+    left: 0.25em;
+}
+
+.arrow-s {
+    border-top-width: 1em;
+    border-top-style: solid;
+    border-top-color: #666;
+    top: 0.25em;
+}
+
+.arrow-w {
+    border-right-width: 1em;
+    border-right-style: solid;
+    border-right-color: #666;
+    right: 0.25em;
+}
+
+ul.marquee {
+    /* required styles */
+    display: block;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    line-height: 1;
+    position: relative;
+    overflow: hidden;
+
+    /* optional styles for appearance */
+    width: 700px;
+    height: 22px; /* height should be included to reserve visual space for the marquee */
+
+   /* background-color: #f2f2ff;
+    border: 1px solid #08084d;*/
+}
+
+ul.marquee li {
+    /* required styles */
+    position: absolute;
+    top: -999em;
+    left: 0;
+    display: block;
+    white-space: nowrap; /* keep all text on a single line */
+
+    /* optional styles for appearance */
+    font: 14px Verdana;
+    padding: 3px 5px;
+}

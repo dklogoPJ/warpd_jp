@@ -1,0 +1,17 @@
+FROM docker_apache_php_5_3
+ENV PHP_MEMORY_LIMIT=512M
+
+# Install dependencies
+#RUN sed -i -e 's/archive.ubuntu.com\|security.ubuntu.com/old-releases.ubuntu.com/g' /etc/apt/sources.list
+#RUN apt-get update && apt-get install -y nano
+
+WORKDIR /var/www/app/
+
+COPY ./app ./
+
+#RUN a2enmod rewrite
+RUN chmod -R 777 ./app/tmp
+
+EXPOSE 80
+
+CMD ["/sbin/entrypoint.sh"]

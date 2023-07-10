@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+
+  warpd-dbase:
+    container_name: warpd-dbase
+    build:
+      context: ../
+      dockerfile: ${DOCKER_COMPOSE_DIR}/db/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+    volumes:
+      - './db/data:/var/lib/mysql/'
+      - './db/my.cnf:/etc/mysql/my.cnf'
+    networks:
+      - warpd-network
+
+  warpd-app:
+    container_name: warpd-app
+    depends_on:
+      - warpd-dbase
+    build:
+      context: ../
+      dockerfile: ${DOCKER_COMPOSE_DIR}/app/Dockerfile
+    volumes:
+      - '../app:/var/www/app'
+    #  - './api/local.ini:/usr/local/etc/php/conf.d/local.ini'
+    external_links:
+      - warpd-dbase:warpd-dbase
+    ports:
+      - "${APP_PORT}:80"
+    networks:
+      - warpd-network
+
+#Docker Networks
+networks:
+  warpd-network:
+    driver: bridge
+
