@@ -325,9 +325,11 @@ class OmcOrdersController extends OmcAppController
         $company_profile = $this->global_company;
         if($this->request->is('post')){
             $export_params = $this->request->data;
-            $start_dt = $this->covertDate($export_params['exp_startdt'],'mysql').' 00:00:00';
-            $end_dt =  $this->covertDate($export_params['exp_enddt'],'mysql').' 23:59:59';
-            $export_filter_bdc = $export_params['exp_filter_bdc'];
+           // pr($export_params);
+            $start_dt = $this->covertDate($export_params['Export']['exp_startdt'],'mysql').' 00:00:00';
+            $end_dt =  $this->covertDate($export_params['Export']['exp_enddt'],'mysql').' 23:59:59';
+            $export_filter_bdc = $export_params['Export']['exp_filter_bdc'];
+            $type = $this->request->data['Export']['export_type'];
             $export_filter_status = isset($export_params['exp_filter_status'])? $export_params['exp_filter_status'] : 'complete_orders';
             $conditions = array(
                 'Order.omc_id' => $company_profile['id'],
@@ -1514,7 +1516,7 @@ class OmcOrdersController extends OmcAppController
                                     $obj['OmcCustomer']['name'],
                                     $obj['OmcBdcDistribution']['unit_price'],
                                     $this->formatNumber($obj['OmcBdcDistribution']['quantity'],'money',0),
-                                    $obj['OmcBdcDistribution']['total_amount'],
+                                    $this->formatNumber($obj['OmcBdcDistribution']['total_amount'],'money',0),
                                     $obj['Region']['name'],
                                     $obj['DeliveryLocation']['name'],
                                     $obj['OmcBdcDistribution']['transporter'],
