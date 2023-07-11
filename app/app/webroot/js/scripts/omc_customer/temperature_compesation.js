@@ -37,7 +37,7 @@ var Order = {
                 {display:'Volume at Depot', name:'volume_depot', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Dens. In Vac', name:'dens_vac', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp. at 20 degrees', name:'temp_20', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Temp. at Depot', name:'temp_depot', width:170, sortable:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Temp. at Depot', name:'temp_depot', width:170, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Coeff', name:'product_coeff', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp Coeff1', name:'temp_coeff_1', width:80, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp. at Station', name:'temp_station', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
