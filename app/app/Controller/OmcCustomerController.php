@@ -479,6 +479,19 @@ class OmcCustomerController extends OmcCustomerAppController
     }
 
 
+    function get_attachments($order_id = null, $attachment_type =null){
+        $this->autoRender = false;
+        $result = $this->__get_attachments($attachment_type,$order_id);
+        $this->attachment_fire_response($result);
+    }
+
+    function attach_files(){
+        $this->autoRender = false;
+        $upload_data = $this->__attach_files();
+        $this->attachment_fire_response($upload_data);
+    }
+
+
 
 
 
