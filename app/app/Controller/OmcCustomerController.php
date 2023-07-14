@@ -11,7 +11,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
     var $name = 'OmcCustomer';
     # set the model to use
-    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder');
+    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -405,6 +405,7 @@ class OmcCustomerController extends OmcCustomerAppController
                             $return_arr[] = array(
                                 'id' => $obj['OmcCustomerOrder']['id'],
                                 'cell' => array(
+                                    $id='',
                                     $tank = '',
                                     $open_stock = '',
                                     $received_quantity = '',

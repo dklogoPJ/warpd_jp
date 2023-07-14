@@ -11,6 +11,14 @@ class TemperatureCompesation extends AppModel
             'order' => '',
             'limit' => '',
             'dependent' => false
+        ),
+        'OmcCustomer' => array(
+            'className' => 'OmcCustomer',
+            'foreignKey' => 'omc_customer_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
         ));
 
     function getTempCompId($Id = null, $recursive = -1)

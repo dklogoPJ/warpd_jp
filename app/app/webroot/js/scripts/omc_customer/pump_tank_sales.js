@@ -31,6 +31,7 @@ var Order = {
             reload_after_edit:true,
             dataType:'json',
             colModel:[
+                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
                 {display:'Tank', name:'tank', width:120, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Open Stock (ltr)', name:'open_stock', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Quantity Received (ltr)', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},

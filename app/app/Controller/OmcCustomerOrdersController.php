@@ -1030,46 +1030,34 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     break;
 
                 case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
                     $data = array('OmcCustomerOrder' => $_POST);
                     $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
-                    //$data['OmcCustomerOrder']['delivery_date'] = $this->covertDate($_POST['delivery_date'],'mysql').' '.date('H:i:s');
-                    $product_id = $_POST['extra']['product_id'];
-                   /**  $delivery_quantity = $_POST['extra']['delivery_quantity'];
-                    $received_quantity = $_POST['received_quantity'];
-                    $shortage = $delivery_quantity - $received_quantity;
-                    $data['OmcCustomerOrder']['shortage_quantity'] = $shortage;
-                    $price_change = $this->getPriceChangeData();
-                    $product_price = doubleval($price_change[$product_id]['price']);
-                    $shortage_cost = $shortage * $product_price;
-                    $data['OmcCustomerOrder']['shortage_cost'] = $shortage_cost;
-                    */
-                    $station_name = $_POST['station_name'];
-                    $order_quantity = $_POST['order_quantity'];
-                    $loaded_quantity = $_POST['loaded_quantity'];
-                    $truck_arrival_date = $_POST['truck_arrival_date'];
-                    $transporter = $_POST['transporter'];
-                    $tank_no = $_POST['tank_no'];
-                    $product_density_depot = $_POST['product_density_depot'];
-                    $product_temp_depot = $_POST['product_temp_depot'];
-                    $product_density_station = $_POST['product_density_station'];
-                    $product_temp_station = $_POST['product_temp_station'];
-                    $dipping_pre_discharge = $_POST['dipping_pre_discharge'];
-                    $tm_approval = $_POST['tm_approval'];
-                    $tm_comments = $_POST['tm_comments'];
+                 
 
 
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
-                        $order_id  = $this->OmcCustomerOrder->id;
+                        $pre_discharge_id  = $this->OmcCustomerOrder->id;
                         //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
-                        $this->logActivity('Order',$log_description);
+                        $log_description = $this->getLogMessage('UpdatePreDischarge')." (Order #".$pre_discharge_id.")";
+                        $this->logActivity('Pre Discharge',$log_description);
 
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$order_id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$pre_discharge_id));
                         }
                     } else {
                         echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -1250,17 +1238,15 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data = array('OmcCustomerOrder' => $_POST);
                     $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
-                    $dipping_post_discharge = $_POST['dipping_post_discharge'];
-                    $loaded_quantity = $_POST['loaded_quantity'];
-                    $received_quantity = $_POST['received_quantity'];
+                    
                     $data['OmcCustomerOrder']['discharge_date'] = $this->covertDate($_POST['discharge_date'],'mysql').' '.date('H:i:s');
-                    $comments = $_POST['comments'];
+                   
 
                      
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
                         $order_id  = $this->OmcCustomerOrder->id;
                         //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
+                        $log_description = $this->getLogMessage('UpdatePost Delivery')." (Order #".$order_id.")";
                         $this->logActivity('Order',$log_description);
 
                         if($_POST['id'] > 0){

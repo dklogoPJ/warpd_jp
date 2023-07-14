@@ -31,7 +31,7 @@ var Order = {
             reload_after_edit:true,
             dataType:'json',
             colModel:[
-                {display:'Order Id', name:'id', width:70, sortable:false, align:'left', hide:false},
+                {display:'Id', name:'id', width:70, sortable:false, align:'left', hide:false},
                 {display:'Order Date', name:'order_date', width:100, sortable:false, align:'left', hide:false},
                 {display:'Product Type', name:'product_type_id', width:100, sortable:true, align:'left', hide:false},
                 {display:'Station Name', name:'station_name', width:140, sortable:false, align:'left', hide:false},

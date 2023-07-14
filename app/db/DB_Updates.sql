@@ -36,5 +36,24 @@ ALTER TABLE `warpd`.`temperature_compesations`
 ADD COLUMN `deleted` VARCHAR(45) NULL AFTER `modified_by`;
 ALTER TABLE `warpd`.`temperature_compesations` 
 CHANGE COLUMN `deleted` `deleted` VARCHAR(45) NULL DEFAULT 'n' ;
+CREATE TABLE `warpd`.`pump_tank_sales` (
+  `id` INT NOT NULL,
+  `omc_customer_id` INT NULL,
+  `tank` VARCHAR(45) NULL,
+  `open_stock` VARCHAR(45) NULL,
+  `received_quantity` VARCHAR(45) NULL,
+  `volume_depot` VARCHAR(45) NULL,
+  `pump_day_sales` VARCHAR(45) NULL,
+  `closing_stock` VARCHAR(45) NULL,
+  `tank_day_sales` VARCHAR(45) NULL,
+  `variance` VARCHAR(45) NULL,
+  `variance_cedis` VARCHAR(45) NULL,
+  `comments` VARCHAR(150) NULL,
+  `created` DATETIME NULL,
+  `created_by` INT NULL,
+  `modified` DATETIME NULL,
+  `modified_by` INT NULL,
+  `deleted` VARCHAR(2) NULL DEFAULT 'n',
+  PRIMARY KEY (`id`));
 
 
