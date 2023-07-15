@@ -32,7 +32,7 @@ var JSObj = {
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
                 {display:'Name', name:'name', width:250, sortable:false, align:'center', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Group Depot', name:'group_depot', width:250, sortable:false, align:'center', hide:false, editable:{form:'select', validate:'', defval:'',options:my_depots}}
+                {display:'Group Depot', name:'group_depot', width:250, sortable:false, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', options:my_depots}}
             ],
             formFields:btn_actions,
             /*searchitems:[

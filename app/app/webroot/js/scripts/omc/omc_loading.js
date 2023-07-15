@@ -73,7 +73,7 @@ var Enter = {
                     {display:'Customer Name', name:'omc_customer_id', width:150, align:'center', editable:{form:'select', validate:'', defval:'', options:customers}},
                     {display:'Unit Price', name:'unit_price', width:100, align:'center', editable:{form:'text', validate:'empty', defval:''}},
                     {display:'Quantity', name:'quantity', width:100, align:'center', editable:{form:'select', validate:'empty,numeric', defval:'',bclass:'quantity-class',options:volumes}},
-                    {display:'Total Amt', name:'total_amount', width:100, align:'center', editable:{form:'text', validate:'empty', defval:''}},
+                    {display:'Total Amt', name:'total_amount', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', on_focus:'action:multiply|sources:unit_price,quantity|targets:total_amount'}},
                     {display:'Region', name:'region_id', width:120, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', bclass:'region-class', options:region}},
                     {display:'Delivery Location', name:'delivery_location_id', width:180, align:'center', hide:false, editable:{form:'select', validate:'empty', defval:'',options:[]}},
                     {display:'Transporter', name:'transporter', width:150, align:'center', editable:{form:'select', validate:'', defval:'', options:truckList}},
