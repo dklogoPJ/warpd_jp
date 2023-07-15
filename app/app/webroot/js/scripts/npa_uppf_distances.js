@@ -87,7 +87,8 @@ var JSObj = {
             JSObj.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
-            var row = jLib.getSelectedRows(grid);
+            //var row = jLib.getSelectedRows(grid);
+            var row = FlexObject.getSelectedRows(grid);
             JSObj.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {

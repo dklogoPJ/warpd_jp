@@ -1,5 +1,5 @@
 <?php
-class OmcPriceChange extends AppModel
+class OmcCustomerPriceChange extends AppModel
 {
     /**
      * associations
@@ -21,12 +21,20 @@ class OmcPriceChange extends AppModel
             'order' => '',
             'limit' => '',
             'dependent' => false
+        ),
+        'OmcCustomer' => array(
+            'className' => 'OmcCustomer',
+            'foreignKey' => 'omc_customer_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
         )
     );
 
 
-    function getPriceQuotes($omc_id = ''){
-        $conditions = array('OmcPriceChange.omc_id' => $omc_id,'OmcPriceChange.deleted' => 'n');
+    function getPriceQuotes($id = ''){
+        $conditions = array('OmcCustomerPriceChange.omc_customer_id' => $id,'OmcCustomerPriceChange.deleted' => 'n');
         $pcd = $this->find('all', array(
             'conditions' => $conditions,
             'contain'=>array(
@@ -36,14 +44,14 @@ class OmcPriceChange extends AppModel
         ));
         $price_q = array();
         foreach ($pcd as $value) {
-            $price_q[$value['ProductType']['name']] = $value['OmcPriceChange'];
+            $price_q[$value['ProductType']['name']] = $value['OmcCustomerPriceChange'];
         }
         return $price_q;
     }
 
 
-    function getPriceQuotesData($omc_id = ''){
-        $conditions = array('OmcPriceChange.omc_id' => $omc_id,'OmcPriceChange.deleted' => 'n');
+    function getPriceQuotesData($id = ''){
+        $conditions = array('OmcCustomerPriceChange.omc_customer_id' => $id,'OmcCustomerPriceChange.deleted' => 'n');
         $pcd = $this->find('all', array(
             'conditions' => $conditions,
             'contain'=>array(
@@ -54,21 +62,21 @@ class OmcPriceChange extends AppModel
         $price_q = array();
         foreach ($pcd as $value) {
             $price_q[$value['ProductType']['id']] = array(
-                'price' =>$value['OmcPriceChange']['price'],
+                'price' =>$value['OmcCustomerPriceChange']['price'],
                 'name' =>$value['ProductType']['name']
             );
         }
         return $price_q;
     }
 
-    function getProductPumpPrice($omc_id = '',$product_type_id){
-        $conditions = array('OmcPriceChange.omc_id' => $omc_id,'OmcPriceChange.product_type_id' => $product_type_id,'OmcPriceChange.deleted' => 'n');
+    function getProductPumpPrice($id = '', $product_type_id){
+        $conditions = array('OmcCustomerPriceChange.omc_customer_id' => $id,'OmcCustomerPriceChange.product_type_id' => $product_type_id,'OmcCustomerPriceChange.deleted' => 'n');
         $pcd = $this->find('first', array(
             'conditions' => $conditions,
             'recursive' => -1
         ));
         if($pcd){
-            return $pcd['OmcPriceChange']['price'];
+            return $pcd['OmcCustomerPriceChange']['price'];
         }
         else{
             return 0.00;

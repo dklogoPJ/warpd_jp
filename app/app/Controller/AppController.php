@@ -447,8 +447,12 @@ class AppController extends Controller
 
     function getPriceChange()
     {
-        $PriceChange = ClassRegistry::init('PriceChange');
-        $price_change = $PriceChange->getPriceQuotes();
+        $price_change = array();
+       // $PriceChange = ClassRegistry::init('PriceChange');
+        if ($this->global_company && $this->global_company['comp_type'] === 'omc_customer') {
+            $PriceChange = ClassRegistry::init('OmcCustomerPriceChange');
+            $price_change = $PriceChange->getPriceQuotes($this->global_company['id']);
+        }
         $this->price_change = $price_change;
         $this->set(compact('price_change'));
     }

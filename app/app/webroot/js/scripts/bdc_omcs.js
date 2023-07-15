@@ -71,7 +71,8 @@ var BdcOmcs = {
             BdcOmcs.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
-            var row = jLib.getSelectedRows(grid);
+            //var row = jLib.getSelectedRows(grid);
+            var row = FlexObject.getSelectedRows(grid);
             BdcOmcs.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {
