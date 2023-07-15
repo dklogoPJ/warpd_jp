@@ -405,11 +405,11 @@ class OmcCustomerController extends OmcCustomerAppController
                                     isset($obj['PumpTankSale']['open_stock']) ? $this->formatNumber($obj['PumpTankSale']['open_stock'],'money',0) : '',
                                     $received_quantity,
                                     isset($obj['PumpTankSale']['stock_in_hand']) ? $this->formatNumber($obj['PumpTankSale']['stock_in_hand'],'money',0) : '',
-                                    $obj['PumpTankSale']['pump_day_sales'],
-                                    $obj['PumpTankSale']['closing_stock'],
-                                    $obj['PumpTankSale']['tank_day_sales'],
-                                    $obj['PumpTankSale']['variance'],
-                                    $obj['PumpTankSale']['variance_cedis'],
+                                    isset($obj['PumpTankSale']['pump_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['pump_day_sales'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['closing_stock']) ? $this->formatNumber($obj['PumpTankSale']['closing_stock'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['tank_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['tank_day_sales'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['variance']) ? $this->formatNumber($obj['PumpTankSale']['variance'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['variance_cedis']) ? $this->formatNumber($obj['PumpTankSale']['variance_cedis'],'money',0) : '',
                                     $obj['PumpTankSale']['comments']
                                 )
                             );
@@ -446,6 +446,11 @@ class OmcCustomerController extends OmcCustomerAppController
                     $data['PumpTankSale']['received_quantity'] = str_replace(',', '', $_POST['received_quantity']);
                     $data['PumpTankSale']['open_stock'] = str_replace(',', '', $_POST['open_stock']);
                     $data['PumpTankSale']['stock_in_hand'] = str_replace(',', '', $_POST['stock_in_hand']);
+                    $data['PumpTankSale']['pump_day_sales'] = str_replace(',', '', $_POST['pump_day_sales']);
+                    $data['PumpTankSale']['closing_stock'] = str_replace(',', '', $_POST['closing_stock']);
+                    $data['PumpTankSale']['tank_day_sales'] = str_replace(',', '', $_POST['tank_day_sales']);
+                    $data['PumpTankSale']['variance'] = str_replace(',', '', $_POST['variance']);
+                    $data['PumpTankSale']['variance_cedis'] = str_replace(',', '', $_POST['variance_cedis']);
 
                     if ($this->PumpTankSale->save($this->sanitize($data))) {
                         $sale_id  = $this->PumpTankSale->id;

@@ -40,7 +40,7 @@ var Order = {
                 {display:'Closing Stock (ltr)', name:'closing_stock', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Tank day sales', name:'tank_day_sales', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Variance (ltr)', name:'variance', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Variance Cedis', name:'variance_cedis', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Variance Cedis (GHs)', name:'variance_cedis', width:160, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
             formFields:btn_actions,
