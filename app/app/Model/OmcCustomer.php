@@ -98,7 +98,34 @@ class OmcCustomer extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'TemperatureCompesation' => array(
+            'className' => 'TemperatureCompesation',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'PumpTankSale' => array(
+            'className' => 'PumpTankSale',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
+        
     );
 
     var $belongsTo = array(

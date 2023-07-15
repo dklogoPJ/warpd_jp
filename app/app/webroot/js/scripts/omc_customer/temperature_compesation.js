@@ -15,10 +15,13 @@ var Order = {
             btn_actions.push({type:'buttom', name:'Edit', bclass:'edit', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-        if(inArray('A',permissions) || inArray('E',permissions)){
+        
+        if(inArray('A',permissions) || inArray('E',permissions)|| inArray('D',permissions)){
             btn_actions.push({type:'buttom', name:'Save', bclass:'save', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
             btn_actions.push({type:'buttom', name:'Cancel', bclass:'cancel', onpress:self.handleGridEvent});
+            btn_actions.push({separator:true});
+            btn_actions.push({type:'buttom', name:'Delete', bclass:'delete', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
             btn_actions.push({type:'buttom', name:'Attachment', bclass:'attach', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
@@ -31,21 +34,22 @@ var Order = {
             reload_after_edit:true,
             dataType:'json',
             colModel:[
+                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
                 {display:'Invoice Date', name:'invoice_date', width:120, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
                 {display:'Invoice No.', name:'invoice_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Name', name:'product_type_id', width:180, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:products}},
                 {display:'Volume at Depot', name:'volume_depot', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Dens. In Vac', name:'dens_vac', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp. at 20 degrees', name:'temp_20', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Temp. at Depot', name:'temp_depot', width:170, sortable:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Temp. at Depot', name:'temp_depot', width:170, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Coeff', name:'product_coeff', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp Coeff1', name:'temp_coeff_1', width:80, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp. at Station', name:'temp_station', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Volume @ 15 degrees', name:'vol_15', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp Coeff 2', name:'temp_coeff_2', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Temp Comp. Volume @ Station', name:'temp_vol_station', width:190, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Received Quantity', name:'received_qualntity', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display: 'Variance - Depot', name: 'variance_depot', width: 140, sortable: true, align: 'left', hide: false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Received Quantity', name:'received_quantity', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Variance - Depot', name: 'variance_depot', width: 140, sortable: true, align: 'left', hide: false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Variance - Received Qty', name:'variance_received_qty', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
             formFields:btn_actions,
@@ -119,6 +123,11 @@ var Order = {
         else if (com == 'Cancel') {
             Order.objGrid.flexCancel();
         }
+        else if (com == 'Delete') {
+            if (FlexObject.rowSelectedCheck(Order.objGrid,grid,1)) {
+                Order.delete_(grid);
+            }
+        }
         else if (com == 'Attachment') {
             if (FlexObject.rowSelectedCheck(Order.objGrid,grid,1)) {
                 Order.attach_file(grid);
@@ -171,8 +180,15 @@ var Order = {
                 });
             });
 
+    },
+    delete_:function (grid) {
+        var self = this;
+        var url = $('#grid_delete_url').val();
+        jLib.do_delete(url, grid);
     }
+    
 };
+
 
 /* when the page is loaded */
 $(document).ready(function () {

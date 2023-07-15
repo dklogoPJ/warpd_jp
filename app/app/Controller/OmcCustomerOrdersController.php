@@ -11,7 +11,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
     var $name = 'OmcCustomerOrders';
     # set the model to use
-    var $uses = array('Order','ProductType','OmcCustomerOrder','OmcCustomer','Volume','OmcBdcDistribution', 'OmcCustomerDistribution');
+    var $uses = array('Order','ProductType','OmcCustomerOrder','OmcCustomer','Volume','OmcBdcDistribution', 'OmcCustomerDistribution','TemperatureCompesation');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -1030,46 +1030,34 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     break;
 
                 case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
                     $data = array('OmcCustomerOrder' => $_POST);
                     $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
-                    //$data['OmcCustomerOrder']['delivery_date'] = $this->covertDate($_POST['delivery_date'],'mysql').' '.date('H:i:s');
-                    $product_id = $_POST['extra']['product_id'];
-                   /**  $delivery_quantity = $_POST['extra']['delivery_quantity'];
-                    $received_quantity = $_POST['received_quantity'];
-                    $shortage = $delivery_quantity - $received_quantity;
-                    $data['OmcCustomerOrder']['shortage_quantity'] = $shortage;
-                    $price_change = $this->getPriceChangeData();
-                    $product_price = doubleval($price_change[$product_id]['price']);
-                    $shortage_cost = $shortage * $product_price;
-                    $data['OmcCustomerOrder']['shortage_cost'] = $shortage_cost;
-                    */
-                    $station_name = $_POST['station_name'];
-                    $order_quantity = $_POST['order_quantity'];
-                    $loaded_quantity = $_POST['loaded_quantity'];
-                    $truck_arrival_date = $_POST['truck_arrival_date'];
-                    $transporter = $_POST['transporter'];
-                    $tank_no = $_POST['tank_no'];
-                    $product_density_depot = $_POST['product_density_depot'];
-                    $product_temp_depot = $_POST['product_temp_depot'];
-                    $product_density_station = $_POST['product_density_station'];
-                    $product_temp_station = $_POST['product_temp_station'];
-                    $dipping_pre_discharge = $_POST['dipping_pre_discharge'];
-                    $tm_approval = $_POST['tm_approval'];
-                    $tm_comments = $_POST['tm_comments'];
+                 
 
 
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
-                        $order_id  = $this->OmcCustomerOrder->id;
+                        $pre_discharge_id  = $this->OmcCustomerOrder->id;
                         //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
-                        $this->logActivity('Order',$log_description);
+                        $log_description = $this->getLogMessage('UpdatePreDischarge')." (Order #".$pre_discharge_id.")";
+                        $this->logActivity('Pre Discharge',$log_description);
 
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$order_id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$pre_discharge_id));
                         }
                     } else {
                         echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -1250,17 +1238,15 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data = array('OmcCustomerOrder' => $_POST);
                     $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
-                    $dipping_post_discharge = $_POST['dipping_post_discharge'];
-                    $loaded_quantity = $_POST['loaded_quantity'];
-                    $received_quantity = $_POST['received_quantity'];
+                    
                     $data['OmcCustomerOrder']['discharge_date'] = $this->covertDate($_POST['discharge_date'],'mysql').' '.date('H:i:s');
-                    $comments = $_POST['comments'];
+                   
 
                      
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
                         $order_id  = $this->OmcCustomerOrder->id;
                         //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
+                        $log_description = $this->getLogMessage('UpdatePost Delivery')." (Order #".$order_id.")";
                         $this->logActivity('Order',$log_description);
 
                         if($_POST['id'] > 0){
@@ -1337,60 +1323,58 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
                     //get users id for this company only
                     $condition_array = array(
-                        'OmcCustomerOrder.omc_customer_id' => $company_profile['id'],
-                        'OmcCustomerOrder.deleted' => 'n'
+                        'TemperatureCompesation.omc_customer_id' => $company_profile['id'],
+                        'TemperatureCompesation.deleted' => 'n'
                     );
+
+                    if (!empty($search_query)) {
+                        if ($qtype == 'id') {
+                            $condition_array['TemperatureCompesation.id'] = $search_query;
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
 
                     $contain = array(
-                        'Omc'=>array('fields' => array('Omc.id', 'Omc.name')),
-                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
-                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
 
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $data_table = $this->TemperatureCompesation->find('all', array('conditions' => $condition_array, 'contain'=>$contain, 'order' => "TemperatureCompesation.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->TemperatureCompesation->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
-                            $bigger_time = date('Y-m-d H:i:s');
-                            if($obj['OmcCustomerOrder']['order_status'] == 'Complete'){
-                                $bigger_time = $obj['OmcCustomerOrder']['omc_modified'];
-                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
-                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
-                                $order_time_elapsed = $time_hr.' hr(s)';
-                            }
-                            else{
-                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
-                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
-                                $order_time_elapsed =  $time_hr.' hr(s)';
-                            }
-
-                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
-                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
-                            $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
-                            
+                            $received_quantity =  isset($obj['TemperatureCompesation']['received_quantity']) ? $this->formatNumber($obj['TemperatureCompesation']['received_quantity'],'money',0) : '';
+                            $variance_received_qty =  isset($obj['TemperatureCompesation']['variance_received_qty']) ? $this->formatNumber($obj['TemperatureCompesation']['variance_received_qty'],'money',0) : '';
+                            $invoice_date =  isset($obj['TemperatureCompesation']['invoice_date']) ? $this->covertDate($obj['TemperatureCompesation']['invoice_date'],'mysql_flip') : '';
                         
                             $return_arr[] = array(
-                                'id' => $obj['OmcCustomerOrder']['id'],
+                                'id' => $obj['TemperatureCompesation']['id'],
                                 'cell' => array(
-                                    $invoice_date = '',
-                                    $invoice_no = '',
-                                    $product_type_id = '',
-                                    $volume_depot = '',
-                                    $dens_vac = '',
-                                    $temp_20 = '',
-                                    $temp_depot = '',
-                                    $product_coeff = '',
-                                    $temp_coeff_1 = '',
-                                    $temp_station = '',
-                                    $vol_15 = '',
-                                    $temp_coeff_2 = '',
-                                    $temp_vol_station = '',
-                                    $received_qualntity = '',
-                                    $variance_depot = '',
-                                    $variance_received_qty =''
+                                    $obj['TemperatureCompesation']['id'],
+                                    $invoice_date,
+                                    $obj['TemperatureCompesation']['invoice_no'],
+                                    $obj['ProductType']['name'],
+                                    $obj['TemperatureCompesation']['volume_depot'],
+                                    $obj['TemperatureCompesation']['dens_vac'],
+                                    $obj['TemperatureCompesation']['temp_20'],
+                                    $obj['TemperatureCompesation']['temp_depot'],
+                                    $obj['TemperatureCompesation']['product_coeff'],
+                                    $obj['TemperatureCompesation']['temp_coeff_1'],
+                                    $obj['TemperatureCompesation']['temp_station'],
+                                    $obj['TemperatureCompesation']['vol_15'],
+                                    $obj['TemperatureCompesation']['temp_coeff_2'],
+                                    $obj['TemperatureCompesation']['temp_vol_station'],
+                                    $received_quantity,
+                                    $obj['TemperatureCompesation']['variance_depot'],
+                                    $obj['TemperatureCompesation']['variance_depot'],
+                                    $variance_received_qty
                                 )
                             );
                         }
@@ -1403,20 +1387,38 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     break;
 
                 case 'save' :
-                    $data = array('OmcCustomerOrder' => $_POST);
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
+                    $data = array('TemperatureCompesation' => $_POST);
+                    if($_POST['id'] == 0){
+                        $data['TemperatureCompesation']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['TemperatureCompesation']['modified_by'] = $authUser['id'];
+                    }
 
-                    if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
-                        $order_id  = $this->OmcCustomerOrder->id;
-                        //Array Data here 
-                        //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
-                        $this->logActivity('Order',$log_description);
+                    $data['TemperatureCompesation']['omc_customer_id'] = $company_profile['id'];
+
+                    if ($this->TemperatureCompesation->save($this->sanitize($data))) {
+                        $temperature_compesation_id  = $this->TemperatureCompesation->id;
+
+                        $log_description = $this->getLogMessage('UpdateTemperatureCompesation')." (TemperatureCompesation #".$temperature_compesation_id.")";
+                        $this->logActivity('TemperatureCompesation',$log_description);
 
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$order_id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$temperature_compesation_id));
                         }
                     } else {
                         echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -1426,6 +1428,20 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
                 case 'load':
 
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('TemperatureCompesation');
+                    $result = $modObj->updateAll(
+                        $this->sanitize(array('TemperatureCompesation.deleted' => "'y'")),
+                        $this->sanitize(array('TemperatureCompesation.id' => $ids))
+                    );
+                    if ($result) {
+                        echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
                     break;
             }
         }
