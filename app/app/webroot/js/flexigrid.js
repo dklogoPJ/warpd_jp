@@ -1326,15 +1326,14 @@
                 var beforeRender_callback = p.subGrid.editable.beforeRender;
                 var afterRender_callback = p.subGrid.editable.afterRender;
                 if(param_tr.hasClass('master-row')){
-                    var beforeRender_callback = p.editable.beforeRender;
-                    var afterRender_callback = p.editable.afterRender;
+                    beforeRender_callback = p.editable.beforeRender;
+                    afterRender_callback = p.editable.afterRender;
                 }
 
                 //Fire Callback for Before Rendering
                 if(typeof beforeRender_callback == 'function'){
                     beforeRender_callback(param_tr);
                 }
-
 
                 var self = this;
                 if(p.current_edit_tr){
@@ -1361,7 +1360,7 @@
                     }
                 }
                 else if(click_type == 'double-click'){
-                    //Check the tr attribute for edit_row, if it has it and the status is no then don't make the row editable if does not have it then allow for row editing
+                    //Check the 'tr' attribute for edit_row, if it has it and the status is no then don't make the row editable, if it does not have it then allow for row editing
                     var edit_row = $(param_tr).attr('edit_row');
                     if(edit_row){
                         if(edit_row == 'no' || edit_row == 'No'){
@@ -1403,12 +1402,13 @@
                             el_readonly:(pr_controls['editable']['readonly']) ? 'readonly' : '',
                             el_class:(pr_controls['editable']['bclass']) ? pr_controls['editable']['bclass'] : '',
                             el_maxlength:(pr_controls['editable']['maxlength']) ? pr_controls['editable']['maxlength'] : '',
-                            el_placeholder:(pr_controls['editable']['placeholder']) ? pr_controls['editable']['placeholder'] : ''
+                            el_placeholder:(pr_controls['editable']['placeholder']) ? pr_controls['editable']['placeholder'] : '',
+							el_on_focus: (pr_controls['editable']['on_focus']) ? (pr_controls['editable']['on_focus']) : ''
                         }
                         if(pr_controls['editable']['form'] == 'select'){
                             pr['el_options'] =  pr_controls['editable']['options'];
                         }
-                        var el = self.getFormElement(pr); //Get the form element for the editing
+                        var el = self.getFormElement(pr, param_tr); //Get the form element for the editing
                         td.find('div').html(el);
                     }
                     else{
@@ -1442,7 +1442,7 @@
             },
 
 
-            getFormElement: function(params){
+            getFormElement: function(params, editing_tr){
                 var self = this;
                 var el = null;
 
@@ -1466,6 +1466,11 @@
                             .attr('style','width:inherit;')
                             .attr('class',params.el_class)
                             .attr('id',params.el_id);
+						if (params.el_on_focus) {
+							$(el).on( "focus", function() {
+								self.onElementFocus(params.el_on_focus, editing_tr);
+							});
+						}
                     }
                     if(params.el_type == 'select'){
                         el = $("<select />")
@@ -1480,7 +1485,7 @@
                         for(var t in params.el_options){
                             var val = params.el_options[t]['id'];
                             var title = params.el_options[t]['name'];
-                            //before we compare these strings we have to remove any specail characters theat both string may contain.
+                            //before we compare these strings we have to remove any special characters that both string may contain.
 
                             //console.log(title+" == "+setvalue);
                             var title_c = title.replace(/[^\w\s]/gi,'');
@@ -1514,6 +1519,46 @@
                 return el;
             },
 
+			onElementFocus: function (params, editing_tr) {
+				var row_id = $(editing_tr).attr('data-id');
+				var focus_params = params.split('|');
+				var focus_action_data = focus_params[0].split(':');
+				var focus_action = focus_action_data[1];
+
+				var sources_values = [];
+				var focus_sources_data = focus_params[1].split(':');
+				var focus_sources_arr = focus_sources_data[1].split(',');
+				focus_sources_arr.forEach(function (source_el) {
+					editing_tr.find('td div #'+source_el+'_'+row_id).each(function(){
+						sources_values.push(parseFloat($(this).val()));
+					});
+				});
+
+				var result = 0;
+				const sum = (accumulator, number) => accumulator + number;
+				const subtract = (accumulator, number) =>  accumulator - number;
+				const multiply = (accumulator, number) =>  accumulator * number;
+				const division = (accumulator, number) =>  accumulator / number;
+
+				if(focus_action === 'sum') {
+					result = sources_values.reduce(sum);
+				}else if(focus_action === 'subtract') {
+					result = sources_values.reduce(subtract);
+				}else if(focus_action === 'multiply') {
+					result = sources_values.reduce(multiply);
+				}else if(focus_action === 'division') {
+					result = sources_values.reduce(division);
+				}
+
+				var focus_targets_data = focus_params[2].split(':');
+				var focus_targets_arr = focus_targets_data[1].split(',');
+				focus_targets_arr.forEach(function (target_el) {
+					editing_tr.find('td div #'+target_el+'_'+row_id).each(function(){
+						$(this).val(result);
+						$(this).parents('div td').attr('data-id', result);
+					});
+				});
+			},
 
             beginCancel: function(){
                 var self = this;
