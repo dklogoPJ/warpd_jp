@@ -1006,7 +1006,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['product_temp_depot'],
                                     $obj['OmcCustomerOrder']['product_density_station'],
                                     $obj['OmcCustomerOrder']['product_temp_station'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'],'money',0),
+                                    $obj['OmcCustomerOrder']['dipping_pre_discharge'],
                                     $obj['OmcCustomerOrder']['tm_approval'],
                                     $obj['OmcCustomerOrder']['tm_comments']
                                 ),
@@ -1209,8 +1209,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['product_density_station'],
                                     $obj['OmcCustomerOrder']['product_temp_station'],
                                     $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'],'money',0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_post_discharge'],'money',0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0),
+                                    $obj['OmcCustomerOrder']['dipping_post_discharge'],
+                                    $obj['OmcCustomerOrder']['received_quantity'],
                                     $this->covertDate($obj['OmcCustomerOrder']['discharge_date'],'mysql_flip'),
                                     //$obj['OmcCustomerOrder']['discharge_date'],
                                     $obj['OmcCustomerOrder']['comments']

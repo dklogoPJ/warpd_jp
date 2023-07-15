@@ -42,7 +42,7 @@ CREATE TABLE `warpd`.`pump_tank_sales` (
   `tank` VARCHAR(45) NULL,
   `open_stock` VARCHAR(45) NULL,
   `received_quantity` VARCHAR(45) NULL,
-  `volume_depot` VARCHAR(45) NULL,
+  `stock_in_hand` VARCHAR(45) NULL,
   `pump_day_sales` VARCHAR(45) NULL,
   `closing_stock` VARCHAR(45) NULL,
   `tank_day_sales` VARCHAR(45) NULL,
@@ -55,5 +55,9 @@ CREATE TABLE `warpd`.`pump_tank_sales` (
   `modified_by` INT NULL,
   `deleted` VARCHAR(2) NULL DEFAULT 'n',
   PRIMARY KEY (`id`));
+
+
+ALTER TABLE `warpd`.`pump_tank_sales` 
+CHANGE COLUMN `id` `id` INT(11) NOT NULL AUTO_INCREMENT ;
 
 

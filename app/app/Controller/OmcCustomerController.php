@@ -367,55 +367,50 @@ class OmcCustomerController extends OmcCustomerAppController
 
                     //get users id for this company only
                     $condition_array = array(
-                        'OmcCustomerOrder.omc_customer_id' => $company_profile['id'],
-                        'OmcCustomerOrder.deleted' => 'n'
+                        'PumpTankSale.omc_customer_id' => $company_profile['id'],
+                        'PumpTankSale.deleted' => 'n'
                     );
 
+                    if (!empty($search_query)) {
+                        if ($qtype == 'id') {
+                            $condition_array['PumpTankSale.id'] = $search_query;
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
+
                     $contain = array(
-                        'Omc'=>array('fields' => array('Omc.id', 'Omc.name')),
-                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
 
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $data_table = $this->PumpTankSale->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PumpTankSale.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->PumpTankSale->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
-                            $bigger_time = date('Y-m-d H:i:s');
-                            if($obj['OmcCustomerOrder']['order_status'] == 'Complete'){
-                                $bigger_time = $obj['OmcCustomerOrder']['omc_modified'];
-                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
-                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
-                                $order_time_elapsed = $time_hr.' hr(s)';
-                            }
-                            else{
-                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
-                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
-                                $order_time_elapsed =  $time_hr.' hr(s)';
-                            }
 
-                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
-                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
-                            $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
-                            
+                            $received_quantity =  isset($obj['PumpTankSale']['received_quantity']) ? $this->formatNumber($obj['PumpTankSale']['received_quantity'],'money',0) : '';                            
                         
                             $return_arr[] = array(
-                                'id' => $obj['OmcCustomerOrder']['id'],
+                                'id' => $obj['PumpTankSale']['id'],
                                 'cell' => array(
-                                    $id='',
-                                    $tank = '',
-                                    $open_stock = '',
-                                    $received_quantity = '',
-                                    $volume_depot = '',
-                                    $pump_day_sales = '',
-                                    $closing_stock = '',
-                                    $tank_day_sales = '',
-                                    $variance = '',
-                                    $variance_cedis = '',
-                                    $comments = '',
+                                    $obj['PumpTankSale']['id'],
+                                    $obj['PumpTankSale']['tank'],
+                                    isset($obj['PumpTankSale']['open_stock']) ? $this->formatNumber($obj['PumpTankSale']['open_stock'],'money',0) : '',
+                                    $received_quantity,
+                                    isset($obj['PumpTankSale']['stock_in_hand']) ? $this->formatNumber($obj['PumpTankSale']['stock_in_hand'],'money',0) : '',
+                                    $obj['PumpTankSale']['pump_day_sales'],
+                                    $obj['PumpTankSale']['closing_stock'],
+                                    $obj['PumpTankSale']['tank_day_sales'],
+                                    $obj['PumpTankSale']['variance'],
+                                    $obj['PumpTankSale']['variance_cedis'],
+                                    $obj['PumpTankSale']['comments']
                                 )
                             );
                         }
@@ -428,20 +423,42 @@ class OmcCustomerController extends OmcCustomerAppController
                     break;
 
                 case 'save' :
-                    $data = array('OmcCustomerOrder' => $_POST);
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    $data = array('PumpTankSale' => $_POST);
 
-                    if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
-                        $order_id  = $this->OmcCustomerOrder->id;
+                    if($_POST['id'] == 0){
+                        $data['PumpTankSale']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['PumpTankSale']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['PumpTankSale']['omc_customer_id'] = $company_profile['id'];
+                    $data['PumpTankSale']['received_quantity'] = str_replace(',', '', $_POST['received_quantity']);
+                    $data['PumpTankSale']['open_stock'] = str_replace(',', '', $_POST['open_stock']);
+                    $data['PumpTankSale']['stock_in_hand'] = str_replace(',', '', $_POST['stock_in_hand']);
+
+                    if ($this->PumpTankSale->save($this->sanitize($data))) {
+                        $sale_id  = $this->PumpTankSale->id;
                         //Array Data here 
                         //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
-                        $this->logActivity('Order',$log_description);
+                        $log_description = $this->getLogMessage('UpdatePumpTankSale')." (Order #".$sale_id.")";
+                        $this->logActivity('Pump Tank Sales',$log_description);
 
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$order_id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$sale_id));
                         }
                     } else {
                         echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
