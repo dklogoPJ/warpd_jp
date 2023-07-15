@@ -1,9 +1,13 @@
 <div class="breadLine">
 
     <ul class="breadcrumb">
-
+        <?php
+         if(count($price_change) > 0){
+        ?>
        <li><span class="isb-graph" style="padding: 3px 0;"></span>&nbsp;<a href="javascript:void(0);">PRICE CHANGE</a> <span class="divider"> || </span></li>
-
+        <?php
+         }
+        ?>
        <!-- <li><?php /*echo $this->Html->link('Dashboard', array('controller' => 'Dashboard', 'action' => 'index'));*/?><span class="divider"></span></li>-->
         <?php
            // if(($this->params['action'] != 'index' )){

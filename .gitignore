@@ -1,5 +1,5 @@
 /docker_warpd/db/data/*
 /docker_warpd/.env
 /app/app/tmp/*
-/app/app/tmp/
+/app/app/tmp/logs/error.log
 /docker_warpd/db/data/

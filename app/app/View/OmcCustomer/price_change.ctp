@@ -41,13 +41,13 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'Omc', 'action' => 'price_change/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'Omc', 'action' => 'price_change/save')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'Omc', 'action' => 'price_change/delete')); ?>" />
-<input type="hidden" id="table-export-url" value="<?php echo $this->Html->url(array('controller' => 'Omc', 'action' => 'export_price_change')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'price_change/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'price_change/save')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'price_change/delete')); ?>" />
+<input type="hidden" id="table-export-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'export_price_change')); ?>" />
 
 
 <!-- Le Script -->
 <?php
-    echo $this->Html->script('scripts/omc/price_change.js');
+    echo $this->Html->script('scripts/omc_customer/price_change.js');
 ?>
