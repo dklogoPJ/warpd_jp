@@ -15,7 +15,7 @@
       <path value="$PROJECT_DIR$/app_cakephp_2_10/app/Vendor/php_excel/PHPExcel" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.0">
+  <component name="PhpProjectSharedConfiguration" php_language_level="5.3.0">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStanOptionsConfiguration">
