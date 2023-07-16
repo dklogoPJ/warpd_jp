@@ -78,6 +78,19 @@ BEGIN
      `deleted` VARCHAR(2) NULL DEFAULT 'n',
      PRIMARY KEY (`id`));
 
+    CREATE TABLE IF NOT EXISTS `trucks` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `truck_no` varchar(45) DEFAULT NULL,
+      `capacity` varchar(45) DEFAULT NULL,
+      `name` varchar(100) DEFAULT NULL,
+      `created` datetime DEFAULT NULL,
+      `created_by` int(11) DEFAULT NULL,
+      `modified` datetime DEFAULT NULL,
+      `modified_by` int(11) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
 END $$
 DELIMITER ;
 
