@@ -217,3 +217,29 @@
 2023-07-15 15:50:42 Error: [MissingControllerException] Controller class CssController could not be found.
 #0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
 #1 {main}
+2023-07-16 10:14:12 Error: [MissingTableException] Table users for model User was not found in datasource default.
+#0 /var/www/app/lib/Cake/Model/Model.php(3186): Model->setSource('users')
+#1 /var/www/app/lib/Cake/Model/Model.php(2338): Model->getDataSource()
+#2 /var/www/app/app/Controller/AppController.php(611): Model->updateAll(Array, Array)
+#3 /var/www/app/app/Controller/AppController.php(135): AppController->updateUserLoginTime()
+#4 /var/www/app/app/Controller/MessagesController.php(28): AppController->beforeFilter(false)
+#5 [internal function]: MessagesController->beforeFilter(Object(CakeEvent))
+#6 /var/www/app/lib/Cake/Event/CakeEventManager.php(246): call_user_func(Array, Object(CakeEvent))
+#7 /var/www/app/lib/Cake/Controller/Controller.php(669): CakeEventManager->dispatch(Object(CakeEvent))
+#8 /var/www/app/lib/Cake/Routing/Dispatcher.php(183): Controller->startupProcess()
+#9 /var/www/app/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(MessagesController), Object(CakeRequest), Object(CakeResponse))
+#10 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#11 {main}
+2023-07-16 10:16:12 Error: [MissingTableException] Table users for model User was not found in datasource default.
+#0 /var/www/app/lib/Cake/Model/Model.php(3186): Model->setSource('users')
+#1 /var/www/app/lib/Cake/Model/Model.php(2338): Model->getDataSource()
+#2 /var/www/app/app/Controller/AppController.php(611): Model->updateAll(Array, Array)
+#3 /var/www/app/app/Controller/AppController.php(135): AppController->updateUserLoginTime()
+#4 /var/www/app/app/Controller/MessagesController.php(28): AppController->beforeFilter(false)
+#5 [internal function]: MessagesController->beforeFilter(Object(CakeEvent))
+#6 /var/www/app/lib/Cake/Event/CakeEventManager.php(246): call_user_func(Array, Object(CakeEvent))
+#7 /var/www/app/lib/Cake/Controller/Controller.php(669): CakeEventManager->dispatch(Object(CakeEvent))
+#8 /var/www/app/lib/Cake/Routing/Dispatcher.php(183): Controller->startupProcess()
+#9 /var/www/app/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(MessagesController), Object(CakeRequest), Object(CakeResponse))
+#10 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#11 {main}
