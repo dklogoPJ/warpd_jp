@@ -193,3 +193,27 @@
 2023-07-14 16:11:34 Error: [MissingControllerException] Controller class CssController could not be found.
 #0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
 #1 {main}
+2023-07-15 15:46:31 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:46:51 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:46:58 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:47:13 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:47:19 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:48:00 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:50:35 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-15 15:50:42 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
