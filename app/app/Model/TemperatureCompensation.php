@@ -1,5 +1,5 @@
 <?php
-class TemperatureCompesation extends AppModel
+class TemperatureCompensation extends AppModel
 {
     
 
@@ -24,7 +24,7 @@ class TemperatureCompesation extends AppModel
     function getTempCompId($Id = null, $recursive = -1)
     {
         $conditions = array(
-            'TemperatureCompesation.id' => $Id,
+            'TemperatureCompensation.id' => $Id,
         );
         # fetch the specific data from the server and retrun it.
         return $this->find('first', array('conditions' => $conditions, 'recursive' => $recursive));

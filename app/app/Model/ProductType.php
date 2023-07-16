@@ -96,8 +96,8 @@ class ProductType extends AppModel
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-        'TemperatureCompesation' => array(
-            'className' => 'TemperatureCompesation',
+        'TemperatureCompensation' => array(
+            'className' => 'TemperatureCompensation',
             'foreignKey' => 'product_type_id',
             'dependent' => false,
             'conditions' => '',
