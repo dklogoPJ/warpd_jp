@@ -591,7 +591,7 @@ class OmcOrdersController extends OmcAppController
                         return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                     }
                     $auto_flow = false;
-                    $bdc_id = $_POST['bdc_id'];
+                    $bdc_id = isset($_POST['bdc_id']) ? $_POST['bdc_id'] : 0;
                     $data = array('Order' => $_POST);
                     /*$data['Order']['order_date'] = $this->covertDate($_POST['order_date'],'mysql').' '.date('H:i:s');*/
                     $data['Order']['omc_modified'] = date('Y-m-d H:i:s');

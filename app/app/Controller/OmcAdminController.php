@@ -1010,8 +1010,9 @@ class OmcAdminController extends OmcAppController
             }
             //first delete the existing bdc records for this omc
             $this->BdcOmc->deleteAll(array('BdcOmc.omc_id' => $company_profile['id']), false);
+            debug($save);
 
-            $res = $this->BdcOmc->saveAll($this->sanitize($save['BdcOmc']));
+            $res = $this->BdcOmc->saveAll($this->sanitize($save[0]['BdcOmc']));
             if ($res) {
 
                 $log_description = $this->getLogMessage('ModifyBdcRelation');

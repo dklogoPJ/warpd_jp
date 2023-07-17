@@ -8,9 +8,11 @@ var OmcOrder = {
     bdc_depot_products: {},
     sel_obj: null,
     val_pro: false,
+    connects_with_bdc: true,
 
     init: function () {
         var self = this;
+        self.connects_with_bdc = my_bdc_list_ids.length > 0;
         /** Will be used to determine which BDCs apply **/
         for (var k in bdc_depots_gbl) {
             var bdc = bdc_depots_gbl[k]['my_depots_to_products'];
@@ -48,37 +50,42 @@ var OmcOrder = {
             btn_actions.push({type:'buttom', name:'Attachment', bclass:'attach', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-        btn_actions.push({type: 'select', name: 'Filter BDC', id: 'filter_bdc', bclass: 'filter', onchange: self.handleGridEvent, options: bdclists});
-        btn_actions.push({separator: true});
+        if(self.connects_with_bdc) {
+            btn_actions.push({type: 'select', name: 'Filter BDC', id: 'filter_bdc', bclass: 'filter', onchange: self.handleGridEvent, options: bdclists});
+            btn_actions.push({separator: true});
+        }
         btn_actions.push({type: 'select', name: 'Order Status', id: 'filter_status', bclass: 'filter', onchange: self.handleGridEvent, options: order_filter});
 
+        var col_models = [
+            {display: 'Order Id', name: 'id', width: 50, sortable: false, align: 'left', hide: false},
+            {display: 'Order Date', name: 'order_date', width: 90, sortable: false, align: 'left', hide: false},
+            //{display:'Priority', name:'omc_order_priority', width:85, sortable:false, align:'left', hide:false},
+            {display: 'Time Elapsed', name: 'time_elapsed', width: 85, sortable: false, align: 'left', hide: false},
+            {display: 'Customer', name: 'omc_customer_id', width: 100, sortable: false, align: 'left', hide: false},
+            {display: 'Loading Depot', name: 'depot_id', width: 120, sortable: true, align: 'left', hide: false},
+            {display: 'Product Type', name: 'product_type_id', width: 100, sortable: true, align: 'left', hide: false},
+            {display: 'Order Quantity', name: 'order_quantity', width: 100, sortable: true, align: 'left', hide: false},
+            {display: 'Transporter', name: 'transporter', width: 95, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:truckList}},
+            {display: 'Truck No.', name: 'truck_no', width: 89, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:numbers}},
+            {display: 'Approved Quantity', name: 'approved_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'approved_quantity-class', options: volumes}},
+            {display: 'Loaded Quantity', name: 'loaded_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'loaded_quantity-class', options: volumes}},
+            {display:'Loading Date', name:'loaded_date', width:80, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
+            {display: 'Received Quantity', name: 'received_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form:'text', validate:'', defval:''}},
+            {display: 'GIT Status', name: 'git_status', width: 110, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:git_status}}
+        ];
+
+        if(self.connects_with_bdc) {
+            col_models.splice(9, 0, {display: 'BDC', name: 'bdc_id', width: 120, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty', defval: '', bclass: 'bdc-class', options: {}}})
+            col_models.push({display: 'BDC Feedback', name: 'bdc_feedback', width: 160, sortable: true, align: 'left', hide: false})
+           // col_models.push({display:'BDC Finance Approval', name:'finance_approval', width:140, sortable:true, align:'left', hide:false})
+        }
 
         self.objGrid = $('#flex').flexigrid({
             url: $('#table-url').val(),
             reload_after_add: true,
             reload_after_edit: true,
             dataType: 'json',
-            colModel: [
-                {display: 'Order Id', name: 'id', width: 50, sortable: false, align: 'left', hide: false},
-                {display: 'Order Date', name: 'order_date', width: 90, sortable: false, align: 'left', hide: false},
-                //{display:'Priority', name:'omc_order_priority', width:85, sortable:false, align:'left', hide:false},
-                {display: 'Time Elapsed', name: 'time_elapsed', width: 85, sortable: false, align: 'left', hide: false},
-                {display: 'Customer', name: 'omc_customer_id', width: 100, sortable: false, align: 'left', hide: false},
-                {display: 'Loading Depot', name: 'depot_id', width: 120, sortable: true, align: 'left', hide: false},
-                {display: 'Product Type', name: 'product_type_id', width: 100, sortable: true, align: 'left', hide: false},
-                {display: 'Order Quantity', name: 'order_quantity', width: 100, sortable: true, align: 'left', hide: false},
-                {display: 'Transporter', name: 'transporter', width: 95, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:truckList}},
-                {display: 'Truck No.', name: 'truck_no', width: 89, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:numbers}},
-                {display: 'BDC', name: 'bdc_id', width: 120, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty', defval: '', bclass: 'bdc-class', options: {}}},
-                {display: 'Approved Quantity', name: 'approved_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'approved_quantity-class', options: volumes}},
-                {display: 'Loaded Quantity', name: 'loaded_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'loaded_quantity-class', options: volumes}},
-                {display:'Loading Date', name:'loaded_date', width:80, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-                {display: 'Received Quantity', name: 'received_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form:'text', validate:'', defval:''}},
-                {display: 'GIT Status', name: 'git_status', width: 110, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:git_status}},
-                {display: 'BDC Feedback', name: 'bdc_feedback', width: 160, sortable: true, align: 'left', hide: false}
-                //{display:'BDC Finance Approval', name:'finance_approval', width:140, sortable:true, align:'left', hide:false},
-
-            ],
+            colModel: col_models,
             formFields: btn_actions,
             searchitems: [
                 {display: 'Order Id', name: 'id', isdefault: true}
