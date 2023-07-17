@@ -99,7 +99,7 @@ var OmcOrder = {
                 add: inArray('A', permissions),
                 edit: inArray('E', permissions),
                 confirmSave: true,
-                confirmSaveText: "Once a BDC is allocated you cannot change it again. \n Are you sure the information you entered is correct ?",
+                confirmSaveText: "Once this order is allocated you cannot change it again. \n Are you sure the information you entered is correct ?",
                 afterRender: function (tr) {
                     var td = tr.find("[field='bdc_id']");
                     var selected_name = td.attr('data-id');
