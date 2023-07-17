@@ -636,6 +636,8 @@ class OmcOrdersController extends OmcAppController
                             $order['bdc_distribution_id'] = $this->BdcDistribution->id;
                             //Push to OMC distribution
                             $this->OmcBdcDistribution->addDistribution($order);
+                            //Update OmcCustomerOrder with approved quantity and loaded quantity
+                            $this->OmcCustomerOrder->updateLoadedQtyApprovedQty($order);
                         }
                         else{
                             /** Notify BDC **/
