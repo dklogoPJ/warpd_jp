@@ -9,6 +9,7 @@
     var truckList = <?php echo json_encode($truckList);?>;
     var numbers = <?php echo json_encode($numbers);?>;
     var invoice_no = <?php echo json_encode($invoice_no);?>;
+    var my_bdc_list_ids = <?php echo json_encode($my_bdc_list_ids); ?>;
     //console.log(delivery_locations)
 </script>
 <div class="workplace">

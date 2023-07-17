@@ -12,7 +12,9 @@ var OmcOrder = {
 
     init: function () {
         var self = this;
+
         self.connects_with_bdc = my_bdc_list_ids.length > 0;
+
         /** Will be used to determine which BDCs apply **/
         for (var k in bdc_depots_gbl) {
             var bdc = bdc_depots_gbl[k]['my_depots_to_products'];
