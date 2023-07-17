@@ -35,7 +35,7 @@ CREATE TABLE `activity_logs` (
   `description` text,
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `activity_logs` (
 
 LOCK TABLES `activity_logs` WRITE;
 /*!40000 ALTER TABLE `activity_logs` DISABLE KEYS */;
-INSERT INTO `activity_logs` VALUES (1,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Administration',' (Customer: JP Spintex)','2023-07-16 18:47:55'),(2,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Logout',NULL,'2023-07-16 19:34:30'),(3,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Login',NULL,'2023-07-16 19:34:41'),(4,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Login',NULL,'2023-07-17 08:00:22');
+INSERT INTO `activity_logs` VALUES (1,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Administration',' (Customer: JP Spintex)','2023-07-16 18:47:55'),(2,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Logout',NULL,'2023-07-16 19:34:30'),(3,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Login',NULL,'2023-07-16 19:34:41'),(4,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Login',NULL,'2023-07-17 08:00:22'),(5,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Logout',NULL,'2023-07-17 08:59:01'),(6,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Login',NULL,'2023-07-17 08:59:18'),(7,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Login',NULL,'2023-07-17 09:18:25'),(8,'omc',1,'JP Trustees Limited',2,'Omc  Admin',2,'System Admin','Logout',NULL,'2023-07-17 09:19:18'),(9,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Login',NULL,'2023-07-17 09:19:27'),(10,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Logout',NULL,'2023-07-17 09:26:25'),(11,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Login',NULL,'2023-07-17 09:26:59'),(12,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Login',NULL,'2023-07-17 09:45:51'),(13,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Logout',NULL,'2023-07-17 09:50:10'),(14,'omc_customer',1,'JP Spintex',8,'Admin  User',10,'System Administrators','Login',NULL,'2023-07-17 09:50:20');
 /*!40000 ALTER TABLE `activity_logs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -575,7 +575,7 @@ CREATE TABLE `failed_logins` (
   `ip_addr` varchar(30) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -584,6 +584,7 @@ CREATE TABLE `failed_logins` (
 
 LOCK TABLES `failed_logins` WRITE;
 /*!40000 ALTER TABLE `failed_logins` DISABLE KEYS */;
+INSERT INTO `failed_logins` VALUES (1,'sp','172.20.0.1','2023-07-17 09:26:40');
 /*!40000 ALTER TABLE `failed_logins` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -726,7 +727,7 @@ CREATE TABLE `login_trails` (
   `created` datetime DEFAULT NULL,
   `logout` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -735,7 +736,7 @@ CREATE TABLE `login_trails` (
 
 LOCK TABLES `login_trails` WRITE;
 /*!40000 ALTER TABLE `login_trails` DISABLE KEYS */;
-INSERT INTO `login_trails` VALUES (1,0,NULL,'2023-07-16 19:34:30','2023-07-16 19:34:30'),(2,2,'172.22.0.1','2023-07-16 19:34:41',NULL),(3,2,'172.19.0.1','2023-07-17 08:00:22',NULL);
+INSERT INTO `login_trails` VALUES (1,0,NULL,'2023-07-16 19:34:30','2023-07-16 19:34:30'),(2,2,'172.22.0.1','2023-07-16 19:34:41',NULL),(3,2,'172.19.0.1','2023-07-17 08:00:22','2023-07-17 08:59:01'),(4,8,'172.19.0.1','2023-07-17 08:59:18',NULL),(5,2,'172.20.0.1','2023-07-17 09:18:25','2023-07-17 09:19:18'),(6,8,'172.20.0.1','2023-07-17 09:19:27','2023-07-17 09:26:25'),(7,8,'172.20.0.1','2023-07-17 09:26:59',NULL),(8,8,'172.20.0.1','2023-07-17 09:45:51','2023-07-17 09:50:10'),(9,8,'172.20.0.1','2023-07-17 09:50:20',NULL);
 /*!40000 ALTER TABLE `login_trails` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1226,7 +1227,7 @@ DROP TABLE IF EXISTS `omc_customer_price_changes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `omc_customer_price_changes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `omc_id` int(11) DEFAULT NULL,
+  `omc_customer_id` int(11) DEFAULT NULL,
   `product_type_id` int(11) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `price` varchar(100) DEFAULT '0.00',
@@ -1332,7 +1333,7 @@ CREATE TABLE `omc_customer_tanks` (
   `modified_by` int(11) DEFAULT NULL,
   `deleted` char(1) DEFAULT 'n',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1341,6 +1342,7 @@ CREATE TABLE `omc_customer_tanks` (
 
 LOCK TABLES `omc_customer_tanks` WRITE;
 /*!40000 ALTER TABLE `omc_customer_tanks` DISABLE KEYS */;
+INSERT INTO `omc_customer_tanks` VALUES (1,1,1,'AGO','AGO',NULL,'10000','1000','Operational','','2023-07-17 09:19:06',2,'2023-07-17 09:19:06',NULL,'n');
 /*!40000 ALTER TABLE `omc_customer_tanks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2487,7 +2489,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Mr','Sytem','Control','','reservered1','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'system',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Active','2013-01-06 12:51:56',NULL,'2013-01-06 12:51:56',NULL,'n','',NULL,'yes',NULL,'n',NULL),(2,'Mr','Omc','Admin','','admin.omc','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'omc',NULL,1,NULL,NULL,NULL,NULL,2,'','','Active',NULL,NULL,'2023-07-16 19:34:30',NULL,'n','','2023-07-17 08:47:04','yes',NULL,'y',NULL),(3,'Mr','Bdc','Admin','','admin.bdc','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'bdc',1,0,NULL,NULL,NULL,NULL,1,'','','Active',NULL,NULL,'2023-04-28 10:10:05',31,'n','','2023-04-28 10:10:05','yes',NULL,'y',NULL),(4,'Mr','Admin','Super','','admin.npa','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'org',NULL,0,NULL,1,NULL,NULL,12,NULL,NULL,'Active','2013-09-06 08:28:08',NULL,'2023-04-28 11:31:26',NULL,'n','','2023-04-28 11:31:25','yes','tr_red','n',NULL),(5,'Mr','Ceps','User','','admin.ceps','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'ceps_depot',NULL,0,NULL,NULL,2,NULL,32,'','ceps@mail.com','Active','2013-10-02 12:02:50',NULL,'2023-04-28 11:35:51',77,'n','','2023-04-28 11:35:51','yes',NULL,'n',NULL),(6,'Mr','Ceps','Central','User','admin.cepshq','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'ceps_central',NULL,0,NULL,NULL,2,NULL,30,NULL,NULL,'Active',NULL,NULL,'2014-01-01 13:54:48',NULL,'y','','2014-01-01 13:54:48','yes',NULL,'n',NULL),(7,'Mr','Depot','Admin','User','admin.depot','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'depot',NULL,0,NULL,NULL,NULL,1,33,NULL,NULL,'Active',NULL,NULL,'2014-12-23 10:17:21',81,'n','','2014-12-23 10:17:21','yes',NULL,'n',NULL),(8,NULL,'Admin','User',NULL,'spintex.admin','6f3d66a77f78f068c1a7597650a59e8a4f55e02f','admin','omc_customer',NULL,0,1,NULL,NULL,NULL,10,NULL,NULL,'Active','2023-07-16 18:47:54',2,'2023-07-16 18:47:54',2,'n',NULL,NULL,'yes',NULL,'n',NULL);
+INSERT INTO `users` VALUES (1,'Mr','Sytem','Control','','reservered1','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'system',NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'Active','2013-01-06 12:51:56',NULL,'2013-01-06 12:51:56',NULL,'n','',NULL,'yes',NULL,'n',NULL),(2,'Mr','Omc','Admin','','admin.omc','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'omc',NULL,1,NULL,NULL,NULL,NULL,2,'','','Active',NULL,NULL,'2023-07-17 09:19:18',NULL,'n','','2023-07-17 09:19:18','yes',NULL,'y',NULL),(3,'Mr','Bdc','Admin','','admin.bdc','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'bdc',1,0,NULL,NULL,NULL,NULL,1,'','','Active',NULL,NULL,'2023-04-28 10:10:05',31,'n','','2023-04-28 10:10:05','yes',NULL,'y',NULL),(4,'Mr','Admin','Super','','admin.npa','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'org',NULL,0,NULL,1,NULL,NULL,12,NULL,NULL,'Active','2013-09-06 08:28:08',NULL,'2023-04-28 11:31:26',NULL,'n','','2023-04-28 11:31:25','yes','tr_red','n',NULL),(5,'Mr','Ceps','User','','admin.ceps','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'ceps_depot',NULL,0,NULL,NULL,2,NULL,32,'','ceps@mail.com','Active','2013-10-02 12:02:50',NULL,'2023-04-28 11:35:51',77,'n','','2023-04-28 11:35:51','yes',NULL,'n',NULL),(6,'Mr','Ceps','Central','User','admin.cepshq','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'ceps_central',NULL,0,NULL,NULL,2,NULL,30,NULL,NULL,'Active',NULL,NULL,'2014-01-01 13:54:48',NULL,'y','','2014-01-01 13:54:48','yes',NULL,'n',NULL),(7,'Mr','Depot','Admin','User','admin.depot','6f3d66a77f78f068c1a7597650a59e8a4f55e02f',NULL,'depot',NULL,0,NULL,NULL,NULL,1,33,NULL,NULL,'Active',NULL,NULL,'2014-12-23 10:17:21',81,'n','','2014-12-23 10:17:21','yes',NULL,'n',NULL),(8,NULL,'Admin','User',NULL,'spintex.admin','6f3d66a77f78f068c1a7597650a59e8a4f55e02f','admin','omc_customer',NULL,0,1,NULL,NULL,NULL,10,NULL,NULL,'Active','2023-07-16 18:47:54',2,'2023-07-17 09:50:10',2,'n','','2023-07-17 09:50:31','yes',NULL,'n',NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2590,4 +2592,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-17  8:48:24
+-- Dump completed on 2023-07-17  9:51:29
