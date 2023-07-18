@@ -1115,3 +1115,6 @@
 2023-07-18 11:05:33 Error: [MissingControllerException] Controller class CssController could not be found.
 #0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
 #1 {main}
+2023-07-18 11:08:58 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
