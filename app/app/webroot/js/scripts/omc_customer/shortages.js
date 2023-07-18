@@ -29,7 +29,7 @@ var Order = {
             reload_after_edit:true,
             dataType:'json',
             colModel:[
-                {display:'Order Id', name:'id', width:60, sortable:false, align:'left', hide:false},
+                {display:'Order Id', name:'id', width:60, sortable:true, align:'left', hide:false},
                 {display:'Order Date', name:'order_date', width:80, sortable:false, align:'left', hide:false},
 				{display:'Product Type', name:'product_type_id', width:100, sortable:true, align:'left', hide:false},
                 {display:'Order Quantity', name:'order_quantity', width:100, sortable:true, align:'left', hide:false},
@@ -38,7 +38,7 @@ var Order = {
                 {display:'Quantity Short', name:'shortage_quantity', width:110, sortable:true, align:'left', hide:false},
                 {display:'Shortage Cost', name:'shortage_cost', width:110, sortable:true, align:'left', hide:false},
                 {display:'Delivery Truck', name:'truck_number', width:110, sortable:true, align:'left', hide:false},
-                {display:'Driver', name:'driver', width:100, sortable:true, align:'left', hide:false},
+                {display:'Transporter', name:'driver', width:100, sortable:true, align:'left', hide:false},
                 {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false}
                 //{display:'Delivery Quantity', name:'delivery_quantity', width:130, sortable:true, align:'left', hide:false}
 

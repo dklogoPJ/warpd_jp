@@ -1,7 +1,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1 style="font-size: 30px;">Temperature Compesation <small> Dashboard</small></h1>
+        <h1 style="font-size: 30px;">Temperature Compensation <small> Dashboard</small></h1>
     </div>
 
     <div class="row-fluid">
@@ -21,7 +21,7 @@
 
             <div class="head clearfix">
                 <div class="isw-text_document"></div>
-                <h1>Temperature Compesation Table</h1>
+                <h1>Temperature Compensation Table</h1>
             </div>
             <table id="flex" style="display:none;"></table>
 
@@ -72,12 +72,12 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compesation/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compesation/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compesation/load_details')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/save')); ?>" />
+<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/load_details')); ?>" />
 
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compesation/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compesation/delete')); ?>" />
+<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/load')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/delete')); ?>" />
 
 
 <!-- This URL will be used by Ajax upload -->

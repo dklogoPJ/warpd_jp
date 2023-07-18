@@ -39,7 +39,7 @@ var Order = {
                 {display:'Loaded Quantity', name:'loaded_quantity', width:120, sortable:true, align:'left', hide:false},
                 {display:'Truck Arrival Date', name:'truck_arrival_date', width:120, sortable:false},
                 {display:'Transporter', name:'transporter', width:100, sortable:false, align:'left', hide:false},
-                {display:'Tank No', name:'tank_no', width:80, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Tank No', name:'tank_no', width:130, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:tanks}},
                 {display:'Product Density Depot', name:'product_density_depot', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Temp-Depot', name:'product_temp_depot', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Product Density Station', name:'product_density_station', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},

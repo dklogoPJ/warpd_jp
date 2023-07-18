@@ -476,7 +476,8 @@ class OmcOrdersController extends OmcAppController
                         'Bdc'=>array('fields' => array('Bdc.id', 'Bdc.name')),
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
-                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
                     $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
@@ -530,9 +531,17 @@ class OmcOrdersController extends OmcAppController
                             if($obj['Order']['loaded_date']){
                                 $loaded_date = $this->covertDate($obj['Order']['loaded_date'],'mysql_flip');
                             }
+
                             $approved_quantity = '';
-                            $received_quantity = '';
-                            $git_status = '';
+                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0);
+                            
+                            if($received_quantity > 0){
+                                $git_status ='Discharged';
+                            }else{
+                                $git_status ='GIT';
+                            }
+
+                            //$git_status = '';
                             if($obj['Order']['approved_quantity']){
                                 $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'money',0);
                             }

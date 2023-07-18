@@ -27,4 +27,35 @@ class OmcTank extends AppModel
         ));
     }
 
+
+
+    function _getTank($col){
+        $tk = array();
+        $r = $this->find('all',array(
+            'fields'=>array($col),
+            'conditions'=>array('NOT'=>array($col=>NULL),'deleted'=>'n'),
+            'order'=>array($col=>'Asc'),
+            'recursive'=>-1
+        ));
+        /*debug($r);
+        exit;*/
+        foreach($r as $k=>$data){
+            $tk[$data['OmcTank'][$col]] = $data['OmcTank'][$col];
+        }
+        asort($tk);
+        return $tk;
+    }
+
+    function getTankList(){
+        $tks =  $this->_getTank('name');
+        $tanks  = array();
+        foreach($tks as $tk){
+            $tanks[] = array(
+                'id'=>$tk,
+                'name'=>$tk
+            );
+        }
+        return $tanks;
+    }
+
 }

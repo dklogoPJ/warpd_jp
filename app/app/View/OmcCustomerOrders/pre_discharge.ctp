@@ -91,6 +91,7 @@
     var permissions = <?php echo json_encode($permissions); ?>;
     var volumes = <?php echo json_encode($volumes); ?>;
     var list_tm = <?php echo json_encode($list_tm); ?>;
+    var tanks = <?php echo json_encode($tanks); ?>;
    
 </script>
 
