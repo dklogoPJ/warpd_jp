@@ -35,9 +35,7 @@ var OmcTrucks = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Truck Number', name:'truck_no', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Capacity', name:'capacity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Transporter', name:'name', width:300, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
+                {display:'NCTs Channel Name', name:'name', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -57,7 +55,7 @@ var OmcTrucks = {
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:300,
+            height:400,
             subgrid:{
                 use:false
             },

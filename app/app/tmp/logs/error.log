@@ -1172,3 +1172,240 @@
 2023-07-18 12:16:18 Error: [MissingControllerException] Controller class CssController could not be found.
 #0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
 #1 {main}
+2023-07-18 12:39:11 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:39:28 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:39:42 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:39:44 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:39:58 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:40:03 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:40:08 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:40:14 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:40:24 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:40:53 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:41:05 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:41:10 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:53:05 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:57:26 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:58:12 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:58:38 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 12:58:44 Error: [MissingActionException] Action OmcCustomerDailySalesController::pump_tank_sales() could not be found.
+#0 /var/www/app/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /var/www/app/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(OmcCustomerDailySalesController), Object(CakeRequest), Object(CakeResponse))
+#2 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2023-07-18 13:01:22 Error: Fatal Error (1): Call to a member function getOmcCustomerProduct() on a non-object in [/var/www/app/app/Controller/OmcCustomerAppController.php, line 118]
+2023-07-18 13:01:22 Error: [FatalErrorException] Call to a member function getOmcCustomerProduct() on a non-object
+#0 /var/www/app/lib/Cake/Error/ErrorHandler.php(161): ErrorHandler::handleFatalError(1, 'Call to a membe...', '/var/www/app/ap...', 118)
+#1 [internal function]: ErrorHandler::handleError(1, 'Call to a membe...', '/var/www/app/ap...', 118, Array)
+#2 /var/www/app/lib/Cake/Core/App.php(926): call_user_func('ErrorHandler::h...', 1, 'Call to a membe...', '/var/www/app/ap...', 118, Array)
+#3 /var/www/app/lib/Cake/Core/App.php(899): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2023-07-18 13:01:47 Error: Fatal Error (1): Call to a member function getOmcCustomerProduct() on a non-object in [/var/www/app/app/Controller/OmcCustomerAppController.php, line 118]
+2023-07-18 13:01:47 Error: [FatalErrorException] Call to a member function getOmcCustomerProduct() on a non-object
+#0 /var/www/app/lib/Cake/Error/ErrorHandler.php(161): ErrorHandler::handleFatalError(1, 'Call to a membe...', '/var/www/app/ap...', 118)
+#1 [internal function]: ErrorHandler::handleError(1, 'Call to a membe...', '/var/www/app/ap...', 118, Array)
+#2 /var/www/app/lib/Cake/Core/App.php(926): call_user_func('ErrorHandler::h...', 1, 'Call to a membe...', '/var/www/app/ap...', 118, Array)
+#3 /var/www/app/lib/Cake/Core/App.php(899): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2023-07-18 13:03:08 Error: Fatal Error (1): Call to a member function getProductList() on a non-object in [/var/www/app/app/Controller/AppController.php, line 913]
+2023-07-18 13:03:08 Error: [FatalErrorException] Call to a member function getProductList() on a non-object
+#0 /var/www/app/lib/Cake/Error/ErrorHandler.php(161): ErrorHandler::handleFatalError(1, 'Call to a membe...', '/var/www/app/ap...', 913)
+#1 [internal function]: ErrorHandler::handleError(1, 'Call to a membe...', '/var/www/app/ap...', 913, Array)
+#2 /var/www/app/lib/Cake/Core/App.php(926): call_user_func('ErrorHandler::h...', 1, 'Call to a membe...', '/var/www/app/ap...', 913, Array)
+#3 /var/www/app/lib/Cake/Core/App.php(899): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2023-07-18 13:03:53 Error: Fatal Error (1): Call to a member function getVolsList() on a non-object in [/var/www/app/app/Controller/OmcCustomerDailySalesController.php, line 936]
+2023-07-18 13:03:53 Error: [FatalErrorException] Call to a member function getVolsList() on a non-object
+#0 /var/www/app/lib/Cake/Error/ErrorHandler.php(161): ErrorHandler::handleFatalError(1, 'Call to a membe...', '/var/www/app/ap...', 936)
+#1 [internal function]: ErrorHandler::handleError(1, 'Call to a membe...', '/var/www/app/ap...', 936, Array)
+#2 /var/www/app/lib/Cake/Core/App.php(926): call_user_func('ErrorHandler::h...', 1, 'Call to a membe...', '/var/www/app/ap...', 936, Array)
+#3 /var/www/app/lib/Cake/Core/App.php(899): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2023-07-18 13:04:09 Error: [MissingViewException] View file "/var/www/app/app/View/OmcCustomerDailySales/pump_tank_sales.ctp" is missing.
+#0 /var/www/app/lib/Cake/View/View.php(473): View->_getViewFileName(NULL)
+#1 /var/www/app/lib/Cake/Controller/Controller.php(956): View->render(NULL, NULL)
+#2 /var/www/app/lib/Cake/Routing/Dispatcher.php(193): Controller->render()
+#3 /var/www/app/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(OmcCustomerDailySalesController), Object(CakeRequest), Object(CakeResponse))
+#4 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#5 {main}
+2023-07-18 13:05:03 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:06:17 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:06:28 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:07:19 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:07:22 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:45:06 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:46:05 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:46:11 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:46:19 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:46:21 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:47:09 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:47:17 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:47:22 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:47:26 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:47:51 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:53:58 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:55:46 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:57:20 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 13:58:45 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:02:22 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:07:23 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:07:54 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:08:41 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:09:24 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:09:50 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 14:32:35 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:30:11 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:34:35 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:34:39 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:34:47 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:35:07 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:35:14 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:37:43 Error: [MissingActionException] Action OmcCustomerDailySalesController::nct_sales_record() could not be found.
+#0 /var/www/app/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /var/www/app/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(OmcCustomerDailySalesController), Object(CakeRequest), Object(CakeResponse))
+#2 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2023-07-18 15:38:43 Error: [MissingActionException] Action OmcCustomerDailySalesController::nct_sales_record() could not be found.
+#0 /var/www/app/lib/Cake/Routing/Dispatcher.php(186): Controller->invokeAction(Object(CakeRequest))
+#1 /var/www/app/lib/Cake/Routing/Dispatcher.php(161): Dispatcher->_invoke(Object(OmcCustomerDailySalesController), Object(CakeRequest), Object(CakeResponse))
+#2 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#3 {main}
+2023-07-18 15:39:45 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 15:42:19 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:05:17 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:05:53 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:05:57 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:10:26 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:11:02 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:11:14 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:15:04 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:15:15 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:15:16 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:15:22 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}
+2023-07-18 16:16:41 Error: [MissingControllerException] Controller class CssController could not be found.
+#0 /var/www/app/app/webroot/index.php(92): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#1 {main}

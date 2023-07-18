@@ -496,7 +496,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                             
                             $product_id = $obj['ProductType']['id'];
                             $shortage_quantity = str_replace(',', '', $delivery_quantity) -  str_replace(',', '', $received_quantity);
-                            $price_change = $this->OmcCustomerPriceChange->getPriceQuotesData(1);
+                            $price_change = $this->OmcCustomerPriceChange->getPriceQuotesData($obj['OmcCustomerOrder']['omc_customer_id']);
 
                             //pr($received_quantity);
                            // exit;

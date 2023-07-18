@@ -10,7 +10,7 @@ class OmcAdminController extends OmcAppController
 
     var $name = 'OmcAdmin';
     # set the model to use
-    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck');
+    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct');
     # Set the layout to use
     var $layout = 'omc_layout';
 
@@ -1213,6 +1213,118 @@ class OmcAdminController extends OmcAppController
                     $result = $modObj->deleteAll(array('Truck.id' => $ids),false);
                     if ($result) {
                         echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+    }
+
+
+    function nct_channel_setup($type = 'get')
+    {
+        //$company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    
+                    $data_table = $this->Nct->find('all', array('order' => "Nct.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->Nct->find('count', array('recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['Nct']['id'],
+                                'cell' => array(
+                                    $obj['Nct']['id'],
+                                    $obj['Nct']['name'],
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
+                    $data = array('Nct' => $_POST);
+        
+                    if($_POST['id'] == 0){
+                        $data['Nct']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['Nct']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['Nct']['omc_id'] = $company_profile['id'];
+
+                    if ($this->Nct->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('Nct');
+                    $result = $modObj->updateAll(
+                        array('Nct.deleted' => "'y'"),
+                        array('Nct.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('Nct');
+                        $modObj->updateAll(
+                            array('Nct.deleted' => "'y'"),
+                            array('Nct.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
                     } else {
                         echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
                     }

@@ -1,7 +1,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1 style="font-size: 30px;">Pumpp vs. Tank Sales <small> Dashboard</small></h1>
+        <h1 style="font-size: 30px;">Pump vs. Tank Sales <small> Dashboard</small></h1>
     </div>
 
     <div class="row-fluid">

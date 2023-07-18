@@ -173,6 +173,18 @@ class Omc extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'Nct' => array(
+            'className' => 'Nct',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
         )
     );
 
