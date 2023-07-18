@@ -373,7 +373,7 @@ class OmcCustomerOrder extends AppModel
              array(
                  'OmcCustomerOrder.approved_quantity' => $order['approved_quantity'],
                  'OmcCustomerOrder.loaded_quantity' => $order['loaded_quantity'],
-                 'OmcCustomerOrder.transporter' => $order['transporter']
+                 'OmcCustomerOrder.transporter' => "'".$order['transporter']."'"
              ),
              array('OmcCustomerOrder.id' => $order['omc_customer_order_id'])
          );

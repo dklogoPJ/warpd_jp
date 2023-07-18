@@ -129,25 +129,27 @@ var OmcOrder = {
                         }
                     }
                     var select = document.getElementById('bdc_id_' + row_id);
-                    select.options.length = 0;
-                    var selected = '';
-                    for (var nx in qualified_bdcs) {
-                        var bdc_name = bdc_depots_gbl[qualified_bdcs[nx]]['name'];
-                        var bdc_id = bdc_depots_gbl[qualified_bdcs[nx]]['id'];
-                        if (selected_name == bdc_name) {
-                            selected = bdc_id;
+                    if(select) {
+                        select.options.length = 0;
+                        var selected = '';
+                        for (var nx in qualified_bdcs) {
+                            var bdc_name = bdc_depots_gbl[qualified_bdcs[nx]]['name'];
+                            var bdc_id = bdc_depots_gbl[qualified_bdcs[nx]]['id'];
+                            if (selected_name == bdc_name) {
+                                selected = bdc_id;
+                            }
+                            var opt = document.createElement('option');
+                            opt.value = bdc_id;
+                            opt.text = bdc_name;
+                            try { //Standard
+                                select.add(opt, null);
+                            }
+                            catch (error) { //IE Only
+                                select.add(opt);
+                            }
                         }
-                        var opt = document.createElement('option');
-                        opt.value = bdc_id;
-                        opt.text = bdc_name;
-                        try { //Standard
-                            select.add(opt, null);
-                        }
-                        catch (error) { //IE Only
-                            select.add(opt);
-                        }
+                        $("#bdc_id_" + row_id).val(selected).change();
                     }
-                    $("#bdc_id_" + row_id).val(selected).change();
                 }
             },
             columnControl: true,

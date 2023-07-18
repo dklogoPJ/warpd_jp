@@ -60,8 +60,9 @@ class OmcController extends   OmcAppController
         $group_depot = $this->User->getDepotGroup($authUser['id']);
         $loading_board = $this->get_loading_board($group_depot);
         $loaded_board = $this->get_loaded_board($group_depot);
+        $is_connected_to_bdc = $this->is_connected_to_bdc();
 
-        $this->set(compact('loading_board','loaded_board','company_profile','grid_data', 'liters_per_products', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','omclists', 'products_lists', 'regions_lists', 'district_lists', 'bar_graph_data', 'pie_data','glbl_region_district','delivery_locations','OmcPriceChange'));
+        $this->set(compact('loading_board','loaded_board','company_profile','grid_data', 'liters_per_products', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists', 'products_lists', 'regions_lists', 'district_lists', 'bar_graph_data', 'pie_data','glbl_region_district','delivery_locations', 'is_connected_to_bdc'));
     }
 
 }

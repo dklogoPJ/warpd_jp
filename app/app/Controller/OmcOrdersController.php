@@ -315,7 +315,7 @@ class OmcOrdersController extends OmcAppController
 
         $volumes = $this->Volume->getVolsList();
 
-        $this->set(compact('grid_data','omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','bdc_depots','volumes'));
+        $this->set(compact('omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','bdc_depots','volumes'));
     }
 
 
@@ -572,8 +572,12 @@ class OmcOrdersController extends OmcAppController
                                 // $fna_feed,
                             );
 
-                            if(count($my_bdc_list_ids) > 0) {
-                                array_splice( $cell, 9, 0, $obj['Bdc']['name']);
+                            if($this->is_connected_to_bdc()) {
+                                if(isset($obj['Bdc']) && isset($obj['Bdc']['name'])) {
+                                    array_splice( $cell, 9, 0, $obj['Bdc']['name']);
+                                } else {
+                                    array_splice( $cell, 9, 0, '---');
+                                }
                                 $cell[] = $ops_feed;
                             }
                             $return_arr[] = array(
@@ -613,7 +617,7 @@ class OmcOrdersController extends OmcAppController
                     $data['Order']['omc_modified_by'] = $authUser['id'];
                     $data['Order']['edit_row'] = 'no'; //
                     unset( $data['Order']['extra']);
-                    if(in_array($bdc_id,$my_bdc_list_ids)){
+                    if(in_array($bdc_id, $my_bdc_list_ids)){
                         unset( $data['Order']['approved_quantity']);
                         unset( $data['Order']['loaded_quantity']);
                         unset( $data['Order']['loaded_date']);
@@ -728,18 +732,18 @@ class OmcOrdersController extends OmcAppController
         $volumes = $this->Volume->getVolsList();
         $truckList = $this->Truck->getTruckList();
         $numbers = $this->Truck->getTruckNo();
-        $git_status = array('0'=>array(
-                                    'id'=>'GIT',
-                                    'name'=>'GIT'
-                        ),
-                        '1'=>array(
-                            'id'=>'Discharged',
-                            'name'=>'Discharged'
-                        )
-                    );
+        $git_status = array(
+            '0'=>array(
+                'id'=>'GIT',
+                'name'=>'GIT'
+            ),
+            '1'=>array(
+                'id'=>'Discharged',
+                'name'=>'Discharged'
+            )
+        );
 
-
-        $this->set(compact('grid_data','omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','bdc_depots','volumes','my_bdc_list_ids','numbers','truckList','git_status'));
+        $this->set(compact('omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','bdc_depots','volumes','my_bdc_list_ids','numbers','truckList','git_status'));
     }
 
 
@@ -1019,7 +1023,7 @@ class OmcOrdersController extends OmcAppController
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('grid_data','omc_customers_lists', 'products_lists','depot_lists','bdc_list','graph_title','g_data','bdclists','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+        $this->set(compact('omc_customers_lists', 'products_lists','depot_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
     }
 
 
@@ -1220,7 +1224,7 @@ class OmcOrdersController extends OmcAppController
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('grid_data','omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
     }
 
 
@@ -1312,10 +1316,14 @@ class OmcOrdersController extends OmcAppController
                                 $obj['BdcDistribution']['vehicle_no']
                             );
 
-                            if(count($my_bdc_list_ids) > 0) {
+                            if($this->is_connected_to_bdc()) {
                                 array_splice( $cell, 3, 0, $waybill_date);
                                 array_splice( $cell, 4, 0, $obj['BdcDistribution']['waybill_id']);
-                                array_splice( $cell, 5, 0, $obj['Bdc']['name']);
+                                if(isset($obj['Bdc']) && isset($obj['Bdc']['name'])) {
+                                    array_splice( $cell, 5, 0, $obj['Bdc']['name']);
+                                } else {
+                                    array_splice( $cell, 5, 0, '---');
+                                }
                             }
 
                             $to_row = array(

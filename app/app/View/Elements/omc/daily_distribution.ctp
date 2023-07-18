@@ -201,9 +201,15 @@
                 <tr>
                     <th>Date</th>
                     <th>Order No</th>
-                    <th>Waybill No</th>
-                    <th>Waybill Date</th>
-                    <th>BDC Name</th>
+                    <?php
+                    if($is_connected_to_bdc) {
+                        ?>
+                        <th>Waybill No</th>
+                        <th>Waybill Date</th>
+                        <th>BDC Name</th>
+                        <?php
+                    }
+                    ?>
                     <th>Loading Depot</th>
                     <th>Product Type</th>
                     <th>Product Quantity</th>
@@ -219,14 +225,20 @@
                     <tr>
                         <td><?php echo $this->App->covertDate($data['BdcDistribution']['created'],'mysql_flip'); ?></td>
                         <td><?php echo $data['BdcDistribution']['order_id'] ;?></td>
-                        <td><?php echo $data['BdcDistribution']['waybill_id'] ;?></td>
-                        <td><?php echo $this->App->covertDate($data['BdcDistribution']['waybill_date'],'mysql_flip'); ?></td>
-                        <td><?php echo $data['Bdc']['name'] ;?></td>
+                        <?php
+                        if($is_connected_to_bdc) {
+                            ?>
+                            <td><?php echo $data['BdcDistribution']['waybill_id'] ;?></td>
+                            <td><?php echo $this->App->covertDate($data['BdcDistribution']['waybill_date'],'mysql_flip'); ?></td>
+                            <td><?php echo $data['Bdc']['name'] ;?></td>
+                            <?php
+                        }
+                        ?>
                         <td><?php echo $data['Depot']['name'] ;?></td>
                         <td><?php echo $data['ProductType']['name'] ;?></td>
                         <td><?php echo $this->App->formatNumber(preg_replace('/,/','',$data['BdcDistribution']['quantity']),'money',0) ;?></td>
                         <!--<td><?php /*echo $data['Region']['name'] ;*/?></td>
-                                <td><?php /*echo $data['District']['name'] ;*/?></td>-->
+                         <td><?php /*echo $data['District']['name'] ;*/?></td>-->
                         <td><?php echo $data['BdcDistribution']['transporter'] ;?></td>
                         <td><?php echo $data['BdcDistribution']['vehicle_no'] ;?></td>
                     </tr>
