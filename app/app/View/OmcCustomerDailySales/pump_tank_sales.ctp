@@ -72,17 +72,17 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'pump_tank_sales/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'pump_tank_sales/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'pump_tank_sales/load_details')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'pump_tank_sales/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'pump_tank_sales/save')); ?>" />
+<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'pump_tank_sales/load_details')); ?>" />
 
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'pump_tank_sales/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'pump_tank_sales/delete')); ?>" />
+<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'pump_tank_sales/load')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'pump_tank_sales/delete')); ?>" />
 
 
 <!-- This URL will be used by Ajax upload -->
-<input type="hidden" id="get_attachments_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'get_attachments')); ?>" />
-<input type="hidden" id="ajax_upload_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'attach_files')); ?>" />
+<input type="hidden" id="get_attachments_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'get_attachments')); ?>" />
+<input type="hidden" id="ajax_upload_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'attach_files')); ?>" />
 <?php echo $this->element('ajax_upload');?>
 
 <script type="text/javascript">
