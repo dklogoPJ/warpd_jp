@@ -978,7 +978,7 @@
                                 }
                                 $(thead).append(tr);
 
-                                var next_tr = $('<tr />').attr('class','parent_tr'+id+' sub-row');
+                                var next_tr = $('<tr />').attr('class','parent_tr'+id+' sub-row').attr('master-row-id', id);
                                 var td = $('<td />').attr('style','padding-left: 30px;').attr('colspan',p.colModel.length +1);
                                 var inner_table = $('<table />').attr('class','subtable subtable-bordered').attr('parent-id',id);
                                 inner_table.append(thead);
@@ -1403,8 +1403,11 @@
                             el_class:(pr_controls['editable']['bclass']) ? pr_controls['editable']['bclass'] : '',
                             el_maxlength:(pr_controls['editable']['maxlength']) ? pr_controls['editable']['maxlength'] : '',
                             el_placeholder:(pr_controls['editable']['placeholder']) ? pr_controls['editable']['placeholder'] : '',
-							el_on_focus: (pr_controls['editable']['on_focus']) ? (pr_controls['editable']['on_focus']) : ''
+							el_on_focus: (pr_controls['editable']['on_focus']) ? (pr_controls['editable']['on_focus']) : '',
+							el_on_focus_out: (pr_controls['editable']['on_focus_out']) ? (pr_controls['editable']['on_focus_out']) : '',
+							el_on_change: (pr_controls['editable']['on_change']) ? (pr_controls['editable']['on_change']) : ''
                         }
+
                         if(pr_controls['editable']['form'] == 'select'){
                             pr['el_options'] =  pr_controls['editable']['options'];
                         }
@@ -1502,7 +1505,17 @@
 
 					if(params.el_on_focus) {
 						$(el).on( "focus", function() {
-							self.onElementFocus(params.el_on_focus, editing_tr);
+							self.onElementEventCallback(params.el_on_focus, editing_tr);
+						});
+					}
+					if(params.el_on_focus_out) {
+						$(el).on( "focusout", function() {
+							self.onElementEventCallback(params.el_on_focus_out, editing_tr);
+						});
+					}
+					if(params.el_on_change) {
+						$(el).on( "change", function() {
+							self.onElementEventCallback(params.el_on_change, editing_tr);
 						});
 					}
                     if(params.el_readonly == 'readonly'){
@@ -1519,16 +1532,16 @@
                 return el;
             },
 
-			onElementFocus: function (params, editing_tr) {
+			onElementEventCallback: function (json_string_data, editing_tr) {
 				var row_id = $(editing_tr).attr('data-id');
-				var focus_params = params.split('|');
-				var focus_action_data = focus_params[0].split(':');
-				var focus_action = focus_action_data[1];
+
+				const obj = JSON.parse(json_string_data);
+				var action = obj['action'];
+				var sources_arr = obj['sources'];
+				var targets_arr = obj['targets'];
 
 				var sources_values = [];
-				var focus_sources_data = focus_params[1].split(':');
-				var focus_sources_arr = focus_sources_data[1].split(',');
-				focus_sources_arr.forEach(function (source_el) {
+				sources_arr.forEach(function (source_el) {
 					editing_tr.find('td div #'+source_el+'_'+row_id).each(function(){
 						sources_values.push(parseFloat($(this).val()));
 					});
@@ -1540,19 +1553,17 @@
 				const multiply = (accumulator, number) =>  accumulator * number;
 				const division = (accumulator, number) =>  accumulator / number;
 
-				if(focus_action === 'sum') {
+				if(action === 'sum') {
 					result = sources_values.reduce(sum);
-				}else if(focus_action === 'subtract') {
+				}else if(action === 'subtract') {
 					result = sources_values.reduce(subtract);
-				}else if(focus_action === 'multiply') {
+				}else if(action === 'multiply') {
 					result = sources_values.reduce(multiply);
-				}else if(focus_action === 'division') {
+				}else if(action === 'division') {
 					result = sources_values.reduce(division);
 				}
 
-				var focus_targets_data = focus_params[2].split(':');
-				var focus_targets_arr = focus_targets_data[1].split(',');
-				focus_targets_arr.forEach(function (target_el) {
+				targets_arr.forEach(function (target_el) {
 					editing_tr.find('td div #'+target_el+'_'+row_id).each(function(){
 						$(this).val(result);
 						$(this).parents('div td').attr('data-id', result);
