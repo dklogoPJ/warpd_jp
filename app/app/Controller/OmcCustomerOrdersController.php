@@ -493,7 +493,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                             $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'money', 0) : '';
                             //$shortage_quantity = isset($obj['OmcCustomerOrder']['shortage_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['shortage_quantity'], 'money', 0) : '';
                             //$shortage_cost = isset($obj['OmcCustomerOrder']['shortage_cost']) ? $this->formatNumber($obj['OmcCustomerOrder']['shortage_cost'], 'money', 2) : '';
-                            
+
                             $product_id = $obj['ProductType']['id'];
                             $shortage_quantity = str_replace(',', '', $delivery_quantity) -  str_replace(',', '', $received_quantity);
                             $price_change = $this->OmcCustomerPriceChange->getPriceQuotesData($obj['OmcCustomerOrder']['omc_customer_id']);

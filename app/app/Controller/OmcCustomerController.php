@@ -522,6 +522,170 @@ class OmcCustomerController extends OmcCustomerAppController
     }
 
 
+    function pump_tank_sales($type = 'get')
+    {   
+        
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+            
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** @var $filter  */
+                    $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'complete_orders' ;
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    //get users id for this company only
+                    $condition_array = array(
+                        'PumpTankSale.omc_customer_id' => $company_profile['id'],
+                        'PumpTankSale.deleted' => 'n'
+                    );
+
+                    if (!empty($search_query)) {
+                        if ($qtype == 'id') {
+                            $condition_array['PumpTankSale.id'] = $search_query;
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                    $data_table = $this->PumpTankSale->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PumpTankSale.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->PumpTankSale->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+
+                            $received_quantity =  isset($obj['PumpTankSale']['received_quantity']) ? $this->formatNumber($obj['PumpTankSale']['received_quantity'],'money',0) : '';                            
+                        
+                            $return_arr[] = array(
+                                'id' => $obj['PumpTankSale']['id'],
+                                'cell' => array(
+                                    $obj['PumpTankSale']['id'],
+                                    $obj['PumpTankSale']['tank'],
+                                    isset($obj['PumpTankSale']['open_stock']) ? $this->formatNumber($obj['PumpTankSale']['open_stock'],'money',0) : '',
+                                    $received_quantity,
+                                    isset($obj['PumpTankSale']['stock_in_hand']) ? $this->formatNumber($obj['PumpTankSale']['stock_in_hand'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['pump_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['pump_day_sales'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['closing_stock']) ? $this->formatNumber($obj['PumpTankSale']['closing_stock'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['tank_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['tank_day_sales'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['variance']) ? $this->formatNumber($obj['PumpTankSale']['variance'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['variance_cedis']) ? $this->formatNumber($obj['PumpTankSale']['variance_cedis'],'money',0) : '',
+                                    $obj['PumpTankSale']['comments']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    $data = array('PumpTankSale' => $_POST);
+
+                    if($_POST['id'] == 0){
+                        $data['PumpTankSale']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['PumpTankSale']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['PumpTankSale']['omc_customer_id'] = $company_profile['id'];
+                    $data['PumpTankSale']['received_quantity'] = str_replace(',', '', $_POST['received_quantity']);
+                    $data['PumpTankSale']['open_stock'] = str_replace(',', '', $_POST['open_stock']);
+                    $data['PumpTankSale']['stock_in_hand'] = str_replace(',', '', $_POST['stock_in_hand']);
+                    $data['PumpTankSale']['pump_day_sales'] = str_replace(',', '', $_POST['pump_day_sales']);
+                    $data['PumpTankSale']['closing_stock'] = str_replace(',', '', $_POST['closing_stock']);
+                    $data['PumpTankSale']['tank_day_sales'] = str_replace(',', '', $_POST['tank_day_sales']);
+                    $data['PumpTankSale']['variance'] = str_replace(',', '', $_POST['variance']);
+                    $data['PumpTankSale']['variance_cedis'] = str_replace(',', '', $_POST['variance_cedis']);
+
+                    if ($this->PumpTankSale->save($this->sanitize($data))) {
+                        $sale_id  = $this->PumpTankSale->id;
+                        //Array Data here 
+                        //Activity Log
+                        $log_description = $this->getLogMessage('UpdatePumpTankSale')." (Order #".$sale_id.")";
+                        $this->logActivity('Pump Tank Sales',$log_description);
+
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$sale_id));
+                        }
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    //echo debug($data);
+                    break;
+
+                case 'load':
+
+                    break;
+            }
+        }
+
+        $products_lists = $this->get_products();
+        $start_dt = date('01-m-Y');
+        $end_dt = date('t-m-Y');
+        $group_by = 'monthly';
+        $group_by_title = date('F');
+
+        
+        /* $bdclists =array(array('name'=>'All','value'=>0));
+         foreach($bdclists_data as $arr){
+             $bdclists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+         }*/
+
+        $order_filter = $this->order_filter;
+
+        $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+
+        $volumes = $this->Volume->getVolsList();
+     
+
+        $graph_title = $group_by_title.", Orders-Consolidated";
+
+        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm'));
+    }
 
 
     function get_attachments($order_id = null, $attachment_type =null){
