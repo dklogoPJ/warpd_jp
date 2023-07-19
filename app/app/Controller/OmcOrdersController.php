@@ -1334,7 +1334,8 @@ class OmcOrdersController extends OmcAppController
                                     'record_origin'=>$obj['BdcDistribution']['record_origin'],
                                     'order_status'=>$obj['BdcDistribution']['order_status'],
                                     'order_id'=>$obj['BdcDistribution']['order_id'],
-                                    'depot_id'=>$obj['Depot']['id']
+                                    'depot_id'=>$obj['Depot']['id'],
+                                    'product_type_id'=>$obj['BdcDistribution']['product_type_id']
                                 )
                             );
                             if($company_profile['available'] != 'Available'){
@@ -1580,11 +1581,7 @@ class OmcOrdersController extends OmcAppController
                                     $obj['DeliveryLocation']['name'],
                                     $obj['OmcBdcDistribution']['transporter'],
                                     $obj['OmcBdcDistribution']['driver']
-                                ),
-                                'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
-                                    'product_type_id'=>$obj['BdcDistribution']['product_type_id']
                                 )
-
                             );
                         }
                         return json_encode(array('code' => 0, 'rows' => $return_arr));

@@ -137,33 +137,38 @@ var Enter = {
 
         $(".omc_customer-class").live('change',function () {
             var omc_customer_id = $(this).val();
-            var parent_tr = $(this).parent().parent().parent();
-            var row_id = $(parent_tr).attr('data-id');
-            var extra_data  = parent_tr.attr('extra-data');
-            var ex_dt_arr_str = extra_data.split(',');
-            var ex_dt_arr = {};
-            for(var k in ex_dt_arr_str){
-                var key_value = ex_dt_arr_str[k].split('=>');
-                ex_dt_arr[key_value[0]]= key_value[1];
-            }
+            var tbody = $(this).closest('.master');
+            var row_tr = $(this).parent().parent().parent();
+            var row_id = $(row_tr).attr('data-id');
+            var parent_id = $(row_tr).attr('parent_id');
+            var master_tr =  $(tbody).find('tr#row'+parent_id);
+            var product_type_id = null;
             var unit_price = 0;
-            var product_type_id = ex_dt_arr['product_type_id'];
-
+            var extra_data  = master_tr.attr('extra-data');
+            if(extra_data) {
+                var ex_dt_arr_str = extra_data.split(',');
+                var ex_dt_arr = {};
+                for(var k in ex_dt_arr_str){
+                    var key_value = ex_dt_arr_str[k].split('=>');
+                    ex_dt_arr[key_value[0]]= key_value[1];
+                }
+                product_type_id = ex_dt_arr['product_type_id'];
+            }
             if(all_customers_products_prices[omc_customer_id] !== undefined && all_customers_products_prices[omc_customer_id][product_type_id] !== undefined) {
-                var quantity = parseInt($(parent_tr).find('td div #quantity_'+row_id).val());
+                var quantity = parseInt($(row_tr).find('td div #quantity_'+row_id).val());
                 unit_price = parseFloat(all_customers_products_prices[omc_customer_id][product_type_id]);
-                $(parent_tr).find('td div #unit_price_'+row_id).val(unit_price);
-                $(parent_tr).find('td div #total_amount_'+row_id).val(unit_price * quantity);
+                $(row_tr).find('td div #unit_price_'+row_id).val(unit_price);
+                $(row_tr).find('td div #total_amount_'+row_id).val(unit_price * quantity);
             } else {
-                $(parent_tr).find('td div #unit_price_'+row_id).val('');
-                $(parent_tr).find('td div #total_amount_'+row_id).val('');
+                $(row_tr).find('td div #unit_price_'+row_id).val('');
+                $(row_tr).find('td div #total_amount_'+row_id).val('');
             }
         });
 
         $(".region-class").live('change',function () {
             var value = $(this).val();
-            var parent_tr = $(this).parent().parent().parent();
-            var row_id = $(parent_tr).attr('data-id');
+            var row_tr = $(this).parent().parent().parent();
+            var row_id = $(row_tr).attr('data-id');
             if(typeof delivery_locations[Enter.depot_id] == "undefined"){
                 return;
             }

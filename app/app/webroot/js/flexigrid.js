@@ -978,7 +978,7 @@
                                 }
                                 $(thead).append(tr);
 
-                                var next_tr = $('<tr />').attr('class','parent_tr'+id+' sub-row');
+                                var next_tr = $('<tr />').attr('class','parent_tr'+id+' sub-row').attr('master-row-id', id);
                                 var td = $('<td />').attr('style','padding-left: 30px;').attr('colspan',p.colModel.length +1);
                                 var inner_table = $('<table />').attr('class','subtable subtable-bordered').attr('parent-id',id);
                                 inner_table.append(thead);
