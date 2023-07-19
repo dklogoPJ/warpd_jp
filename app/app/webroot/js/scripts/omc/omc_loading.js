@@ -78,10 +78,10 @@ var Enter = {
                 url:$('#table-details-url').val(),
                 colModel:[
                     {display:'Inv. No.', name:'invoice_number', width:100, align:'center', editable:{form:'text', validate:'empty', defval: ''}},
-                    {display:'Customer Name', name:'omc_customer_id', width:150, align:'center', editable:{form:'select', validate:'', defval:'', options:customers}},
-                    {display:'Unit Price', name:'unit_price', width:100, align:'center', editable:{form:'text', validate:'empty', defval:''}},
-                    {display:'Quantity', name:'quantity', width:100, align:'center', editable:{form:'select', validate:'empty,numeric', defval:'',bclass:'quantity-class',options:volumes}},
-                    {display:'Total Amt', name:'total_amount', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', readonly:'readonly', on_focus:'action:multiply|sources:unit_price,quantity|targets:total_amount'}},
+                    {display:'Customer Name', name:'omc_customer_id', width:150, align:'center', editable:{form:'select', validate:'', defval:'', bclass:'omc_customer-class', options:customers}},
+                    {display:'Unit Price', name:'unit_price', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', on_focus_out:'{"action":"multiply", "sources":["unit_price","quantity"], "targets":["total_amount"]}'}},
+                    {display:'Quantity', name:'quantity', width:100, align:'center', editable:{form:'select', validate:'empty,numeric', defval:'',bclass:'quantity-class',options:volumes, on_change:'{"action":"multiply", "sources":["unit_price","quantity"], "targets":["total_amount"]}'}},
+                    {display:'Total Amt', name:'total_amount', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', readonly:'readonly', on_focus:'{"action":"multiply", "sources":["unit_price","quantity"], "targets":["total_amount"]}'}},
                     {display:'Region', name:'region_id', width:120, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', bclass:'region-class', options:region}},
                     {display:'Delivery Location', name:'delivery_location_id', width:180, align:'center', hide:false, editable:{form:'select', validate:'empty', defval:'',options:[]}},
                     {display:'Transporter', name:'transporter', width:150, align:'center', editable:{form:'select', validate:'', defval:'', options:truckList}},
@@ -134,10 +134,41 @@ var Enter = {
             }
         });
 
+
+        $(".omc_customer-class").live('change',function () {
+            var omc_customer_id = $(this).val();
+            var tbody = $(this).closest('.master');
+            var row_tr = $(this).parent().parent().parent();
+            var row_id = $(row_tr).attr('data-id');
+            var parent_id = $(row_tr).attr('parent_id');
+            var master_tr =  $(tbody).find('tr#row'+parent_id);
+            var product_type_id = null;
+            var unit_price = 0;
+            var extra_data  = master_tr.attr('extra-data');
+            if(extra_data) {
+                var ex_dt_arr_str = extra_data.split(',');
+                var ex_dt_arr = {};
+                for(var k in ex_dt_arr_str){
+                    var key_value = ex_dt_arr_str[k].split('=>');
+                    ex_dt_arr[key_value[0]]= key_value[1];
+                }
+                product_type_id = ex_dt_arr['product_type_id'];
+            }
+            if(all_customers_products_prices[omc_customer_id] !== undefined && all_customers_products_prices[omc_customer_id][product_type_id] !== undefined) {
+                var quantity = parseInt($(row_tr).find('td div #quantity_'+row_id).val());
+                unit_price = parseFloat(all_customers_products_prices[omc_customer_id][product_type_id]);
+                $(row_tr).find('td div #unit_price_'+row_id).val(unit_price);
+                $(row_tr).find('td div #total_amount_'+row_id).val(unit_price * quantity);
+            } else {
+                $(row_tr).find('td div #unit_price_'+row_id).val('');
+                $(row_tr).find('td div #total_amount_'+row_id).val('');
+            }
+        });
+
         $(".region-class").live('change',function () {
             var value = $(this).val();
-            var parent_tr = $(this).parent().parent().parent();
-            var row_id = $(parent_tr).attr('data-id');
+            var row_tr = $(this).parent().parent().parent();
+            var row_id = $(row_tr).attr('data-id');
             if(typeof delivery_locations[Enter.depot_id] == "undefined"){
                 return;
             }

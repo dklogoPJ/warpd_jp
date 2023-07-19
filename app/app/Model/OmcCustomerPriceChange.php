@@ -69,7 +69,7 @@ class OmcCustomerPriceChange extends AppModel
         return $price_q;
     }
 
-    function getProductPumpPrice($id = '', $product_type_id){
+    function getProductPumpPrice($id, $product_type_id){
         $conditions = array('OmcCustomerPriceChange.omc_customer_id' => $id,'OmcCustomerPriceChange.product_type_id' => $product_type_id,'OmcCustomerPriceChange.deleted' => 'n');
         $pcd = $this->find('first', array(
             'conditions' => $conditions,
@@ -79,7 +79,25 @@ class OmcCustomerPriceChange extends AppModel
             return $pcd['OmcCustomerPriceChange']['price'];
         }
         else{
-            return 0.00;
+            return 0;
         }
+    }
+
+    function getAllProductsPumpPrices($omc_id){
+        $OmcCustomer = ClassRegistry::init('OmcCustomer');
+        $omc_customer_ids = $OmcCustomer->getOmcCustomerIds($omc_id);
+        $conditions = array('OmcCustomerPriceChange.omc_customer_id' => $omc_customer_ids, 'OmcCustomerPriceChange.deleted' => 'n');
+        $query = $this->find('all', array(
+            'conditions' => $conditions,
+            'recursive' => -1
+        ));
+        $data = array();
+        if($query){
+            foreach ($query as $row) {
+                $data[$row['OmcCustomerPriceChange']['omc_customer_id']][$row['OmcCustomerPriceChange']['product_type_id']] = $row['OmcCustomerPriceChange']['price'];
+            }
+        }
+
+        return $data;
     }
 }
