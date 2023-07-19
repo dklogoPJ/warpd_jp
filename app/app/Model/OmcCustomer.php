@@ -161,7 +161,7 @@ class OmcCustomer extends AppModel
         $conditions = array(
             'OmcCustomer.id' => $Id,
         );
-        # fetch the specific data from the server and retrun it.
+        # fetch the specific data from the server and return it.
         return $this->find('first', array('conditions' => $conditions, 'recursive' => $recursive));
     }
 
@@ -174,13 +174,23 @@ class OmcCustomer extends AppModel
         );
     }
 
-    function getCustomerByOmcId($omc_id = null, $recursive = -1)
-    {
+    function getCustomerByOmcId($omc_id = null, $recursive = -1) {
         $conditions = array(
             'OmcCustomer.omc_id' => $omc_id,
         );
         # fetch the specific data from the server and retrun it.
         return $this->find('all', array('conditions' => $conditions, 'recursive' => $recursive));
+    }
+
+    function getOmcCustomerIds($omc_id = null) {
+        $conditions = array('OmcCustomer.omc_id' => $omc_id,);
+        # fetch the specific data from the server and retrun it.
+        $query = $this->find('all', array('conditions' => $conditions, 'recursive' => -1));
+        $ids = array();
+        foreach ($query as $row) {
+            $ids[]= $row['OmcCustomer']['id'];
+        }
+        return $ids;
     }
 
     function getCustomerList($recursive = -1){

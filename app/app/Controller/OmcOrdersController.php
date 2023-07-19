@@ -11,7 +11,7 @@ class OmcOrdersController extends OmcAppController
 
     var $name = 'OmcOrders';
     # set the model to use
-    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck');
+    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck', 'OmcCustomerPriceChange');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -1541,6 +1541,7 @@ class OmcOrdersController extends OmcAppController
                     $gdata = $this->OmcBdcDistribution->find('all',array(
                         'conditions'=>array('OmcBdcDistribution.bdc_distribution_id'=>$_POST['id']),
                         'contain' => array(
+                            'BdcDistribution'=>array('fields' => array('BdcDistribution.id', 'BdcDistribution.product_type_id')),
                             'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
                             'DeliveryLocation'=>array('fields' => array('DeliveryLocation.id', 'DeliveryLocation.name')),
                             'Region'=>array('fields' => array('Region.id', 'Region.name'))
@@ -1550,19 +1551,40 @@ class OmcOrdersController extends OmcAppController
 
                     if($gdata){
                         foreach ($gdata as $obj) {
+                            $unit_price = $obj['OmcBdcDistribution']['unit_price'];
+                            $quantity = $obj['OmcBdcDistribution']['quantity'];
+                            $total_amount = $obj['OmcBdcDistribution']['total_amount'];
+
+                            if(!$unit_price) {
+                                $price = $this->OmcCustomerPriceChange->getProductPumpPrice($obj['OmcBdcDistribution']['omc_customer_id'], $obj['BdcDistribution']['product_type_id']);
+                                if($price && $price != 0) {
+                                    $unit_price = $price;
+                                }
+
+                                if($unit_price) {
+                                    $unit_price = floatval($unit_price);
+                                    $quantity = floatval($quantity);
+                                    $total_amount = $unit_price * $quantity;
+                                }
+                            }
+
                             $return_arr[] = array(
                                 'id' => $obj['OmcBdcDistribution']['id'],
                                 'cell' => array(
                                     $obj['OmcBdcDistribution']['invoice_number'],
                                     $obj['OmcCustomer']['name'],
-                                    $obj['OmcBdcDistribution']['unit_price'],
-                                    $this->formatNumber($obj['OmcBdcDistribution']['quantity'],'money',0),
-                                    $this->formatNumber($obj['OmcBdcDistribution']['total_amount'],'money',0),
+                                    $unit_price,
+                                    $this->formatNumber($quantity,'money',0),
+                                    $this->formatNumber($total_amount,'money',0),
                                     $obj['Region']['name'],
                                     $obj['DeliveryLocation']['name'],
                                     $obj['OmcBdcDistribution']['transporter'],
                                     $obj['OmcBdcDistribution']['driver']
+                                ),
+                                'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
+                                    'product_type_id'=>$obj['BdcDistribution']['product_type_id']
                                 )
+
                             );
                         }
                         return json_encode(array('code' => 0, 'rows' => $return_arr));
@@ -1592,12 +1614,12 @@ class OmcOrdersController extends OmcAppController
         $volumes = $this->Volume->getVolsList();
         $truckList = $this->Truck->getTruckList();
         $numbers = $this->Truck->getTruckNo();
-
+        $all_customers_products_prices = $this->OmcCustomerPriceChange->getAllProductsPumpPrices($company_profile['id']);
         $tr_year = date("y");
         $invoice_no = $tr_year.'00001';
 
 
-        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no'));
+        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no', 'all_customers_products_prices'));
 
     }
 
