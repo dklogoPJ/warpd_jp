@@ -368,5 +368,16 @@ class OmcCustomerOrder extends AppModel
         );
     }
 
+    function updateLoadedQtyApprovedQty($order=array()){
+         return $this->updateAll(
+             array(
+                 'OmcCustomerOrder.approved_quantity' => $order['approved_quantity'],
+                 'OmcCustomerOrder.loaded_quantity' => $order['loaded_quantity'],
+                 'OmcCustomerOrder.transporter' => "'".$order['transporter']."'"
+             ),
+             array('OmcCustomerOrder.id' => $order['omc_customer_order_id'])
+         );
+    }
+
 
 }

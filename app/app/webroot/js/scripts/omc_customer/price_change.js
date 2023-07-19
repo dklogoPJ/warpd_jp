@@ -26,13 +26,10 @@ var JSObj = {
             btn_actions.push({separator:true});
         }
         if(inArray('PX',permissions)){
-            btn_actions.push({type:'buttom', name:'Export' ,bclass:'export', onpress:self.handleGridEvent});
+            btn_actions.push({type:'buttom', name:'Export', bclass:'export', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-
-        btn_actions.push({type:'select',name: 'Filter Depot', id: 'filter_depot' ,bclass: 'filter',onchange:self.handleGridEvent,options:filter_depots});
-        btn_actions.push({separator:true});
-        btn_actions.push({type:'select',name: 'Filter Region', id: 'filter_region',bclass: 'filter',onchange:self.handleGridEvent,options:filter_region});
+       // btn_actions.push({type:'select',name: 'Filter Rate Category', id: 'filter_category' ,bclass: 'filter',onchange:self.handleGridEvent,options:filter_rate_cats});
 
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
@@ -41,12 +38,10 @@ var JSObj = {
             dataType:'json',
             colModel:[
                 {display:'Id', name:'id', width:50, sortable:true, align:'left', hide:true},
-                {display:'Depot (From)', name:'depot_id', width:250, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', options:depot_lists}},
-                {display:'Location Name (To)', name:'name', width:250, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Region', name:'region_id', width:170, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', options:regions_lists}},
-                {display:'Distance (km)', name:'distance', width:120, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'empty,onlyNumber', defval:''}},
-                {display:'Alternate Route', name:'alternate_route', width:120, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'',options:route_types}}
-
+                {display:'Name', name:'product_type_id', width:250, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'',options:product_list}},
+                {display:'Description', name:'description', width:150, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Pump Price', name:'price', width:200, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'empty,numeric', defval:''}},
+                {display:'Unit', name:'unit', width:100, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'empty', defval:'GHp/litre'}}
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -74,12 +69,6 @@ var JSObj = {
                 jLib.message($title, $message, $type);
             }
         });
-
-        $("#import-btn").click(function (e) {
-            e.preventDefault();
-            var url = $(this).attr('href');
-            window.open(url, "Import", "menubar=yes, width=600, height=500,location=no,status=no,scrollbars=yes,resizable=yes");
-        });
     },
 
     handleGridEvent:function (com, grid, json) {
@@ -98,17 +87,12 @@ var JSObj = {
             JSObj.objGrid.flexCancel();
         }
         else if (com == 'Delete') {
-            if (FlexObject.rowSelectedCheck( JSObj.objGrid,grid)) {
+            if (FlexObject.rowSelectedCheck(JSObj.objGrid,grid)) {
                 JSObj.delete_(grid);
             }
         }
-        else if (com == 'Filter Depot' || com == 'Filter Region') {
-            JSObj.filterGrid(json);
-        }
         else if (com == 'Export') {
-            var filter_depot = $("#filter_depot").val();
-            var filter_region = $("#filter_region").val();
-            var url = $("#table-export-url").val()+"/"+filter_depot+"/"+filter_region;
+            var url = $("#table-export-url").val();
             window.open(url, "ExportWindow", "menubar=yes, width=400, height=300,location=no,status=no,scrollbars=yes,resizable=yes");
         }
 
@@ -121,12 +105,10 @@ var JSObj = {
     },
 
     filterGrid:function(json){
-        var filter_depot = $("#filter_depot").val();
-        var filter_region = $("#filter_region").val();
+        var filter_category = $("#filter_category").val();
         $(JSObj.objGrid).flexOptions({
             params: [
-                {name: 'filter_depot', value: filter_depot},
-                {name: 'filter_region', value: filter_region}
+                {name: 'filter_category', value: filter_category}
             ]
         }).flexReload();
     }

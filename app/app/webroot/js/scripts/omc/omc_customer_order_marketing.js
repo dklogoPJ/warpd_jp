@@ -84,7 +84,8 @@ var Order = {
             Order.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
-            var row = jLib.getSelectedRows(grid);
+           // var row = jLib.getSelectedRows(grid);
+            var row = FlexObject.getSelectedRows(grid);
             Order.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {

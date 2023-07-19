@@ -1466,11 +1466,6 @@
                             .attr('style','width:inherit;')
                             .attr('class',params.el_class)
                             .attr('id',params.el_id);
-						if (params.el_on_focus) {
-							$(el).on( "focus", function() {
-								self.onElementFocus(params.el_on_focus, editing_tr);
-							});
-						}
                     }
                     if(params.el_type == 'select'){
                         el = $("<select />")
@@ -1505,6 +1500,11 @@
                         }
                     }
 
+					if(params.el_on_focus) {
+						$(el).on( "focus", function() {
+							self.onElementFocus(params.el_on_focus, editing_tr);
+						});
+					}
                     if(params.el_readonly == 'readonly'){
                         el.attr('readonly','readonly');
                     }

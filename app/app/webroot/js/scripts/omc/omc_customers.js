@@ -97,7 +97,8 @@ var OmcCustomers = {
             OmcCustomers.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
-            var row = jLib.getSelectedRows(grid);
+            //var row = jLib.getSelectedRows(grid);
+            var row = FlexObject.getSelectedRows(grid);
             OmcCustomers.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {

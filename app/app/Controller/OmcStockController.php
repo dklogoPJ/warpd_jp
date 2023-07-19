@@ -11,7 +11,7 @@ class OmcStockController extends OmcAppController
 
     var $name = 'OmcStock';
     # set the model to use
-    var $uses = array('OmcCustomer','OmcCustomerTankMinstocklevel','OmcCustomerTank','OmcDsrpDataOption');
+    var $uses = array('OmcCustomer','OmcCustomerTankMinstocklevel','OmcCustomerTank','OmcDsrpDataOption','OmcTank','OmcTankStatus','OmcTankType');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -403,39 +403,36 @@ class OmcStockController extends OmcAppController
 
         //$customer_tanks = $this->getCustomersTankTypes();
 
+        $tanks_status_data = $this->OmcTankStatus->getTankStatuses($company_profile['id']);
         $tank_status = array();
-        foreach($this->omc_customer_tank_status as $key => $key){
+        foreach($tanks_status_data as $value){
             $tank_status[] =array(
-                'id'=>$key,
-                'name'=>$key
+                'id'=> $value['OmcTankStatus']['name'],
+                'name'=> $value['OmcTankStatus']['name']
             );
         }
 
-        $tanks_types_pro = $this->getTanksProductTypes();
+        $tanks_types_pro = $this->OmcTankType->getTankTypes($company_profile['id']);
         $tanks_types_opt = array();
-        foreach($tanks_types_pro as $key => $value){
+        foreach($tanks_types_pro as $value){
             $tanks_types_opt[] =array(
-                'id'=>$key,
-                'name'=>$value
+                'id'=> $value['OmcTankType']['name'],
+                'name'=>$value['OmcTankType']['name']
             );
         }
 
         $tank_names = array();
-        $data = $this->OmcDsrpDataOption->find('first',array(
-            'conditions'=>array('omc_id'=>$company_profile['id']),
-            'recursive'=>-1
-        ));
-        if($data && isset($data['OmcDsrpDataOption']) && !empty($data['OmcDsrpDataOption']['bulk_stock_position_products'])){
-            $arr = unserialize($data['OmcDsrpDataOption']['bulk_stock_position_products']);
-            foreach($arr as $arr_value){
+        $tanks = $this->OmcTank->getTanks($company_profile['id']);
+        if($tanks){
+            foreach($tanks as $tank_data){
                 $tank_names[] =array(
-                    'id'=>$arr_value['value'],
-                    'name'=>$arr_value['value']
+                    'id'=>$tank_data['OmcTank']['name'],
+                    'name'=>$tank_data['OmcTank']['name']
                 );
             }
         }
 
-        $this->set(compact('tanks_types_opt','customer_tanks','tank_status','tank_names'));
+        $this->set(compact('tanks_types_opt','tank_status','tank_names'));
     }
 
 }

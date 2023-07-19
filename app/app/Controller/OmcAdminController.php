@@ -999,7 +999,7 @@ class OmcAdminController extends OmcAppController
             $save = array('BdcOmc');
             foreach($my_depots as $sel){
                 if($sel['my_bdc_id'] > 0){
-                    $fin[]=$sel['my_bdc_id'];
+                    //$fin[]=$sel['my_bdc_id'];
                     $save['BdcOmc'][] = array(
                         'omc_id'=>$company_profile['id'],
                         'bdc_id'=>$sel['my_bdc_id'],
@@ -1008,21 +1008,27 @@ class OmcAdminController extends OmcAppController
                     );
                 }
             }
+
             //first delete the existing bdc records for this omc
             $this->BdcOmc->deleteAll(array('BdcOmc.omc_id' => $company_profile['id']), false);
 
-            $res = $this->BdcOmc->saveAll($this->sanitize($save['BdcOmc']));
-            if ($res) {
+            if(isset($save['BdcOmc'])) {
+                $res = $this->BdcOmc->saveAll($this->sanitize($save['BdcOmc']));
+                if ($res) {
 
-                $log_description = $this->getLogMessage('ModifyBdcRelation');
-                $this->logActivity('Administration',$log_description);
+                    $log_description = $this->getLogMessage('ModifyBdcRelation');
+                    $this->logActivity('Administration',$log_description);
 
-                $this->Session->setFlash('BDCs has been updated !');
+                    $this->Session->setFlash('BDCs has been connected !');
+                    $this->Session->write('process_error', 'no');
+                }
+                else {
+                    $this->Session->setFlash('Sorry, BDCs update failed.');
+                    $this->Session->write('process_error', 'yes');
+                }
+            } else {
+                $this->Session->setFlash('BDCs has been disconnected !');
                 $this->Session->write('process_error', 'no');
-            }
-            else {
-                $this->Session->setFlash('Sorry, BDCs update failed.');
-                $this->Session->write('process_error', 'yes');
             }
 
             $this->redirect(array('action' => 'manage_bdc'));

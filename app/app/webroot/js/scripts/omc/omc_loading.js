@@ -2,9 +2,12 @@ var Enter = {
     selected_row_id:null,
     objGrid:null,
     depot_id:null,
+    connects_with_bdc: true,
 
     init:function () {
         var self = this;
+
+        self.connects_with_bdc = my_bdc_list_ids.length > 0;
 
         var btn_actions_sub = [];
         if(inArray('A',permissions)){
@@ -22,24 +25,29 @@ var Enter = {
             btn_actions_sub.push({separator:true});
         }
 
+        var col_models = [
+            {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
+            {display:'Date', name:'loading_date', width:80, sortable:false, align:'left', hide:false},
+            {display:'Order No.', name:'order_id', width:80, sortable:true, align:'left', hide:false},
+            {display:'Loading Depot', name:'depot_id', width:100, sortable:true, align:'left', hide:false},
+            {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
+            {display:'Product Quantity', name:'quantity', width:100, sortable:true, align:'left', hide:false},
+            /*{display:'Region', name:'region_id', width:150, sortable:true, align:'left', hide:false},
+            {display:'Districts', name:'district_id', width:100, sortable:true, align:'left', hide:false},*/
+            {display:'Truck No.', name:'vehicle_no', width:80, sortable:true, align:'left', hide:false}
+        ];
+
+        if(self.connects_with_bdc) {
+            col_models.splice(3, 0, {display:'Waybill Date.', name:'waybill_date', width:80, sortable:true, align:'left', hide:false});
+            col_models.splice(4, 0, {display:'Waybill No.', name:'waybill_id', width:80, sortable:true, align:'left', hide:false});
+            col_models.splice(5, 0, {display:'BDC', name:'bdc_id', width:200, sortable:true, align:'left', hide:false});
+        }
+
 
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
             dataType:'json',
-            colModel:[
-                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Date', name:'loading_date', width:80, sortable:false, align:'left', hide:false},
-                {display:'Order No.', name:'order_id', width:80, sortable:true, align:'left', hide:false},
-				{display:'Waybill Date.', name:'waybill_date', width:80, sortable:true, align:'left', hide:false},
-                {display:'Waybill No.', name:'waybill_id', width:80, sortable:true, align:'left', hide:false},
-                {display:'BDC', name:'bdc_id', width:200, sortable:true, align:'left', hide:false},
-                {display:'Loading Depot', name:'depot_id', width:100, sortable:true, align:'left', hide:false},
-                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
-                {display:'Product Quantity', name:'quantity', width:100, sortable:true, align:'left', hide:false},
-                /*{display:'Region', name:'region_id', width:150, sortable:true, align:'left', hide:false},
-                {display:'Districts', name:'district_id', width:100, sortable:true, align:'left', hide:false},*/
-                {display:'Truck No.', name:'vehicle_no', width:80, sortable:true, align:'left', hide:false}
-            ],
+            colModel:col_models,
             /*formFields:[
              {type:'buttom', name:'New', bclass:'add', onpress:self.handleGridEvent},
              {separator:true},
@@ -73,7 +81,7 @@ var Enter = {
                     {display:'Customer Name', name:'omc_customer_id', width:150, align:'center', editable:{form:'select', validate:'', defval:'', options:customers}},
                     {display:'Unit Price', name:'unit_price', width:100, align:'center', editable:{form:'text', validate:'empty', defval:''}},
                     {display:'Quantity', name:'quantity', width:100, align:'center', editable:{form:'select', validate:'empty,numeric', defval:'',bclass:'quantity-class',options:volumes}},
-                    {display:'Total Amt', name:'total_amount', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', on_focus:'action:multiply|sources:unit_price,quantity|targets:total_amount'}},
+                    {display:'Total Amt', name:'total_amount', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', readonly:'readonly', on_focus:'action:multiply|sources:unit_price,quantity|targets:total_amount'}},
                     {display:'Region', name:'region_id', width:120, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', bclass:'region-class', options:region}},
                     {display:'Delivery Location', name:'delivery_location_id', width:180, align:'center', hide:false, editable:{form:'select', validate:'empty', defval:'',options:[]}},
                     {display:'Transporter', name:'transporter', width:150, align:'center', editable:{form:'select', validate:'', defval:'', options:truckList}},

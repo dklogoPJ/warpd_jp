@@ -73,7 +73,8 @@ var OmcTrucks = {
             OmcTrucks.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
-            var row = jLib.getSelectedRows(grid);
+            //var row = jLib.getSelectedRows(grid);
+            var row = FlexObject.getSelectedRows(grid);
             OmcTrucks.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {
