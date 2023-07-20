@@ -56,3 +56,9 @@
 <?php
 echo $this->Html->script('scripts/omc_customer/nct_sales_record.js');
 ?>
+<script type="text/javascript">
+
+    var nct = <?php echo json_encode($nct); ?>;
+    var omc_customer = <?php echo json_encode($omc_customer); ?>;
+   
+</script>
