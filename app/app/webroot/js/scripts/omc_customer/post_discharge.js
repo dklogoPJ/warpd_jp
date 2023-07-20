@@ -45,8 +45,8 @@ var Order = {
                 {display:'Product Density Station', name:'product_density_station', width:150, sortable:true, align:'left', hide:false},
                 {display:'Product Temp-Station', name:'product_temp_station', width:170, sortable:true, align:'left', hide:false},
                 {display:'Dipping Pre-Discharge (ltr)', name:'dipping_pre_discharge', width:170, sortable:true, align:'left', hide:false},
-                {display:'Dipping Post-Discharge (ltr)', name:'dipping_post_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Received Qty (ltr)', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Dipping Post-Discharge (ltr)', name:'dipping_post_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'',  on_focus_out:'{"action":"subtract", "sources":["dipping_post_discharge","dipping_pre_discharge"], "targets":["received_quantity"]}'}},
+                {display:'Received Qty (ltr)', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'',readonly:'readonly'}},
                 {display:'Discharge Date', name:'discharge_date', width:120, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
                 {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'',defval:''}}
 
