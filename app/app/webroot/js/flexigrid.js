@@ -1900,6 +1900,26 @@
                                 if(temp_tr.hasClass('new-row')){
                                     temp_tr.removeClass('new-row')
                                 }
+								var collection = p.colModel;
+								if(temp_tr.hasClass('inner-sub-row')){
+									collection = p.subGrid.colModel;
+								}
+
+								temp_tr.find('td').each(function(){
+									var td = $(this);
+									var field = td.attr('field');
+									var field_value = td.attr('data-id');
+									if(!field_value){
+										field_value = '';
+									}
+									var format_no = g.getColumnAttribute('format_number', 'name' , field, collection);
+									format_no = format_no != null ? format_no === true ? 'yes':'no' : 'yes';
+									td.find('div').html(field_value);
+									if(format_no === 'yes'){
+										field_value = g.isNumeric(field_value) ? g.numberWithCommas(field_value): field_value;
+										td.find('div').html(field_value);
+									}
+								});
                             }
                             if(response.extra_data){
                                 var extra_data_str = "";
