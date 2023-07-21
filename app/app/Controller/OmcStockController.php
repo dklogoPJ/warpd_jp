@@ -302,7 +302,7 @@ class OmcStockController extends OmcAppController
                                 }
 
 
-                                //$type_minstocklevel_str .= $dt['type'].'=>'.$this->formatNumber(preg_replace('/,/','',$dt['min_stock_level']),'money',0).' | ';
+                                //$type_minstocklevel_str .= $dt['type'].'=>'.$this->formatNumber(preg_replace('/,/','',$dt['min_stock_level']),'number',0).' | ';
                             }*/
 
                             $return_arr[] = array(

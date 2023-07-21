@@ -350,8 +350,20 @@
 				this.hDiv.scrollLeft = this.bDiv.scrollLeft;
 				this.rePosDrag();
 			},
+
+			getColumnAttribute: function(attribute, compare_attribute, compare_value, collection) {
+				for (var i = 0; i < collection.length; i++) {
+					var row = collection[i];
+					if(row[compare_attribute] === compare_value) {
+						return typeof row[attribute] != "undefined" ? row[attribute] : null;
+					}
+				}
+				return null;
+			},
+
 			addData: function (data) { //parse data
                 //clear all editing rows
+				var self = this;
                 p.in_edit_mode = false;
                 p.current_edit_tr = false;
 
@@ -441,7 +453,8 @@
 						$('thead tr:first th', g.hDiv).each( //add cell
 							function () {
 								var td = document.createElement('td');
-                                $(td).attr('field', $(this).attr('field'));
+								var field = $(this).attr('field');
+                                $(td).attr('field', field);
 								var idx = $(this).attr('axis').substr(3);
                                 var editable = $(this).attr('editable');
                                 $(td).attr('editable', editable);
@@ -464,6 +477,10 @@
                                     $(td).attr('data-id', row.cell[p.colModel[idx].name]);
 								}
 								$(td).attr('abbr', $(this).attr('abbr'));
+								var format_no = self.getColumnAttribute('format_number', 'name' , field, p.colModel);
+								//add attribute format_number to td to tell inner td div-render if a valid number should be formatted
+								format_no = format_no != null ? format_no === true ? 'yes':'no' : 'yes';
+								$(td).attr('format_number', format_no);
 								$(tr).append(td);
 								td = null;
 							}
@@ -726,7 +743,19 @@
 					this.populate();
 				}
 			},
+
+			isNumeric: function (str) {
+				//if (typeof str != "string") return false // we only process strings!
+				return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+					!isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+			},
+
+			numberWithCommas: function (x) {
+				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			},
+
 			addCellProp: function () {
+				var self = this;
 				$('tbody tr td', g.bDiv).each(function () {
 					var tdDiv = document.createElement('div');
 					var n = $('td', $(this).parent()).index(this);
@@ -750,6 +779,9 @@
 						this.innerHTML = '&nbsp;';
 					}
 					tdDiv.innerHTML = this.innerHTML;
+					if($(this).attr('format_number') === 'yes') {
+						tdDiv.innerHTML = self.isNumeric(this.innerHTML) ? self.numberWithCommas(this.innerHTML): this.innerHTML;
+					}
 					var prnt = $(this).parent()[0];
 					var pid = false;
 					if (prnt.id) {
@@ -1014,9 +1046,18 @@
                                         for (var k = 0; k < p.subGrid.colModel.length; k++){
                                             var pos = p.subGrid.colModel[k]['align'];
                                             var p_width = p.subGrid.colModel[k]['width'];
-                                            var td_ = $('<td />').attr('align',pos).html($("<div />").attr('style','text-align:'+pos+'; padding: 0px 5px; width:'+p_width+'px;').html(row_items['cell'][k]));
-                                            $(td_).attr('data-id', row_items['cell'][k]);
-                                            $(td_).attr('field', p.subGrid.colModel[k]['name']);
+											var field = p.subGrid.colModel[k]['name'];
+											var value = row_items['cell'][k];
+											var format_value = row_items['cell'][k];
+											var format_no = g.getColumnAttribute('format_number', 'name' , field, p.subGrid.colModel);
+											format_no = format_no != null ? format_no === true ? 'yes':'no' : 'yes';
+											if(format_no === 'yes'){
+												format_value = g.isNumeric(format_value) ? g.numberWithCommas(format_value): format_value;
+											}
+                                            var td_ = $('<td />').attr('align',pos).html($("<div />").attr('style','text-align:'+pos+'; padding: 0px 5px; width:'+p_width+'px;').html(format_value));
+                                            $(td_).attr('data-id', value);
+                                            $(td_).attr('field', field);
+											$(td_).attr('format_number', format_no);
                                             if(p.subGrid.colModel[k]['editable']){
                                                 $(td_).attr('editable', 'yes');
                                                 $(td_).attr('form', p.subGrid.colModel[k]['editable']['form']);
@@ -1405,7 +1446,8 @@
                             el_placeholder:(pr_controls['editable']['placeholder']) ? pr_controls['editable']['placeholder'] : '',
 							el_on_focus: (pr_controls['editable']['on_focus']) ? (pr_controls['editable']['on_focus']) : '',
 							el_on_focus_out: (pr_controls['editable']['on_focus_out']) ? (pr_controls['editable']['on_focus_out']) : '',
-							el_on_change: (pr_controls['editable']['on_change']) ? (pr_controls['editable']['on_change']) : ''
+							el_on_change: (pr_controls['editable']['on_change']) ? (pr_controls['editable']['on_change']) : '',
+							el_on_key_up: (pr_controls['editable']['on_key_up']) ? (pr_controls['editable']['on_key_up']) : ''
                         }
 
                         if(pr_controls['editable']['form'] == 'select'){
@@ -1518,6 +1560,11 @@
 							self.onElementEventCallback(params.el_on_change, editing_tr);
 						});
 					}
+					if(params.el_on_key_up) {
+						$(el).on( "keyup", function() {
+							self.onElementEventCallback(params.el_on_key_up, editing_tr);
+						});
+					}
                     if(params.el_readonly == 'readonly'){
                         el.attr('readonly','readonly');
                     }
@@ -1580,14 +1627,18 @@
                     else{
                         p.current_edit_tr.find('td').each(function(){
                             var td = $(this);
-                            if(td.attr('editable') == 'yes'){
+                            if(td.attr('editable') === 'yes'){
                                 var field = td.attr('field');
                                 var field_type = td.attr('form');
                                 var field_value = td.attr('data-id');
                                 if(!field_value){
                                     field_value = '';
                                 }
-                                td.find('div').html(field_value);
+								td.find('div').html(field_value);
+								if($(td).attr('format_number') === 'yes') {
+									field_value = g.isNumeric(field_value) ? g.numberWithCommas(field_value): field_value;
+									td.find('div').html(field_value);
+								}
                             }
                         });
                     }

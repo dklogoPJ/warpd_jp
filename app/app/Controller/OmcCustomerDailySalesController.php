@@ -859,8 +859,8 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                                 $order_time_elapsed =  $time_hr.' hr(s)';
                             }
 
-                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
-                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
+                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'number',0) : '';
+                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0) : '';
                             $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
                             
                         
@@ -993,7 +993,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                                     $obj['NctRecord']['id'],
                                     $this->covertDate($obj['NctRecord']['record_date'], 'mysql_flip'),
                                     $obj['NctRecord']['nct_channel'],
-                                    $this->formatNumber($obj['NctRecord']['amount'], 'money', 0)
+                                    $this->formatNumber($obj['NctRecord']['amount'], 'number', 0)
                                 )
                             );
                         }

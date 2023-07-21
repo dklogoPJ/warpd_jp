@@ -28,7 +28,7 @@ var Enter = {
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
                 {display:'Loading Date', name:'loading_date', width:100, sortable:false, align:'left', hide:false},
-                {display:'Invoice Number', name:'invoice_number', width:100, sortable:true, align:'left', hide:false},
+                {display:'Invoice Number', name:'invoice_number', width:100, sortable:true, align:'left', hide:false, format_number:false},
                 //{display:'Loading Depot', name:'depot_id', width:100, sortable:true, align:'left', hide:false},
                 {display:'Product Type', name:'product_type_id', width:160, sortable:true, align:'left', hide:false},
                 {display:'Product Quantity', name:'quantity', width:140, sortable:true, align:'left', hide:false},

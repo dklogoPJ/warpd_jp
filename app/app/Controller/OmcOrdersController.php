@@ -160,7 +160,7 @@ class OmcOrdersController extends OmcAppController
 
                                     $obj['Depot']['name'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber( $obj['Order']['order_quantity'],'money',0),
+                                    $this->formatNumber( $obj['Order']['order_quantity'],'number',0),
                                     $obj['Bdc']['name'],
                                     /*$this->mkt_feedback[$obj['Order']['delivery_priority']],*/
                                    // $this->ops_feedback[$obj['Order']['bdc_feedback']],
@@ -533,7 +533,7 @@ class OmcOrdersController extends OmcAppController
                             }
 
                             $approved_quantity = '';
-                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0);
+                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
                             
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
@@ -543,11 +543,11 @@ class OmcOrdersController extends OmcAppController
 
                             //$git_status = '';
                             if($obj['Order']['approved_quantity']){
-                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'money',0);
+                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
                             }
                             $loaded_quantity = '';
                             if($obj['Order']['loaded_quantity']){
-                                $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'money',0);
+                                $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
                             }
 
                             $cell = array(
@@ -558,7 +558,7 @@ class OmcOrdersController extends OmcAppController
                                 $obj['OmcCustomer']['name'],
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
-                                $this->formatNumber($obj['Order']['order_quantity'],'money',0),
+                                $this->formatNumber($obj['Order']['order_quantity'],'number',0),
                                 /*,$mkt_feed*/
                                 $obj['Order']['transporter'],
                                 $obj['Order']['truck_no'],
@@ -853,7 +853,7 @@ class OmcOrdersController extends OmcAppController
                                     $obj['OmcCustomer']['name'],
                                    // $obj['OmcCustomer']['credit_limit'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
                                     $marketing_feed,
                                     $approve,
@@ -1126,9 +1126,9 @@ class OmcOrdersController extends OmcAppController
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'],'mysql_flip'),
                                     //$order_time_elapsed,
                                     $obj['OmcCustomer']['name'],
-                                    $this->formatNumber($obj['OmcCustomer']['credit_limit'],'money',2),
+                                    $this->formatNumber($obj['OmcCustomer']['credit_limit'],'number',2),
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
                                     //$obj['Depot']['name'],
                                     $priority,
@@ -1310,7 +1310,7 @@ class OmcOrdersController extends OmcAppController
                                 $obj['Bdc']['name'],*/
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
-                                $this->formatNumber( $obj['BdcDistribution']['quantity'],'money',0),
+                                $this->formatNumber( $obj['BdcDistribution']['quantity'],'number',0),
                                 /*$obj['Region']['name'],
                                 $obj['District']['name'],*/
                                 $obj['BdcDistribution']['vehicle_no']
@@ -1575,8 +1575,8 @@ class OmcOrdersController extends OmcAppController
                                     $obj['OmcBdcDistribution']['invoice_number'],
                                     $obj['OmcCustomer']['name'],
                                     $unit_price,
-                                    $this->formatNumber($quantity,'money',0),
-                                    $this->formatNumber($total_amount,'money',0),
+                                    $this->formatNumber($quantity,'number',0),
+                                    $this->formatNumber($total_amount,'number',0),
                                     $obj['Region']['name'],
                                     $obj['DeliveryLocation']['name'],
                                     $obj['OmcBdcDistribution']['transporter'],
@@ -1816,7 +1816,7 @@ class OmcOrdersController extends OmcAppController
                             $bdc_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['bdc_approval']])? $this->waybill_feedback[$obj['Waybill']['bdc_approval']] : 'Not Yet Approved';
                             $cep_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['ceps_approval']])? $this->waybill_feedback[$obj['Waybill']['ceps_approval']] : 'Not Yet Approved';
 
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Waybill']['id'],
                                 'cell' => array(
