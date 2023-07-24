@@ -1,184 +1,326 @@
-var Order = {
+var DailySalesProduct = {
 
-    selected_row_id:null,
-    objGrid:null,
+    edit_row: false,
 
-    init:function () {
+    init: function () {
         var self = this;
 
-        var btn_actions = [];
-        if(inArray('A',permissions)){
-            btn_actions.push({type:'buttom', name:'New', bclass:'add', onpress:self.handleGridEvent});
-            btn_actions.push({separator:true});
-        }
-        if(inArray('E',permissions)){
-            btn_actions.push({type:'buttom', name:'Edit', bclass:'edit', onpress:self.handleGridEvent});
-            btn_actions.push({separator:true});
-        }
-        
-        if(inArray('A',permissions) || inArray('E',permissions)|| inArray('D',permissions)){
-            btn_actions.push({type:'buttom', name:'Save', bclass:'save', onpress:self.handleGridEvent});
-            btn_actions.push({separator:true});
-            btn_actions.push({type:'buttom', name:'Cancel', bclass:'cancel', onpress:self.handleGridEvent});
-            btn_actions.push({separator:true});
-            btn_actions.push({type:'buttom', name:'Delete', bclass:'delete', onpress:self.handleGridEvent});
-            btn_actions.push({separator:true});
-            btn_actions.push({type:'buttom', name:'Attachment', bclass:'attach', onpress:self.handleGridEvent});
-            btn_actions.push({separator:true});
-        }
-       // btn_actions.push({type:'select',name: 'Order Status', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:order_filter});
+        self.initRowSelect();
+        self.initRowMenus();
+        self.bindRules();
 
-        self.objGrid = $('#flex').flexigrid({
-            url:$('#table-url').val(),
-            reload_after_add:true,
-            reload_after_edit:true,
-            dataType:'json',
-            colModel:[
-                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-               // {display:'Station Name', name:'omc_customer_id', width:180, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:omc_customer}},
-                {display:'Record Date', name:'record_date', width:120, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-                {display:'NCT Channel', name:'nct_channel', width:180, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:nct}},
-                {display:'Amount.', name:'amount', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
-            ],
-            formFields:btn_actions,
-            searchitems:[
-                {display:'Order Id', name:'id', isdefault:true}
-            ],
-            checkboxSelection:true,
-            editablegrid:{
-                use:true,
-                url:$('#table-editable-url').val(),
-                add:inArray('A',permissions),
-                edit:inArray('E',permissions),
-                confirmSave:false
-               // confirmSaveText:"If this order gets processed by te OMC, you can't change it afterwords. \n Are you sure the information you entered is correct ?"
-            },
-            columnControl:true,
-            sortname:"id",
-            sortorder:"desc",
-            usepager:true,
-            useRp:true,
-            rp:15,
-            showTableToggleBtn:false,
-            height:370,
-            subgrid:{
-                use:false
-            },
-            callback:function ($type,$title,$message) {
-                jLib.message($title, $message, $type);
-            }
-        });
-
-        $('input.datepicker').live('focus', function(){
-            if (false == $(this).hasClass('hasDatepicker')) {
-                $(this).datepicker({
-                    inline: true,
-                    changeMonth: true,
-                    changeYear: true
-                });
-                $(this).datepicker( "option", "dateFormat", 'dd-mm-yy' );
-            }
-        });
-
-        $("#form-export").validationEngine();
-        $("#export-btn").click(function () {
-            var validationStatus = $('#form-export').validationEngine({returnIsValid:true});
-            if (validationStatus) {
-                $("#form-export").attr('action', $("#export_url").val());
-                window.open('', "ExportWindow", "menubar=yes, width=300, height=200,location=no,status=no,scrollbars=yes,resizable=yes");
-                $("#form-export").submit();
-            }
-        });
-
-        $('.quantity-class').live('focus', function(){
-            if (false == $(this).hasClass('hasMore')) {
-                $(this).select_more();
-            }
-        });
-    },
-
-    handleGridEvent:function (com, grid, json) {
-        if (com == 'New') {
-            Order.objGrid.flexBeginAdd();
-        }
-        else if (com == 'Edit') {
-            var row = FlexObject.getSelectedRows(grid);
-            Order.objGrid.flexBeginEdit(row[0]);
-        }
-        else if (com == 'Save') {
-            Order.objGrid.flexSaveChanges();
-        }
-        else if (com == 'Cancel') {
-            Order.objGrid.flexCancel();
-        }
-        else if (com == 'Delete') {
-            if (FlexObject.rowSelectedCheck(Order.objGrid,grid,1)) {
-                Order.delete_(grid);
-            }
-        }
-        else if (com == 'Attachment') {
-            if (FlexObject.rowSelectedCheck(Order.objGrid,grid,1)) {
-                Order.attach_file(grid);
-            }
-        }
-        else if (com == 'Filter BDC' || com == 'Order Status') {
-            Order.filterGrid(json);
-        }
-    },
-
-    filterGrid:function(json){
-        //var bdc_filter = $("#filter_bdc").val();
-        var filter_status = $("#filter_status").val();
-        $(Order.objGrid).flexOptions({
-            params: [
-                //{name: 'filter', value: bdc_filter},
-                {name: 'filter_status', value: filter_status}
+        $('#fixed_hdr').fxdHdrCol({
+            fixedCols: 1,
+            width:     "100%",
+            height:    400,
+            colModal: [
+                { width: 75, align: 'center' },
+                { width: 80, align: 'center' }
+                /** ,
+                { width: 155, align: 'center' },
+                { width: 155, align: 'center' },
+                { width: 215, align: 'center' },
+                { width: 215, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' },
+                { width: 250, align: 'center' }*/
             ]
-        }).flexReload();
+        });
+
+
+        $('#fixed_hdr2').fxdHdrCol({
+            fixedCols: 1,
+            width:     "100%",
+            height:    400,
+            colModal: [
+                { width: 75, align: 'center' },
+                { width: 80, align: 'center' },
+                { width: 155, align: 'center' },
+                { width: 155, align: 'center' },
+                { width: 215, align: 'center' },
+                { width: 215, align: 'center' },
+                { width: 200, align: 'center' },
+                { width: 200, align: 'center' }
+            ]
+        });
     },
 
-    attach_file:function(grid){
-        var row_ids = FlexObject.getSelectedRowIds(grid);
-        var item_id = row_ids[0];
-        document.getElementById('fileupload').reset();
-        var attachment_type = 'Customer Order';
-        var log_activity_type = 'Order';
-        $("#fileupload #type_id").val(item_id);
-        $("#fileupload #type").val(attachment_type);//
-        $("#fileupload #log_activity_type").val(log_activity_type);
-        // Load existing files:
-        $('#fileupload').addClass('fileupload-processing');
-        $.ajax({
-            // Uncomment the following to send cross-domain cookies:
-            //xhrFields: {withCredentials: true},
-            url: $('#get_attachments_url').val()+'/'+item_id+'/'+attachment_type,
-            dataType: 'json',
-            context: $('#fileupload')[0]
-        }).always(function () {
-                $(this).removeClass('fileupload-processing');
-            }).done(function (result) {
-                $('#ajax_upload_table tbody').html('');
-                $(this).fileupload('option', 'done')
-                    .call(this, $.Event('done'), {result: result});
-
-                $('#attachment_modal').modal({
-                    backdrop: 'static',
-                    show: true,
-                    keyboard: true
-                });
-            });
-
-    },
-    delete_:function (grid) {
+    initRowSelect: function () {
         var self = this;
-        var url = $('#grid_delete_url').val();
-        jLib.do_delete(url, grid);
-    }
-    
-};
+        DsrpCommon.initRowSelect();
+    },
 
+    initRowMenus: function () {
+        var self = this;
+        $("#edit_row_btn").click(function () {
+            self.editRow();
+        });
+        $("#cancel_row_btn").click(function () {
+            self.cancelRow();
+        });
+        $("#save_row_btn").click(function () {
+            self.saveRow();
+        });
+    },
+
+    editRow: function () {
+        var self = this;
+        if (self.edit_row) {
+            self.saveRow(function () {
+                self.renderRow();
+            });
+        }
+        else {
+            self.renderRow();
+        }
+    },
+
+    cancelRow: function () {
+        var self = this;
+        self.clearEditing();
+    },
+
+
+    saveRow: function (callback) {
+        var self = this;
+        var table_setup_data = table_setup;
+        var res = DsrpCommon.validateRow(table_setup_data);
+        if (!self.edit_row) {
+            return;
+        }
+        if (res.status) {//validation pass get the values
+            DsrpCommon.saveRow(function (data,response) {
+                DailySalesProduct.clearEditing();
+                DailySalesProduct.updateTotalTable(response.data);
+                if (typeof callback == "function") {
+                    callback();
+                }
+            });
+        }
+        else {
+            alertify.error(res.message);
+            return false;
+        }
+    },
+
+
+    updateTotalTable:function(data){
+        var self = this;
+        var row_id  = data.id;
+        $("table#fixed_hdr3 tbody tr[data-id='" + row_id +"'] td").each(function(){
+            var td = $(this);
+            var field_id = td.attr('data-field');
+            var field_lookup = table_total_setup[field_id];
+           /* console.log(table_setup);
+            console.log(field_lookup);*/
+
+            var format = field_lookup['format'];
+            td.attr('data-value', data[field_id]);
+            var html_val = data[field_id];
+            if(html_val && !isNaN(html_val)){
+                html_val = parseFloat(html_val);
+                var decimal_places = 0;
+                var format_type = format;
+                if(format == 'float'){
+                    decimal_places = 2;
+                    format_type = 'money';
+                }
+                if(format_type !=''){
+                    html_val = jLib.formatNumber(html_val,format_type,decimal_places);
+                }
+            }
+            td.html(html_val);
+        });
+    },
+
+
+    renderRow: function () {
+        var self = this;
+        var table_setup_data = table_setup;
+        DsrpCommon.renderRow(table_setup_data);
+        self.edit_row = true;
+    },
+
+    clearEditing: function () {
+        var self = this;
+        DsrpCommon.clearEditing();
+        self.edit_row = false;
+    },
+
+
+    /**** Field Rules ***/
+    bindRules: function () {
+        $("#unit_price").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var search = first_td.attr('data-value');
+            var haystack = control_data['daily_sales_products'];
+            var targets = ['unit_price'];
+            var value = RuleActions.price_change(targets, search,haystack);
+        });
+        /** Cash Sales*/
+        $("#cash_day_sales_value").live('focusin', function () {
+            var operands = ['unit_price','cash_day_sales_qty'];
+            var targets = ['cash_day_sales_value'];
+            var value = RuleActions.multiply(targets, operands);
+        });
+        $("#cash_previous_day_sales_qty").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'cash_day_sales_qty';
+            var haystack = previous_data;
+            var targets = ['cash_previous_day_sales_qty'];
+            var value = RuleActions.previous_val(targets, control_key, control_value, source_field, haystack);
+        });
+        $("#cash_previous_day_sales_value").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'cash_day_sales_value';
+            var haystack = previous_data;
+            var targets = ['cash_previous_day_sales_value'];
+            var value = RuleActions.previous_val(targets, control_key, control_value, source_field, haystack);
+        });
+        $("#cash_month_to_date_qty").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'cash_month_to_date_qty';
+            var haystack = previous_data;
+            var current_days_field = 'cash_day_sales_qty';
+            var targets = ['cash_month_to_date_qty'];
+            var value = RuleActions.month_to_date(targets, current_days_field,control_key, control_value, source_field, haystack);
+        });
+        $("#cash_month_to_date_value").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'cash_month_to_date_value';
+            var haystack = previous_data;
+            var current_days_field = 'cash_day_sales_value';
+            var targets = ['cash_month_to_date_value'];
+            var value = RuleActions.month_to_date(targets, current_days_field,control_key, control_value, source_field, haystack);
+        });
+
+        /** Dealers Sales*/
+        $("#dealer_credit_day_sales_value").live('focusin', function () {
+            var operands = ['unit_price','dealer_credit_day_sales_qty'];
+            var targets = ['dealer_credit_day_sales_value'];
+            var value = RuleActions.multiply(targets, operands);
+        });
+        $("#dealer_credit_previous_day_sales_qty").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'dealer_credit_day_sales_qty';
+            var haystack = previous_data;
+            var targets = ['dealer_credit_previous_day_sales_qty'];
+            var value = RuleActions.previous_val(targets, control_key, control_value, source_field, haystack);
+        });
+        $("#dealer_credit_previous_day_sales_value").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'dealer_credit_day_sales_value';
+            var haystack = previous_data;
+            var targets = ['dealer_credit_previous_day_sales_value'];
+            var value = RuleActions.previous_val(targets, control_key, control_value, source_field, haystack);
+        });
+        $("#dealer_credit_month_to_date_qty").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'dealer_credit_month_to_date_qty';
+            var haystack = previous_data;
+            var current_days_field = 'dealer_credit_day_sales_qty';
+            var targets = ['dealer_credit_month_to_date_qty'];
+            var value = RuleActions.month_to_date(targets, current_days_field,control_key, control_value, source_field, haystack);
+        });
+        $("#dealer_credit_month_to_date_value").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'dealer_credit_month_to_date_value';
+            var haystack = previous_data;
+            var current_days_field = 'dealer_credit_day_sales_value';
+            var targets = ['dealer_credit_month_to_date_value'];
+            var value = RuleActions.month_to_date(targets, current_days_field,control_key, control_value, source_field, haystack);
+        });
+
+        /** Customers Sales*/
+
+        $("#customers_day_sales_value").live('focusin', function () {
+            var operands = ['unit_price','customers_day_sales_qty'];
+            var targets = ['customers_day_sales_value'];
+            var value = RuleActions.multiply(targets, operands);
+        });
+        $("#customers_previous_day_sales_qty").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'customers_day_sales_qty';
+            var haystack = previous_data;
+            var targets = ['customers_previous_day_sales_qty'];
+            var value = RuleActions.previous_val(targets, control_key, control_value, source_field, haystack);
+        });
+        $("#customers_previous_day_sales_value").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'customers_day_sales_value';
+            var haystack = previous_data;
+            var targets = ['customers_previous_day_sales_value'];
+            var value = RuleActions.previous_val(targets, control_key, control_value, source_field, haystack);
+        });
+        $("#customers_month_to_date_qty").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'customers_month_to_date_qty';
+            var haystack = previous_data;
+            var current_days_field = 'customers_day_sales_qty';
+            var targets = ['customers_month_to_date_qty'];
+            var value = RuleActions.month_to_date(targets, current_days_field,control_key, control_value, source_field, haystack);
+        });
+        $("#customers_month_to_date_value").live('focusin', function () {
+            var tr_parent = $(this).parents().parents();
+            var first_td = tr_parent.find("td:first");
+            var control_key = 'products';
+            var control_value = first_td.attr('data-value');
+            var source_field = 'customers_month_to_date_value';
+            var haystack = previous_data;
+            var current_days_field = 'customers_day_sales_value';
+            var targets = ['customers_month_to_date_value'];
+            var value = RuleActions.month_to_date(targets, current_days_field,control_key, control_value, source_field, haystack);
+        });
+    }
+
+};
 
 /* when the page is loaded */
 $(document).ready(function () {
-    Order.init();
+    DailySalesProduct.init();
 });

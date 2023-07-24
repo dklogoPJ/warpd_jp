@@ -1196,7 +1196,6 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['product_density_station'],
                                     $obj['OmcCustomerOrder']['product_temp_station'],
                                     $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'], 'number', 0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'], 'number', 0),
                                     $this->formatNumber($obj['OmcCustomerOrder']['dipping_post_discharge'], 'number', 0),
                                     $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0),
                                     $this->covertDate($obj['OmcCustomerOrder']['discharge_date'], 'mysql_flip'),

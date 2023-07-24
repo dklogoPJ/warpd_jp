@@ -14,8 +14,8 @@ var DailySalesProduct = {
             width:     "100%",
             height:    400,
             colModal: [
-                { width: 75, align: 'center' },
-                { width: 80, align: 'center' },
+                { width: 100, align: 'center' },
+                { width: 130, align: 'center' },
                 { width: 155, align: 'center' },
                 { width: 155, align: 'center' },
                 { width: 215, align: 'center' },
