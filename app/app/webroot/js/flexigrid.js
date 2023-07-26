@@ -350,8 +350,20 @@
 				this.hDiv.scrollLeft = this.bDiv.scrollLeft;
 				this.rePosDrag();
 			},
+
+			getColumnAttribute: function(attribute, compare_attribute, compare_value, collection) {
+				for (var i = 0; i < collection.length; i++) {
+					var row = collection[i];
+					if(row[compare_attribute] === compare_value) {
+						return typeof row[attribute] != "undefined" ? row[attribute] : null;
+					}
+				}
+				return null;
+			},
+
 			addData: function (data) { //parse data
                 //clear all editing rows
+				var self = this;
                 p.in_edit_mode = false;
                 p.current_edit_tr = false;
 
@@ -441,7 +453,8 @@
 						$('thead tr:first th', g.hDiv).each( //add cell
 							function () {
 								var td = document.createElement('td');
-                                $(td).attr('field', $(this).attr('field'));
+								var field = $(this).attr('field');
+                                $(td).attr('field', field);
 								var idx = $(this).attr('axis').substr(3);
                                 var editable = $(this).attr('editable');
                                 $(td).attr('editable', editable);
@@ -464,6 +477,10 @@
                                     $(td).attr('data-id', row.cell[p.colModel[idx].name]);
 								}
 								$(td).attr('abbr', $(this).attr('abbr'));
+								var format_no = self.getColumnAttribute('format_number', 'name' , field, p.colModel);
+								//add attribute format_number to td to tell inner td div-render if a valid number should be formatted
+								format_no = format_no != null ? format_no === true ? 'yes':'no' : 'yes';
+								$(td).attr('format_number', format_no);
 								$(tr).append(td);
 								td = null;
 							}
@@ -726,7 +743,19 @@
 					this.populate();
 				}
 			},
+
+			isNumeric: function (str) {
+				//if (typeof str != "string") return false // we only process strings!
+				return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+					!isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+			},
+
+			numberWithCommas: function (x) {
+				return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			},
+
 			addCellProp: function () {
+				var self = this;
 				$('tbody tr td', g.bDiv).each(function () {
 					var tdDiv = document.createElement('div');
 					var n = $('td', $(this).parent()).index(this);
@@ -750,6 +779,9 @@
 						this.innerHTML = '&nbsp;';
 					}
 					tdDiv.innerHTML = this.innerHTML;
+					if($(this).attr('format_number') === 'yes') {
+						tdDiv.innerHTML = self.isNumeric(this.innerHTML) ? self.numberWithCommas(this.innerHTML): this.innerHTML;
+					}
 					var prnt = $(this).parent()[0];
 					var pid = false;
 					if (prnt.id) {
@@ -978,7 +1010,7 @@
                                 }
                                 $(thead).append(tr);
 
-                                var next_tr = $('<tr />').attr('class','parent_tr'+id+' sub-row');
+                                var next_tr = $('<tr />').attr('class','parent_tr'+id+' sub-row').attr('master-row-id', id);
                                 var td = $('<td />').attr('style','padding-left: 30px;').attr('colspan',p.colModel.length +1);
                                 var inner_table = $('<table />').attr('class','subtable subtable-bordered').attr('parent-id',id);
                                 inner_table.append(thead);
@@ -1014,9 +1046,18 @@
                                         for (var k = 0; k < p.subGrid.colModel.length; k++){
                                             var pos = p.subGrid.colModel[k]['align'];
                                             var p_width = p.subGrid.colModel[k]['width'];
-                                            var td_ = $('<td />').attr('align',pos).html($("<div />").attr('style','text-align:'+pos+'; padding: 0px 5px; width:'+p_width+'px;').html(row_items['cell'][k]));
-                                            $(td_).attr('data-id', row_items['cell'][k]);
-                                            $(td_).attr('field', p.subGrid.colModel[k]['name']);
+											var field = p.subGrid.colModel[k]['name'];
+											var value = row_items['cell'][k];
+											var format_value = row_items['cell'][k];
+											var format_no = g.getColumnAttribute('format_number', 'name' , field, p.subGrid.colModel);
+											format_no = format_no != null ? format_no === true ? 'yes':'no' : 'yes';
+											if(format_no === 'yes'){
+												format_value = g.isNumeric(format_value) ? g.numberWithCommas(format_value): format_value;
+											}
+                                            var td_ = $('<td />').attr('align',pos).html($("<div />").attr('style','text-align:'+pos+'; padding: 0px 5px; width:'+p_width+'px;').html(format_value));
+                                            $(td_).attr('data-id', value);
+                                            $(td_).attr('field', field);
+											$(td_).attr('format_number', format_no);
                                             if(p.subGrid.colModel[k]['editable']){
                                                 $(td_).attr('editable', 'yes');
                                                 $(td_).attr('form', p.subGrid.colModel[k]['editable']['form']);
@@ -1403,8 +1444,12 @@
                             el_class:(pr_controls['editable']['bclass']) ? pr_controls['editable']['bclass'] : '',
                             el_maxlength:(pr_controls['editable']['maxlength']) ? pr_controls['editable']['maxlength'] : '',
                             el_placeholder:(pr_controls['editable']['placeholder']) ? pr_controls['editable']['placeholder'] : '',
-							el_on_focus: (pr_controls['editable']['on_focus']) ? (pr_controls['editable']['on_focus']) : ''
+							el_on_focus: (pr_controls['editable']['on_focus']) ? (pr_controls['editable']['on_focus']) : '',
+							el_on_focus_out: (pr_controls['editable']['on_focus_out']) ? (pr_controls['editable']['on_focus_out']) : '',
+							el_on_change: (pr_controls['editable']['on_change']) ? (pr_controls['editable']['on_change']) : '',
+							el_on_key_up: (pr_controls['editable']['on_key_up']) ? (pr_controls['editable']['on_key_up']) : ''
                         }
+
                         if(pr_controls['editable']['form'] == 'select'){
                             pr['el_options'] =  pr_controls['editable']['options'];
                         }
@@ -1502,7 +1547,22 @@
 
 					if(params.el_on_focus) {
 						$(el).on( "focus", function() {
-							self.onElementFocus(params.el_on_focus, editing_tr);
+							self.onElementEventCallback(params.el_on_focus, editing_tr);
+						});
+					}
+					if(params.el_on_focus_out) {
+						$(el).on( "focusout", function() {
+							self.onElementEventCallback(params.el_on_focus_out, editing_tr);
+						});
+					}
+					if(params.el_on_change) {
+						$(el).on( "change", function() {
+							self.onElementEventCallback(params.el_on_change, editing_tr);
+						});
+					}
+					if(params.el_on_key_up) {
+						$(el).on( "keyup", function() {
+							self.onElementEventCallback(params.el_on_key_up, editing_tr);
 						});
 					}
                     if(params.el_readonly == 'readonly'){
@@ -1519,16 +1579,16 @@
                 return el;
             },
 
-			onElementFocus: function (params, editing_tr) {
+			onElementEventCallback: function (json_string_data, editing_tr) {
 				var row_id = $(editing_tr).attr('data-id');
-				var focus_params = params.split('|');
-				var focus_action_data = focus_params[0].split(':');
-				var focus_action = focus_action_data[1];
+
+				const obj = JSON.parse(json_string_data);
+				var action = obj['action'];
+				var sources_arr = obj['sources'];
+				var targets_arr = obj['targets'];
 
 				var sources_values = [];
-				var focus_sources_data = focus_params[1].split(':');
-				var focus_sources_arr = focus_sources_data[1].split(',');
-				focus_sources_arr.forEach(function (source_el) {
+				sources_arr.forEach(function (source_el) {
 					editing_tr.find('td div #'+source_el+'_'+row_id).each(function(){
 						sources_values.push(parseFloat($(this).val()));
 					});
@@ -1540,19 +1600,17 @@
 				const multiply = (accumulator, number) =>  accumulator * number;
 				const division = (accumulator, number) =>  accumulator / number;
 
-				if(focus_action === 'sum') {
+				if(action === 'sum') {
 					result = sources_values.reduce(sum);
-				}else if(focus_action === 'subtract') {
+				}else if(action === 'subtract') {
 					result = sources_values.reduce(subtract);
-				}else if(focus_action === 'multiply') {
+				}else if(action === 'multiply') {
 					result = sources_values.reduce(multiply);
-				}else if(focus_action === 'division') {
+				}else if(action === 'division') {
 					result = sources_values.reduce(division);
 				}
 
-				var focus_targets_data = focus_params[2].split(':');
-				var focus_targets_arr = focus_targets_data[1].split(',');
-				focus_targets_arr.forEach(function (target_el) {
+				targets_arr.forEach(function (target_el) {
 					editing_tr.find('td div #'+target_el+'_'+row_id).each(function(){
 						$(this).val(result);
 						$(this).parents('div td').attr('data-id', result);
@@ -1569,14 +1627,18 @@
                     else{
                         p.current_edit_tr.find('td').each(function(){
                             var td = $(this);
-                            if(td.attr('editable') == 'yes'){
+                            if(td.attr('editable') === 'yes'){
                                 var field = td.attr('field');
                                 var field_type = td.attr('form');
                                 var field_value = td.attr('data-id');
                                 if(!field_value){
                                     field_value = '';
                                 }
-                                td.find('div').html(field_value);
+								td.find('div').html(field_value);
+								if($(td).attr('format_number') === 'yes') {
+									field_value = g.isNumeric(field_value) ? g.numberWithCommas(field_value): field_value;
+									td.find('div').html(field_value);
+								}
                             }
                         });
                     }
@@ -1838,6 +1900,26 @@
                                 if(temp_tr.hasClass('new-row')){
                                     temp_tr.removeClass('new-row')
                                 }
+								var collection = p.colModel;
+								if(temp_tr.hasClass('inner-sub-row')){
+									collection = p.subGrid.colModel;
+								}
+
+								temp_tr.find('td').each(function(){
+									var td = $(this);
+									var field = td.attr('field');
+									var field_value = td.attr('data-id');
+									if(!field_value){
+										field_value = '';
+									}
+									var format_no = g.getColumnAttribute('format_number', 'name' , field, collection);
+									format_no = format_no != null ? format_no === true ? 'yes':'no' : 'yes';
+									td.find('div').html(field_value);
+									if(format_no === 'yes'){
+										field_value = g.isNumeric(field_value) ? g.numberWithCommas(field_value): field_value;
+										td.find('div').html(field_value);
+									}
+								});
                             }
                             if(response.extra_data){
                                 var extra_data_str = "";

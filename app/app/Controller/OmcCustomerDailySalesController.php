@@ -11,7 +11,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
     var $name = 'OmcCustomerDailySales';
     # set the model to use
-    var $uses = array('OmcSalesSheet','OmcBulkStockPosition','OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary','OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption','OmcCustomerOrder','OmcCustomer','ProductType','Volume');
+    var $uses = array('OmcSalesSheet','OmcBulkStockPosition','OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary','OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption','OmcCustomerOrder','OmcCustomer','ProductType','Volume','NctRecord','Nct');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -859,8 +859,8 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                                 $order_time_elapsed =  $time_hr.' hr(s)';
                             }
 
-                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
-                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
+                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'number',0) : '';
+                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0) : '';
                             $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
                             
                         
@@ -945,6 +945,51 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
     function nct_sales_record($type = 'get')
     {   
         $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+        $sheet_id = $this->OmcSalesSheet->setUpSheet($company_profile['id'],$company_profile['omc_id']);
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $post = $this->sanitize($_POST);
+            $post['modified_by'] = $authUser['id'];
+            $post = $this->total_daily_sales_product($post);
+            if ($this->OmcDailySalesProduct->save($post)) {
+                //Update Operators Credit
+                $this->OmcOperatorsCredit->setUp($sheet_id,$company_profile['id'],$company_profile['omc_id']);
+                return json_encode(array('code' => 0, 'msg' => 'Record Saved!', 'data'=>$post));
+            }
+            else {
+                return json_encode(array('code' => 1, 'msg' => 'Some errors occurred whiles saving the record.'));
+            }
+        }
+        $form_data = $this->OmcDailySalesProduct->setUp($sheet_id,$company_profile['omc_id']);
+        $table_setup = $this->OmcDailySalesProduct->getTableSetup();
+        $table_total_setup = $this->OmcDailySalesProduct->getTotalTableSetup();
+        $previous_data_raw = $this->OmcDailySalesProduct->getPreviousDayData($company_profile['id'],$company_profile['omc_id']);
+        $previous_data = array();
+        foreach($previous_data_raw as $spd){
+            $previous_data[] = $spd['OmcDailySalesProduct'];
+        }
+        $data = $this->OmcDsrpDataOption->find('first',array(
+            'conditions'=>array('omc_id'=>$company_profile['omc_id']),
+            'recursive'=>-1
+        ));
+        $control_data = array();
+        $control_data['bulk_stock_position_products'] = unserialize($data['OmcDsrpDataOption']['bulk_stock_position_products']);
+        $control_data['daily_sales_products'] = unserialize($data['OmcDsrpDataOption']['daily_sales_products']);
+        $control_data['lubricants_products'] = unserialize($data['OmcDsrpDataOption']['lubricants_products']);
+
+        $price_change_data = array();
+        foreach($this->price_change as $pn => $pr){
+            $price_change_data[$pr['product_type_id']] = array(
+                'name'=>$pn,
+                'value'=>$pr['price']
+            );
+        }
+
+
+        $this->set(compact('permissions','form_data','table_setup','previous_data','control_data','price_change_data','table_total_setup'));
     }
 
 }

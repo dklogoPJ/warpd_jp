@@ -1359,8 +1359,12 @@ class OmcAdminController extends OmcAppController
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
+                    $condition_array = array(
+                        'Nct.deleted' => 'n'
+                    );
+
                     
-                    $data_table = $this->Nct->find('all', array('order' => "Nct.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Nct->find('all', array('conditions' => $condition_array,'order' => "Nct.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
                     $data_table_count = $this->Nct->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;

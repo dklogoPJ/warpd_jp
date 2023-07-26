@@ -581,21 +581,21 @@ class OmcCustomerController extends OmcCustomerAppController
                         $return_arr = array();
                         foreach ($data_table as $obj) {
 
-                            $received_quantity =  isset($obj['PumpTankSale']['received_quantity']) ? $this->formatNumber($obj['PumpTankSale']['received_quantity'],'money',0) : '';                            
+                            $received_quantity =  isset($obj['PumpTankSale']['received_quantity']) ? $this->formatNumber($obj['PumpTankSale']['received_quantity'],'number',0) : '';
                         
                             $return_arr[] = array(
                                 'id' => $obj['PumpTankSale']['id'],
                                 'cell' => array(
                                     $obj['PumpTankSale']['id'],
                                     $obj['PumpTankSale']['tank'],
-                                    isset($obj['PumpTankSale']['open_stock']) ? $this->formatNumber($obj['PumpTankSale']['open_stock'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['open_stock']) ? $this->formatNumber($obj['PumpTankSale']['open_stock'],'number',0) : '',
                                     $received_quantity,
-                                    isset($obj['PumpTankSale']['stock_in_hand']) ? $this->formatNumber($obj['PumpTankSale']['stock_in_hand'],'money',0) : '',
-                                    isset($obj['PumpTankSale']['pump_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['pump_day_sales'],'money',0) : '',
-                                    isset($obj['PumpTankSale']['closing_stock']) ? $this->formatNumber($obj['PumpTankSale']['closing_stock'],'money',0) : '',
-                                    isset($obj['PumpTankSale']['tank_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['tank_day_sales'],'money',0) : '',
-                                    isset($obj['PumpTankSale']['variance']) ? $this->formatNumber($obj['PumpTankSale']['variance'],'money',0) : '',
-                                    isset($obj['PumpTankSale']['variance_cedis']) ? $this->formatNumber($obj['PumpTankSale']['variance_cedis'],'money',0) : '',
+                                    isset($obj['PumpTankSale']['stock_in_hand']) ? $this->formatNumber($obj['PumpTankSale']['stock_in_hand'],'number',0) : '',
+                                    isset($obj['PumpTankSale']['pump_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['pump_day_sales'],'number',0) : '',
+                                    isset($obj['PumpTankSale']['closing_stock']) ? $this->formatNumber($obj['PumpTankSale']['closing_stock'],'number',0) : '',
+                                    isset($obj['PumpTankSale']['tank_day_sales']) ? $this->formatNumber($obj['PumpTankSale']['tank_day_sales'],'number',0) : '',
+                                    isset($obj['PumpTankSale']['variance']) ? $this->formatNumber($obj['PumpTankSale']['variance'],'number',0) : '',
+                                    isset($obj['PumpTankSale']['variance_cedis']) ? $this->formatNumber($obj['PumpTankSale']['variance_cedis'],'number',0) : '',
                                     $obj['PumpTankSale']['comments']
                                 )
                             );
