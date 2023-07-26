@@ -1970,4 +1970,348 @@ class OmcOrdersController extends OmcAppController
         $this->attachment_fire_response($upload_data);
     }
 
+
+    function git_status($type = 'get')
+    {
+        $permissions = $this->action_permission;
+        $my_bdc_list = $this->get_bdc_omc_list();//Bdc this Omc is connected with on this system
+        $my_bdc_list_ids = array();
+        foreach($my_bdc_list as $arr){
+            $my_bdc_list_ids[] = $arr['id'];
+        }
+
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+
+            $company_profile = $this->global_company;
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** @var $filter  */
+                    $filter =   isset($_POST['filter']) ? $_POST['filter'] : 0 ;
+                    /** @var $filter  */
+                    $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'incomplete_orders' ;
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $group_depot = ClassRegistry::init('User')->getDepotGroup($authUser['id']);
+                    $condition_array = array(
+                        'Order.omc_id' => $company_profile['id'],
+                        'Order.deleted' => 'n'
+                    );
+                    if($group_depot > 0){
+                        $condition_array['Order.depot_id'] = $group_depot;
+                    }
+                    if($filter != 0){
+                        $condition_array['Order.bdc_id'] = $filter;
+                    }
+                    if($filter_status == 'incomplete_orders'){
+                        $condition_array['NOT'] = array('Order.order_status'=>'Complete');
+                    }
+                    else{
+                        $condition_array['Order.order_status'] = 'Complete';
+                    }
+
+                    if (!empty($search_query)) {
+                        if ($qtype == 'id') {
+                            $condition_array['Order.id'] = $search_query;
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
+
+                    $contain = array(
+                        'Bdc'=>array('fields' => array('Bdc.id', 'Bdc.name')),
+                        'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
+                    );
+                    // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $bigger_time = date('Y-m-d H:i:s');
+                            if($obj['Order']['order_status'] == 'Complete'){
+                                $bigger_time = $obj['Order']['bdc_modified'];
+                                if(!$bigger_time){
+                                    if($company_profile['available'] != 'Available'){
+                                        $bigger_time = $obj['Order']['omc_created'];
+                                        if($obj['Order']['omc_modified']){
+                                            $bigger_time = $obj['Order']['omc_modified'];
+                                        }
+                                    }
+                                    else{
+                                        $bigger_time = $obj['Order']['omc_modified'];
+                                    }
+                                }
+
+                                $time_hr = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'hours');
+                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
+                                $order_time_elapsed = $time_hr.' hr(s)';
+                            }
+                            else{
+                                $time_hr = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'hours');
+                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
+                                $order_time_elapsed =  $time_hr.' hr(s)';
+                            }
+
+                            //If Orders are being processed by BDC, Omc can't edit that order, unless that order is still blue (New which must be edited with higher clearance right)
+                            $st = $obj['Order']['order_status'];
+                            $edit_row = $obj['Order']['edit_row'];
+                            //debug($st);
+                            if($st == 'New' || $st == 'New From Dealer'){
+
+                            }
+                            else{
+                                $edit_row = 'no';
+                            }
+                            //debug($edit_row);
+                            $ops_feed = isset($this->ops_feedback[$obj['Order']['bdc_feedback']]) ? $this->ops_feedback[$obj['Order']['bdc_feedback']] : '';
+                            //$fna_feed = isset($this->fna_feedback[$obj['Order']['finance_approval']]) ? $this->fna_feedback[$obj['Order']['finance_approval']] : '';
+                            $mkt_feed = isset($this->mkt_feedback[$obj['Order']['delivery_priority']]) ? $this->mkt_feedback[$obj['Order']['delivery_priority']] : '';
+                            $loaded_date = '';
+                            if($obj['Order']['loaded_date']){
+                                $loaded_date = $this->covertDate($obj['Order']['loaded_date'],'mysql_flip');
+                            }
+
+                            $approved_quantity = '';
+                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
+                            
+                            if($received_quantity > 0){
+                                $git_status ='Discharged';
+                            }else{
+                                $git_status ='GIT';
+                            }
+
+                            //$git_status = '';
+                            if($obj['Order']['approved_quantity']){
+                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
+                            }
+                            $loaded_quantity = '';
+                            if($obj['Order']['loaded_quantity']){
+                                $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
+                            }
+
+                            $cell = array(
+                                $obj['Order']['id'],
+                                $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
+                                //$obj['Order']['omc_order_priority'],
+                                $order_time_elapsed,
+                                $obj['OmcCustomer']['name'],
+                                $obj['Depot']['name'],
+                                $obj['ProductType']['name'],
+                                $this->formatNumber($obj['Order']['order_quantity'],'number',0),
+                                /*,$mkt_feed*/
+                                $obj['Order']['transporter'],
+                                $obj['Order']['truck_no'],
+                                /*$obj['Bdc']['name'],*/
+                                $approved_quantity,
+                                $loaded_quantity,
+                                $loaded_date,
+                                $received_quantity,
+                                $git_status,
+                                /*$ops_feed */
+                                // $fna_feed,
+                            );
+
+                            if($this->is_connected_to_bdc()) {
+                                if(isset($obj['Bdc']) && isset($obj['Bdc']['name'])) {
+                                    array_splice( $cell, 9, 0, $obj['Bdc']['name']);
+                                } else {
+                                    array_splice( $cell, 9, 0, '---');
+                                }
+                                $cell[] = $ops_feed;
+                            }
+                            $return_arr[] = array(
+                                'id' => $obj['Order']['id'],
+                                'cell' => $cell,
+                                'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
+                                    'record_origin'=>$obj['Order']['record_origin'],
+                                    'order_status'=>$obj['Order']['order_status'],
+                                    'product_type_id'=>$obj['ProductType']['id'],
+                                    'product_type_name'=>$obj['ProductType']['name'],
+                                    'depot_id'=>$obj['Depot']['id'],
+                                    'depot_name'=>$obj['Depot']['name']
+                                ),
+                                'property'=>array(
+                                    'bg_color'=>$obj['Order']['row_bg_color'],
+                                    'edit_row'=> $edit_row
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if(!in_array('E',$permissions)){
+                        return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                    }
+                    $auto_flow = false;
+                    $bdc_id = isset($_POST['bdc_id']) ? $_POST['bdc_id'] : 0;
+                    $data = array('Order' => $_POST);
+                    /*$data['Order']['order_date'] = $this->covertDate($_POST['order_date'],'mysql').' '.date('H:i:s');*/
+                    $data['Order']['omc_modified'] = date('Y-m-d H:i:s');
+                    $data['Order']['omc_modified_by'] = $authUser['id'];
+                    $data['Order']['edit_row'] = 'no'; //
+                    unset( $data['Order']['extra']);
+                    if(in_array($bdc_id, $my_bdc_list_ids)){
+                        unset( $data['Order']['approved_quantity']);
+                        unset( $data['Order']['loaded_quantity']);
+                        unset( $data['Order']['loaded_date']);
+                        $data['Order']['record_type'] = 'bdc'; //BDC must respond to this order
+                        $auto_flow = false;
+                    }
+                    else{
+                        $data['Order']['row_bg_color'] = 'tr_green';
+                        $data['Order']['order_status'] = 'Complete';
+                        $data['Order']['record_type'] = 'omc'; // omc is not connected with this bdc
+                        $data['Order']['depot_loadding_approval'] = 'Loaded';
+                        $data['Order']['loaded_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        $auto_flow = true;
+                    }
+
+                    if ($this->Order->save($this->sanitize($data))) {
+                        $order_id  = $this->Order->id;
+                        if($auto_flow){
+                            $order_data = $this->Order->find('first', array(
+                                'conditions' => array('Order.id' => $order_id),
+                                'recursive' => -1
+                            ));
+                            $order  = $order_data['Order'];
+                            //This Order needs no BDC input so quickly approve his orders and push to distribution
+                            $order['waybill_date'] = '';
+                            $order['waybill_id'] = '';
+                            //Push to BDC distribution
+                            $this->BdcDistribution->addDistribution($order,'omc',$authUser['id']);
+                            $order['bdc_distribution_id'] = $this->BdcDistribution->id;
+                            //Push to OMC distribution
+                            $this->OmcBdcDistribution->addDistribution($order);
+                            //Update OmcCustomerOrder with approved quantity and loaded quantity
+                            $this->OmcCustomerOrder->updateLoadedQtyApprovedQty($order);
+                        }
+                        else{
+                            /** Notify BDC **/
+                            $send_params = array(
+                                'title'=>$company_profile['name'].', Order Allocation',
+                                'content'=>'New order = '.$data['Order']['id'].' has been allocated to you.',
+                                'sender'=>$authUser['id'],
+                                'sender_type'=>'blast',
+                                'entity'=>'bdc',
+                                'entity_id'=>$data['Order']['bdc_id'],
+                                'include_this_entity'=>false,
+                                'msg_type'=>'system'
+                            );
+                            $this->sendMessage($send_params);
+                        }
+                        //Activity Log
+                        $log_description = $this->getLogMessage('AllocateOrder');
+                        $this->logActivity('Order',$log_description);
+
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$this->Order->id));
+                        }
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occured.'));
+                    }
+                    //echo debug($data);
+                    break;
+
+                case 'load':
+
+                    break;
+
+                case 'delete':
+                    if(!in_array('D',$permissions)){
+                        return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                    }
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('Order');
+                    $result = $modObj->updateAll(
+                        $this->sanitize(array('Order.deleted' => "'y'")),
+                        $this->sanitize(array('Order.id' => $ids))
+                    );
+                    if ($result) {
+                        echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+
+        $products_lists = $this->get_products();
+        $depot_lists = $this->get_depot_list();
+        $omc_customers_lists = $this->get_customer_list();
+
+        $bdc_list = $bdclists_data = $this->get_bdc_list();
+        $start_dt = date('01-m-Y');
+        $end_dt = date('t-m-Y');
+        $group_by = 'monthly';
+        $group_by_title = date('F');
+
+        $bdclists =array(array('name'=>'All','value'=>0));
+        $bdc_depots  =array();
+        foreach($bdclists_data as $arr){
+            $bdclists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+            $bdc_depots[$arr['id']] = $arr;
+        }
+
+        $order_filter = $this->order_filter;
+
+        $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+
+        $graph_title = $group_by_title.", Orders-Consolidated";
+
+        $volumes = $this->Volume->getVolsList();
+        $truckList = $this->Truck->getTruckList();
+        $numbers = $this->Truck->getTruckNo();
+        $git_status = array(
+            '0'=>array(
+                'id'=>'GIT',
+                'name'=>'GIT'
+            ),
+            '1'=>array(
+                'id'=>'Discharged',
+                'name'=>'Discharged'
+            )
+        );
+
+        $this->set(compact('omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','bdc_depots','volumes','my_bdc_list_ids','numbers','truckList','git_status'));
+    }
+
+
+    
+
 }
