@@ -1,7 +1,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1 style="font-size: 30px;">Pre Discharge <small> Dashboard</small></h1>
+        <h1 style="font-size: 30px;">Temperature Compensation <small> Dashboard</small></h1>
     </div>
 
     <div class="row-fluid">
@@ -21,14 +21,14 @@
 
             <div class="head clearfix">
                 <div class="isw-text_document"></div>
-                <h1>Pre Discharge Table</h1>
+                <h1>Temperature Compensation Table</h1>
             </div>
             <table id="flex" style="display:none;"></table>
 
         </div>
     </div>
 
-  
+
 
     <!--<div class="row-fluid" id="export-form">
         <div class="span3">
@@ -72,12 +72,12 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'pre_discharge/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'pre_discharge/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'pre_discharge/load_details')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/save')); ?>" />
+<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/load_details')); ?>" />
 
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'pre_discharge/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'pre_discharge/delete')); ?>" />
+<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/load')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'temperature_compensation/delete')); ?>" />
 
 
 <!-- This URL will be used by Ajax upload -->
@@ -90,12 +90,10 @@
     var order_filter = <?php echo json_encode($order_filter);?>;
     var permissions = <?php echo json_encode($permissions); ?>;
     var volumes = <?php echo json_encode($volumes); ?>;
-    var list_tm = <?php echo json_encode($list_tm); ?>;
-    var tanks = <?php echo json_encode($tanks); ?>;
    
 </script>
 
 <!-- Le Script -->
 <?php
-echo $this->Html->script('scripts/omc_customer/pre_discharge.js');
+echo $this->Html->script('scripts/omc_customer/temperature_compesation.js');
 ?>

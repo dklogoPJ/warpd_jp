@@ -99,8 +99,8 @@ class OmcCustomer extends AppModel
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-        'TemperatureCompesation' => array(
-            'className' => 'TemperatureCompesation',
+        'TemperatureCompensation' => array(
+            'className' => 'TemperatureCompensation',
             'foreignKey' => 'omc_customer_id',
             'dependent' => false,
             'conditions' => '',

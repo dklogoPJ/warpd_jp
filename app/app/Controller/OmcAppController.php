@@ -104,6 +104,15 @@ class OmcAppController extends AppController
         return $bdc_list;
     }
 
+    function is_connected_to_bdc() {
+        $my_bdc_list = $this->get_bdc_omc_list();//Bdc this Omc is connected with on this system
+        $my_bdc_list_ids = array();
+        foreach($my_bdc_list as $arr){
+            $my_bdc_list_ids[] = $arr['id'];
+        }
+        return count($my_bdc_list_ids) > 0;
+    }
+
     function get_all_bdc_list(){
         $bdc_list = $this->Bdc->getBDCs();
         return $bdc_list;
