@@ -1290,6 +1290,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
         $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter'));
     }
     
+    
 
 
     function temperature_compesation($type = 'get')
@@ -1468,6 +1469,188 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm'));
+    }
+
+
+
+    function git_status($type = 'get')
+    {   $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** @var $filter  */
+                    $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'complete_orders' ;
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    //get users id for this company only
+                    $condition_array = array(
+                        'OmcCustomerOrder.omc_customer_id' => $company_profile['id'],
+                        'OmcCustomerOrder.deleted' => 'n'
+                    );
+                    if($filter_status == 'incomplete_orders'){
+                        $condition_array['NOT'] = array('OmcCustomerOrder.order_status'=>'Complete');
+                    }
+                    else{
+                        $condition_array['OmcCustomerOrder.order_status'] = 'Complete';
+                    }
+
+                    if (!empty($search_query)) {
+                        if ($qtype == 'id') {
+                            $condition_array['OmcCustomerOrder.id'] = $search_query;
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
+
+                    $contain = array(
+                        'Omc'=>array('fields' => array('Omc.id', 'Omc.name')),
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+                    // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $bigger_time = date('Y-m-d H:i:s');
+                            if($obj['OmcCustomerOrder']['order_status'] == 'Complete'){
+                                $bigger_time = $obj['OmcCustomerOrder']['omc_modified'];
+                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
+                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
+                                $order_time_elapsed = $time_hr.' hr(s)';
+                            }
+                            else{
+                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
+                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
+                                $order_time_elapsed =  $time_hr.' hr(s)';
+                            }
+
+                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
+                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
+                            $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
+                            $station_name = $this->OmcCustomer->getCustomerList();
+
+                            $return_arr[] = array(
+                                'id' => $obj['OmcCustomerOrder']['id'],
+                                'cell' => array(
+                                    $obj['OmcCustomerOrder']['id'],
+                                    $this->covertDate($obj['OmcCustomerOrder']['order_date'],'mysql_flip'),
+                                    $obj['ProductType']['name'],
+                                    $station_name[$obj['OmcCustomerOrder']['omc_customer_id']],
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'],'money',0),
+                                    $this->covertDate($obj['OmcCustomerOrder']['truck_arrival_date'],'mysql_flip'),
+                                    $obj['OmcCustomerOrder']['transporter'],
+                                    $obj['OmcCustomerOrder']['tank_no'],
+                                    $obj['OmcCustomerOrder']['product_density_depot'],
+                                    $obj['OmcCustomerOrder']['product_temp_depot'],
+                                    $obj['OmcCustomerOrder']['product_density_station'],
+                                    $obj['OmcCustomerOrder']['product_temp_station'],
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_post_discharge'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0),
+                                    $this->covertDate($obj['OmcCustomerOrder']['discharge_date'],'mysql_flip'),
+                                    //$obj['OmcCustomerOrder']['discharge_date'],
+                                    $obj['OmcCustomerOrder']['comments']
+                                ),
+                                'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
+                                    'order_status'=>$obj['OmcCustomerOrder']['order_status'],
+                                    'delivery_quantity'=>$obj['OmcCustomerOrder']['delivery_quantity'],
+                                    'product_id'=>$obj['ProductType']['id']
+                                ),
+                                'property'=>array(
+                                    //'bg_color'=>$obj['OmcCustomerOrder']['row_bg_color'],
+                                    //'edit_row'=> $edit_row
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    $data = array('OmcCustomerOrder' => $_POST);
+                    $data['OmcCustomerOrder']['dealer_modified'] = date('Y-m-d H:i:s');
+                    $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
+                    
+                    $data['OmcCustomerOrder']['discharge_date'] = $this->covertDate($_POST['discharge_date'],'mysql').' '.date('H:i:s');
+                   
+
+                     
+                    if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
+                        $order_id  = $this->OmcCustomerOrder->id;
+                        //Activity Log
+                        $log_description = $this->getLogMessage('UpdatePost Delivery')." (Order #".$order_id.")";
+                        $this->logActivity('Order',$log_description);
+
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$order_id));
+                        }
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    //echo debug($data);
+                    break;
+
+                case 'load':
+
+                    break;
+            }
+        }
+
+        $products_lists = $this->get_products();
+        $start_dt = date('01-m-Y');
+        $end_dt = date('t-m-Y');
+        $group_by = 'monthly';
+        $group_by_title = date('F');
+        
+
+        /* $bdclists =array(array('name'=>'All','value'=>0));
+         foreach($bdclists_data as $arr){
+             $bdclists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+         }*/
+
+        $order_filter = $this->order_filter;
+
+        $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+
+        $volumes = $this->Volume->getVolsList();
+
+        $graph_title = $group_by_title.", Orders-Consolidated";
+
+        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter'));
     }
 
 
