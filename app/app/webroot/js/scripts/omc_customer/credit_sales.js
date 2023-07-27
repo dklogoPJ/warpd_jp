@@ -53,8 +53,8 @@ var Order = {
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
                 edit:inArray('E',permissions),
-                confirmSave:false
-               // confirmSaveText:"If this order gets processed by te OMC, you can't change it afterwords. \n Are you sure the information you entered is correct ?"
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:true,
             sortname:"id",
