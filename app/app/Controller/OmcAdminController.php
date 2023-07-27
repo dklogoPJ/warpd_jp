@@ -10,7 +10,7 @@ class OmcAdminController extends OmcAppController
 
     var $name = 'OmcAdmin';
     # set the model to use
-    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct');
+    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct','CustomerCreditSetting');
     # Set the layout to use
     var $layout = 'omc_layout';
 
@@ -1230,7 +1230,7 @@ class OmcAdminController extends OmcAppController
 
     function credit_customer_setting($type = 'get')
     {
-        //$company_profile = $this->global_company;
+        $company_profile = $this->global_company;
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -1254,22 +1254,35 @@ class OmcAdminController extends OmcAppController
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
-                   
-                    $data_table = $this->Truck->find('all', array('order' => "Truck.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->Truck->find('count', array('recursive' => -1));
+                    $condition_array = array(
+                        'CustomerCreditSetting.deleted' => 'n'
+                    );
 
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                   
+                    $data_table = $this->CustomerCreditSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->CustomerCreditSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
+
 
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
                             $return_arr[] = array(
-                                'id' => $obj['Truck']['id'],
+                                'id' => $obj['CustomerCreditSetting']['id'],
                                 'cell' => array(
-                                    $obj['Truck']['id'],
-                                    $obj['Truck']['truck_no'],
-                                    $obj['Truck']['capacity'],
-                                    $obj['Truck']['name'],
+                                    $obj['CustomerCreditSetting']['id'],
+                                    $obj['CustomerCreditSetting']['customer_name'],
+                                    $obj['CustomerCreditSetting']['business_type'],
+                                    $obj['OmcCustomer']['name'],
+                                    $obj['CustomerCreditSetting']['territory'],
+                                    $obj['CustomerCreditSetting']['credit_limit'],
+                                    $obj['CustomerCreditSetting']['credit_days'],
+                                    $obj['CustomerCreditSetting']['agreement_sign'],
+                                    $obj['CustomerCreditSetting']['risk_rating']
                                 )
                             );
                         }
@@ -1295,39 +1308,55 @@ class OmcAdminController extends OmcAppController
                     
                    
 
-                    $data = array('Truck' => $_POST);
+                    $data = array('CustomerCreditSetting' => $_POST);
         
                     if($_POST['id'] == 0){
-                        $data['Truck']['created_by'] = $authUser['id'];
+                        $data['CustomerCreditSetting']['created_by'] = $authUser['id'];
                     }
                     else{
-                        $data['Truck']['modified_by'] = $authUser['id'];
+                        $data['CustomerCreditSetting']['modified_by'] = $authUser['id'];
                     }
 
-                    if ($this->Truck->save($this->sanitize($data))) {
+                    if ($this->CustomerCreditSetting->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Truck->id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->CustomerCreditSetting->id));
                         }
                     } else {
                         return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
                     }
                     break;
 
-                case 'delete':
-                    $ids = $_POST['ids'];
-                    $modObj = ClassRegistry::init('Truck');
-                    $result = $modObj->deleteAll(array('Truck.id' => $ids),false);
-                    if ($result) {
-                        echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
-                    } else {
-                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
-                    }
-                    break;
+                    case 'delete':
+                        $ids = $_POST['ids'];
+                        $modObj = ClassRegistry::init('CustomerCreditSetting');
+                        $result = $modObj->updateAll(
+                            array('CustomerCreditSetting.deleted' => "'y'"),
+                            array('CustomerCreditSetting.id' => $ids)
+                        );
+                        if ($result) {
+                            $modObj = ClassRegistry::init('CustomerCreditSetting');
+                            $modObj->updateAll(
+                                array('CustomerCreditSetting.deleted' => "'y'"),
+                                array('CustomerCreditSetting.id' => $ids)
+                            );
+    
+                         echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                        } else {
+                            echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                        }
+                        break;
             }
         }
+
+        
+        $station_list = $this->get_customer_list();
+        $yes_no = array('0'=>array('id'=>'Yes','name'=>'Yes'),'1'=>array('id'=>'No','name'=>'No'));
+        $risk_rate = array('0'=>array('id'=>'Low','name'=>'Low'),'1'=>array('id'=>'Medium','name'=>'Medium'),'2'=>array('id'=>'High','name'=>'High'));
+
+        $this->set(compact('yes_no','station_list','risk_rate'));
 
     }
 
