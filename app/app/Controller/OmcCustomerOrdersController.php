@@ -315,7 +315,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
-pr($data_table);
+
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
