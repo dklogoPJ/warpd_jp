@@ -126,6 +126,8 @@ class AppController extends Controller
 
     public $global_company = array();
 
+    public $active_menu = null;
+
     var $company_modules = array();
 
 
@@ -133,6 +135,12 @@ class AppController extends Controller
     {
         $this->processUserCookie();
         $this->updateUserLoginTime();
+
+        $Menu = ClassRegistry::init('Menu');
+        $this->active_menu = $Menu->getMenuByUrl($this->params['controller'], $this->params['action']);
+        if($this->active_menu && $this->active_menu['Menu']['url_type'] === 'proxy'){//if not allowed, redirect to Router
+            $this->redirect(array('controller' => $this->params['controller'], 'action' => 'index/'.$this->params['action']));
+        }
 
         $User = ClassRegistry::init('User');
         $Bdc = ClassRegistry::init('Bdc');
@@ -149,7 +157,6 @@ class AppController extends Controller
             $company_modules = array();
             if($authUser){
                 $user_type = $authUser['user_type'];
-               //if ses_entity then use it rather than querying from db.
                 if($this->Session->check('ses_entity')){
                     $this->global_company = $this->Session->read('ses_entity');
                 }
@@ -219,8 +226,9 @@ class AppController extends Controller
             }
 
             $controller = $this->params['controller'];
+            $menuTitle = $this->active_menu ? $this->active_menu['Menu']['menu_name'] : '';
 
-            $this->set(compact('authUser','auth_user_view','company_profile','company_modules','controller'));
+            $this->set(compact('authUser','auth_user_view','company_profile','company_modules','controller','menuTitle'));
         }
     }
 
@@ -383,6 +391,9 @@ class AppController extends Controller
             return true;
         }
         if(stristr($controller, 'Common') !== false) {//Skip for Common
+            return true;
+        }
+        if(stristr($controller, 'OmcCustomerDailySales') !== false && stristr($action, 'index') !== false) {//Skip validation
             return true;
         }
         if(stristr($action, 'print_export') !== false) {//Skip for print and export functions

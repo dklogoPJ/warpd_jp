@@ -11,7 +11,7 @@ class OmcDailySalesController extends OmcAppController
 
     var $name = 'OmcDailySales';
     # set the model to use
-    var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm','OmcCustomer');
+    var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm','OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -148,6 +148,25 @@ class OmcDailySalesController extends OmcAppController
     }
 
 
+    function _createSalesFormMenu($data){
+        $menu_action = str_replace(" ","_",strtolower(trim($data['form_name'])));
+        return $this->Menu->createMenu(array(
+            'id'=>$data['menu_id'],
+            'type'=>'omc_customer',
+            'title'=>$data['form_name'],
+            'description'=>$data['form_name'],
+            'permission_controls'=>'A,E,PX',
+            'parent'=>114,
+            'required'=>'',
+            'menu_group'=>'Operations',
+            'controller'=>'OmcCustomerDailySales',
+            'action'=>$menu_action,
+            'url_type'=>'proxy',
+            'icon'=>'icon-file',
+            'menu_name'=>$data['form_name'],
+            'order'=>$data['form_order']
+        ));
+    }
 
     function sales_form_templates(){
         $permissions = $this->action_permission;
@@ -158,13 +177,31 @@ class OmcDailySalesController extends OmcAppController
             $this->autoLayout = false;
             $authUser = $this->Auth->user();
             $post = $this->sanitize($_POST);
-            $action_type = isset($post['form_action_type'])? $post['form_action_type'] : $post['field_action_type'];
-            //Form Save
+            $action_type = '';
+            if(isset($post['form_action_type'])) {
+                $action_type = $post['form_action_type'];
+            }
+            if(isset($post['field_action_type'])) {
+                $action_type = $post['field_action_type'];
+            }
+            if(isset($post['pf_option_action_type'])) {
+                $action_type = $post['pf_option_action_type'];
+            }
+            //Form
             if($action_type == 'form_save'){
+                $menu_action = str_replace(" ","_",strtolower(trim($post['form_name'])));
+                //Create form url so it can be accessed via menus
+                $post['action'] = $menu_action;
+                $menu_id = $this->_createSalesFormMenu($post);
+
                 $data = array('OmcSalesForm'=>array(
                     'id'=>$post['form_id'],
+                    'menu_id'=> $menu_id,
+                    'form_key'=>$menu_action,
                     'form_name'=>$post['form_name'],
+                    'order'=>$post['form_order'],
                     'description'=>$post['form_description'],
+                    'primary_field'=>$post['form_primary_field'],
                     'omc_id'=>$post['omc_id'],
                     'modified_by'=>$authUser['id']
                 )) ;
@@ -173,58 +210,50 @@ class OmcDailySalesController extends OmcAppController
                 }
                 if ($this->OmcSalesForm->save($data['OmcSalesForm'])) {
                     if($post['form_id'] > 0){
-                        return json_encode(array('code' => 0, 'msg' => 'Form Updated!', 'id'=>$post['form_id']));
+                        return json_encode(array('code' => 0, 'msg' => 'Form Updated!', 'id'=>$post['form_id'], 'menu_id'=>$menu_id));
                     }
                     else{
-                        return json_encode(array('code' => 0, 'msg' => 'Form Saved', 'id'=>$this->OmcSalesForm->id));
+                        return json_encode(array('code' => 0, 'msg' => 'Form Saved', 'id'=>$this->OmcSalesForm->id, 'menu_id'=>$menu_id));
                     }
                 }
                 else {
+                    $this->Menu->deleteMenu($menu_id, $authUser['id']);
                     echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
                 }
             }
             elseif($action_type == 'form_delete'){
                 $form_id= $post['form_id'];
-                $res = $this->OmcSalesForm->deleteForm($form_id,$authUser['id']);
+                $menu_id= $post['menu_id'];
+                $res = $this->OmcSalesForm->deleteForm($form_id, $authUser['id']);
                 if ($res) {
+                    $this->Menu->deleteMenu($menu_id, $authUser['id']);
                     return json_encode(array('code' => 0, 'msg' => 'Form Deleted!', 'id'=>$post['form_id']));
                 }
                 else {
                     return json_encode(array('code' => 1, 'msg' => 'Form Deletion Failed.'));
                 }
             }
-            elseif($action_type == 'form_preview'){
-                $form_id= $post['form_id'];
-                $from_data = $this->OmcSalesForm->getFormForPreview($form_id);
-                $view = new View($this, false);
-                $view->set(compact('from_data')); // set variables
-                $view->viewPath = 'Elements/omc/'; // render an element
-                $html = $view->render('preview_table_form'); // get the rendered markup
-
-                if ($from_data) {
-                    return json_encode(array('code' => 0, 'msg' => 'Form Found!', 'form_name'=>$from_data['form']['name'],'html'=>$html));
-                }
-                else {
-                    return json_encode(array('code' => 1, 'msg' => 'Form Not Found.'));
-                }
-            }
-            //Field Save
-            if($action_type == 'field_save'){
-                $data = array('OmcSalesFormField'=>array(
+            //Field
+            elseif($action_type == 'field_save'){
+                $data = array(
                     'id'=>$post['field_id'],
                     'omc_sales_form_id'=>$post['omc_sales_form_id'],
-                    //'groups'=>$post['groups'],
                     'field_name'=>$post['field_name'],
+                    'field_order'=>$post['field_order'],
                     'field_type'=>$post['field_type'],
                     'field_type_values'=>$post['field_type_values'],
                     'field_required'=>$post['field_required'],
+                    'field_event'=>$post['field_event'],
+                    'field_action'=>$post['field_action'],
+                    'field_action_sources'=> $post['field_action_sources_str'],
+                    'field_action_targets'=> $post['field_id'] != 0 ?  $post['field_id'] : null,
                     'modified_by'=>$authUser['id']
-                )) ;
+                ) ;
 
                 if($post['field_id'] == 0){//New Manual Entry
-                    $data['OmcSalesFormField']['created_by'] = $authUser['id'];
+                    $data['created_by'] = $authUser['id'];
                 }
-                if ($this->OmcSalesFormField->save($data['OmcSalesFormField'])) {
+                if ($this->OmcSalesFormField->save($data)) {
                     if($post['field_id'] > 0){
                         return json_encode(array('code' => 0, 'msg' => 'Field Updated!', 'id'=>$post['field_id']));
                     }
@@ -246,6 +275,60 @@ class OmcDailySalesController extends OmcAppController
                     return json_encode(array('code' => 1, 'msg' => 'Field Deletion Failed.'));
                 }
             }
+            //Primary Field
+            elseif($action_type == 'option_save'){
+                $data = array(
+                    'id'=>$post['pf_option_id'],
+                    'omc_sales_form_id'=>$post['pf_omc_sales_form_id'],
+                    'option_name'=>$post['pf_option_name'],
+                    'order'=>$post['pf_order'],
+                    'is_total'=>$post['pf_option_is_total'],
+                    'total_option_list'=>$post['pf_total_option_list'],
+                    'modified_by'=>$authUser['id']
+                ) ;
+
+                if($post['pf_option_id'] == 0){//New Manual Entry
+                    $data['created_by'] = $authUser['id'];
+                }
+                if ($this->OmcSalesFormPrimaryFieldOption->save($data)) {
+                    if($post['pf_option_id'] > 0){
+                        return json_encode(array('code' => 0, 'msg' => 'Option Updated!', 'id'=>$post['pf_option_id']));
+                    }
+                    else{
+                        return json_encode(array('code' => 0, 'msg' => 'Option Saved', 'id'=>$this->OmcSalesFormPrimaryFieldOption->id));
+                    }
+                }
+                else {
+                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                }
+            }
+            elseif($action_type == 'option_delete'){
+                $option_id= $post['pf_option_id'];
+                $res = $this->OmcSalesFormPrimaryFieldOption->deleteOption($option_id, $authUser['id']);
+                if ($res) {
+                    return json_encode(array('code' => 0, 'msg' => 'Option Deleted!', 'id'=>$option_id));
+                }
+                else {
+                    return json_encode(array('code' => 1, 'msg' => 'Option Deletion Failed.'));
+                }
+            }
+            //Preview
+            elseif($action_type == 'form_preview'){
+                $form_id= $post['form_id'];
+                $from_data = $this->OmcSalesForm->getFormForPreview($form_id);
+                $view = new View($this, false);
+                $view->set(compact('from_data')); // set variables
+                $view->viewPath = 'Elements/omc/'; // render an element
+                $html = $view->render('preview_table_form'); // get the rendered markup
+
+                if ($from_data) {
+                    return json_encode(array('code' => 0, 'msg' => 'Form Found!', 'form_name'=>$from_data['form']['name'],'html'=>$html));
+                }
+                else {
+                    return json_encode(array('code' => 1, 'msg' => 'Form Not Found.'));
+                }
+            }
+
         }
 
 
@@ -263,25 +346,49 @@ class OmcDailySalesController extends OmcAppController
                     $fields_arr[$field['id']]=array(
                         'id'=>$field['id'],
                         'form_id'=>$field['omc_sales_form_id'],
-                        'groups'=>$field['groups'],
                         'field_name'=>$field['field_name'],
+                        'field_order'=>$field['field_order'],
                         'field_type'=>$field['field_type'],
                         'field_type_values'=>$field['field_type_values'],
-                        'field_required'=>$field['field_required']
+                        'field_required'=>$field['field_required'],
+                        'field_event'=>$field['field_event'],
+                        'field_action'=>$field['field_action'],
+                        'field_action_sources'=>$field['field_action_sources']
+                    );
+                }
+            }
+            //group form primary field options
+            $primary_field_options_arr = array();
+            foreach($form_arr['OmcSalesFormPrimaryFieldOption'] as $option){
+                if($option['deleted'] == 'n'){
+                    $primary_field_options_arr[$option['id']]=array(
+                        'id'=>$option['id'],
+                        'form_id'=>$option['omc_sales_form_id'],
+                        'option_name'=>$option['option_name'],
+                        'order'=>$option['order'],
+                        'is_total'=>$option['is_total'],
+                        'total_option_list'=>$option['total_option_list']
                     );
                 }
             }
 
             $forms_fields[$form['id']] = array(
                 'id' => $form['id'],
+                'menu_id' => $form['menu_id'],
                 'name' => $form['form_name'],
+                'description' => $form['description'],
+                'order' => $form['order'],
+                'primary_field_name' => $form['primary_field'],
+                'primary_field_options'=>$primary_field_options_arr,
                 'fields'=>$fields_arr
             );
+
         }
 
-        //debug($forms_fields);
+        $sale_form_element_events = $this->SalesFormElementEvent->getKeyValuePair();
+        $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
 
-        $this->set(compact('permissions','products_services','sale_forms','company_profile','sale_form_options','forms_fields'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions'));
     }
 
 

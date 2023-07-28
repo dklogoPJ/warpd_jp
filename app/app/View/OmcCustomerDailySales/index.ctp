@@ -50,7 +50,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1>Daily Sales Record : <?php echo date('l jS F Y');?> <small> </small></h1>
+        <h1><?php echo $menu_title.' : '.date('l jS F Y');?> <small> </small></h1>
     </div>
 
     <div class="row-fluid">
@@ -67,36 +67,34 @@
                 </ul>
             </div>
             <div class="block-fluid" id="form_tabs">
-                <ul id="sales-form-tabs">
+               <!-- <ul id="sales-form-tabs">
                     <?php
-                    foreach($forms_n_fields as $f){
+/*                    foreach($forms_n_fields as $f){
                         $form_id = $f['id'];
                         $form_name = $f['name'];
                         $render_type = $f['render_type'];
                         $tab_ref_id = "#tabs-".$form_id;
-                    ?>
-                        <li><a href="<?php echo $tab_ref_id; ?>" data-render_type="<?php echo $render_type; ?>"  data-form_id="<?php echo $form_id; ?>"  data-form_table_id="#form-table-<?php echo $form_id; ?>"><strong><?php echo $form_name; ?></strong></a></li>
+                    */?>
+                        <li><a href="<?php /*echo $tab_ref_id; */?>" data-render_type="<?php /*echo $render_type; */?>"  data-form_id="<?php /*echo $form_id; */?>"  data-form_table_id="#form-table-<?php /*echo $form_id; */?>"><strong><?php /*echo $form_name; */?></strong></a></li>
                     <?php
-                    }
-                    ?>
-                </ul>
-                <?php
-                $form_field_rendered = array();
+/*                    }
+                    */?>
+                </ul>-->
+               <!-- --><?php
+/*                $form_field_rendered = array();
                 foreach($forms_n_fields as $f){
                     $form_id = $f['id'];
                     $tab_id = "tabs-".$form_id;
                     $table_id = "form-table-".$form_id;
-                ?>
-                    <div id="<?php echo $tab_id; ?>">
-                        <div style="padding: 40px 10px 0px;">
+                */?>
+                    <div id="">
+                        <div style="padding: 10px 10px 0px;">
                             <div class="row-fluid">
                                 <div class="span12">
                                     <div class="block-fluid">
                                         <div style="height: 550px; overflow-x: auto; overflow-y: auto;">
                                             <?php
-                                            $table_n_fields = $this->TableForm->render($table_id,$f['fields'],$f['values']);
-                                            $form_field_rendered[$form_id] = $table_n_fields['fields'];
-                                            echo $table_n_fields['table'];
+                                            echo $this->TableForm->renderDailySalesTableForm($to_days_sales_record);
                                             ?>
                                         </div>
                                     </div>
@@ -104,9 +102,7 @@
                             </div>
                         </div>
                     </div>
-                <?php
-                }
-                ?>
+
             </div>
         </div>
 
@@ -123,7 +119,7 @@
 <!-- Le Script -->
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
-    var forms_n_fields = <?php echo json_encode($forms_n_fields); ?>;
+    var to_days_sales_record = <?php echo json_encode($to_days_sales_record); ?>;
     var form_field_rendered = <?php echo json_encode($form_field_rendered); ?>;
     var price_change_data = <?php echo json_encode($price_change_data); ?>;
     var previous_day_records = <?php echo json_encode($previous_day_records); ?>;

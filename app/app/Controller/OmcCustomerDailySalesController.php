@@ -11,8 +11,13 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
     var $name = 'OmcCustomerDailySales';
     # set the model to use
-    var $uses = array('OmcSalesSheet','OmcBulkStockPosition','OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary','OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption','OmcCustomerOrder','OmcCustomer','ProductType','Volume','NctRecord','Nct');
-
+    var $uses = array(
+        'Menu','OmcSalesForm','OmcSalesRecord','OmcSalesSheet','OmcBulkStockPosition',
+        'OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary',
+        'OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption',
+        'OmcCustomerOrder','OmcCustomer','ProductType','Volume','NctRecord','Nct',
+        'OmcCustomerDailySaleRecord'
+    );
     # Set the layout to use
     var $layout = 'omc_customer_layout';
 
@@ -22,7 +27,127 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
     }
 
 
-    function index(){
+    function index($form_key = '') {
+        $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+        $sheet_date = date('Y-m-d');
+
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $post = $this->sanitize($_POST);
+            $sheet = $this->OmcSalesSheet->getSheet($company_profile['id'],$company_profile['omc_id'],$sheet_date);
+            $sheet_id = 0;
+            if($sheet){
+                $sheet_id = $sheet['OmcSalesSheet']['id'];
+            }
+            else{
+                $this->OmcSalesSheet->setUpSheet($company_profile['id'],$company_profile['omc_id']);
+                $sheet = $this->OmcSalesSheet->getSheet($company_profile['id'],$company_profile['omc_id'],$sheet_date);
+                $sheet_id = $sheet['OmcSalesSheet']['id'];
+            }
+            $post['sheet'] = $sheet_id;
+            $record_id = intval($post['record_id']);
+            $new = false;
+            if($record_id == 0){//New Row or Record
+                $new = true;
+                $record_id = $this->OmcSalesRecord->createRecord($sheet_id,$post['form_id']);
+            }
+            foreach($post['field_values'] as $key => $d){
+                $post['field_values'][$key]['omc_sales_record_id'] = $record_id;
+                $post['field_values'][$key]['modified_by'] = $authUser['id'];
+                if($new){
+                    $post['field_values'][$key]['created_by'] = $authUser['id'];
+                }
+            }
+
+            $action_type = $post['form_action_type'];
+            //Form Save
+            if($action_type == 'form_save'){
+                if ($this->OmcSalesValue->saveAll($post['field_values'])) {
+                    $rec = $this->OmcSalesRecord->getRecordById($record_id);
+                    if($new){
+                        return json_encode(array('code' => 0, 'msg' => 'Record Saved!', 'data'=>$rec));
+                    }
+                    else{
+                        return json_encode(array('code' => 0, 'msg' => 'Record Updated!', 'data'=>$rec));
+                    }
+                }
+                else {
+                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred whiles saving the record.'));
+                }
+            }
+        }
+
+        $to_days_sales_record = $this->OmcCustomerDailySaleRecord->setupFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $form_key);
+
+        // $this->OmcSalesForm->initPrePopulateForms($company_profile['omc_id'],$company_profile['id'],$sheet_date);
+
+        //$sale_form_data = $this->OmcSalesForm->getSalesForm($company_profile['omc_id'], $form_key);
+
+      //  debug($sale_form_data);
+
+       /* $forms_n_fields = array();
+        $form = $sale_form_data['OmcSalesForm'];
+        $fields = $sale_form_data['OmcSalesFormField'];
+        if(!empty($fields)){
+            //group forms and fields
+            $fields_arr = array();
+            foreach($sale_form_data['OmcSalesFormField'] as $field){
+                if($field['deleted'] == 'n'){
+                    $fields_arr[$field['id']]=array(
+                        'id'=>$field['id'],
+                        'form_id'=>$field['omc_sales_form_id'],
+                        'groups'=>$field['groups'],
+                        'field_name'=>$field['field_name'],
+                        'field_type'=>$field['field_type'],
+                        'control_field'=>$field['control_field'],
+                        'field_type_values'=>$field['field_type_values'],
+                        'field_required'=>$field['field_required'],
+                        'rule_type'=>$field['rule_type'],
+                        'on_focus'=>$field['on_focus'],
+                        'on_blur'=>$field['on_blur'],
+                        'on_change'=>$field['on_change'],
+                        'before_render'=>$field['before_render'],
+                        'after_render'=>$field['after_render']
+                    );
+                }
+            }
+            //Get form Values
+            $form_data_record_raw = $this->OmcSalesSheet->getFormData($form['id'],$company_profile['id'],$company_profile['omc_id'],$sheet_date);
+            $form_data_records = $form_data_record_raw['data'];
+            $forms_n_fields = array(
+                'id' => $form['id'],
+                'name' => $form['form_name'],
+                'render_type' => $form['render_type'],
+                'fields'=>$fields_arr,
+                'values'=>$form_data_records
+            );
+        }*/
+
+
+        //Get Previous Days Records
+        $previous_day_records = $this->OmcSalesForm->getPreviousDayData($company_profile['omc_id'],$company_profile['id'], $form_key);
+        $current_day_records = $this->OmcSalesForm->getCurrentDayData($company_profile['omc_id'],$company_profile['id'], $form_key);
+        //debug($current_day_records);
+
+        $price_change_data = array();
+        foreach($this->price_change as $pn => $pr){
+            $price_change_data[$pr['product_type_id']] = array(
+                'name'=>$pn,
+                'value'=>$pr['price']
+            );
+        }
+
+        $menu = $this->Menu->getMenuByUrl('OmcCustomerDailySales', $form_key);
+        $menu_title = $menu['Menu']['menu_name'];
+
+        //debug($to_days_sales_record);
+        $this->set(compact('permissions','company_profile','to_days_sales_record','price_change_data','previous_day_records','current_day_records','menu_title'));
+    }
+
+    function indexOriginal(){
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
         $sheet_date = date('Y-m-d');
@@ -137,143 +262,6 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
         //debug($forms_n_fields);
         $this->set(compact('permissions','company_profile','forms_n_fields','price_change_data','previous_day_records','current_day_records'));
-    }
-
-
-
-    function sales_form_templates(){
-        $permissions = $this->action_permission;
-        $company_profile = $this->global_company;
-
-        if ($this->request->is('ajax')) {
-            $this->autoRender = false;
-            $this->autoLayout = false;
-            $authUser = $this->Auth->user();
-            $post = $this->sanitize($_POST);
-            $action_type = isset($post['form_action_type'])? $post['form_action_type'] : $post['field_action_type'];
-            //Form Save
-            if($action_type == 'form_save'){
-                $data = array('OmcSalesForm'=>array(
-                    'id'=>$post['form_id'],
-                    'form_name'=>$post['form_name'],
-                    'description'=>$post['form_description'],
-                    'omc_id'=>$post['omc_id'],
-                    'modified_by'=>$authUser['id']
-                )) ;
-                if($post['form_id'] == 0){//New Manual Entry
-                    $data['OmcSalesForm']['created_by'] = $authUser['id'];
-                }
-                if ($this->OmcSalesForm->save($data['OmcSalesForm'])) {
-                    if($post['form_id'] > 0){
-                        return json_encode(array('code' => 0, 'msg' => 'Form Updated!', 'id'=>$post['form_id']));
-                    }
-                    else{
-                        return json_encode(array('code' => 0, 'msg' => 'Form Saved', 'id'=>$this->OmcSalesForm->id));
-                    }
-                }
-                else {
-                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
-                }
-            }
-            elseif($action_type == 'form_delete'){
-                $form_id= $post['form_id'];
-                $res = $this->OmcSalesForm->deleteForm($form_id,$authUser['id']);
-                if ($res) {
-                    return json_encode(array('code' => 0, 'msg' => 'Form Deleted!', 'id'=>$post['form_id']));
-                }
-                else {
-                    return json_encode(array('code' => 1, 'msg' => 'Form Deletion Failed.'));
-                }
-            }
-            elseif($action_type == 'form_preview'){
-                $form_id= $post['form_id'];
-                $from_data = $this->OmcSalesForm->getFormForPreview($form_id);
-                $view = new View($this, false);
-                $view->set(compact('from_data')); // set variables
-                $view->viewPath = 'Elements/omc/'; // render an element
-                $html = $view->render('preview_table_form'); // get the rendered markup
-
-                if ($from_data) {
-                    return json_encode(array('code' => 0, 'msg' => 'Form Found!', 'form_name'=>$from_data['form']['name'],'html'=>$html));
-                }
-                else {
-                    return json_encode(array('code' => 1, 'msg' => 'Form Not Found.'));
-                }
-            }
-            //Field Save
-            if($action_type == 'field_save'){
-                $data = array('OmcSalesFormField'=>array(
-                    'id'=>$post['field_id'],
-                    'omc_sales_form_id'=>$post['omc_sales_form_id'],
-                    //'groups'=>$post['groups'],
-                    'field_name'=>$post['field_name'],
-                    'field_type'=>$post['field_type'],
-                    'field_type_values'=>$post['field_type_values'],
-                    'field_required'=>$post['field_required'],
-                    'modified_by'=>$authUser['id']
-                )) ;
-
-                if($post['field_id'] == 0){//New Manual Entry
-                    $data['OmcSalesFormField']['created_by'] = $authUser['id'];
-                }
-                if ($this->OmcSalesFormField->save($data['OmcSalesFormField'])) {
-                    if($post['field_id'] > 0){
-                        return json_encode(array('code' => 0, 'msg' => 'Field Updated!', 'id'=>$post['field_id']));
-                    }
-                    else{
-                        return json_encode(array('code' => 0, 'msg' => 'Field Saved', 'id'=>$this->OmcSalesFormField->id));
-                    }
-                }
-                else {
-                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
-                }
-            }
-            elseif($action_type == 'field_delete'){
-                $field_id= $post['field_id'];
-                $res = $this->OmcSalesFormField->deleteField($field_id,$authUser['id']);
-                if ($res) {
-                    return json_encode(array('code' => 0, 'msg' => 'Field Deleted!', 'id'=>$field_id));
-                }
-                else {
-                    return json_encode(array('code' => 1, 'msg' => 'Field Deletion Failed.'));
-                }
-            }
-        }
-
-
-        $sale_forms = $this->OmcSalesForm->getAllSalesForms($company_profile['id']);
-
-        $sale_form_options = $forms_fields = array();
-        foreach($sale_forms as $form_arr){
-            $form = $form_arr['OmcSalesForm'];
-            //Forms for Options
-            $sale_form_options[$form['id']] = $form['form_name'];
-            //group forms and fields
-            $fields_arr = array();
-            foreach($form_arr['OmcSalesFormField'] as $field){
-                if($field['deleted'] == 'n'){
-                    $fields_arr[$field['id']]=array(
-                        'id'=>$field['id'],
-                        'form_id'=>$field['omc_sales_form_id'],
-                        'groups'=>$field['groups'],
-                        'field_name'=>$field['field_name'],
-                        'field_type'=>$field['field_type'],
-                        'field_type_values'=>$field['field_type_values'],
-                        'field_required'=>$field['field_required']
-                    );
-                }
-            }
-
-            $forms_fields[$form['id']] = array(
-                'id' => $form['id'],
-                'name' => $form['form_name'],
-                'fields'=>$fields_arr
-            );
-        }
-
-        //debug($forms_fields);
-
-        $this->set(compact('permissions','products_services','sale_forms','company_profile','sale_form_options','forms_fields'));
     }
 
 
@@ -950,7 +938,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
             $this->autoLayout = false;
             $authUser = $this->Auth->user();
             $company_profile = $this->global_company;
-            
+
             switch ($type) {
                 case 'get' :
                     /**  Get posted data */
@@ -1028,7 +1016,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
                     if ($this->NctRecord->save($this->sanitize($data))) {
                         $nct_record_id  = $this->NctRecord->id;
-                        //Array Data here 
+                        //Array Data here
                         //Activity Log
                         $log_description = $this->getLogMessage('UpdateNctRecord')." (Nct Record #".$nct_record_id.")";
                         $this->logActivity('Order',$log_description);
@@ -1062,7 +1050,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                                 array('NctRecord.deleted' => "'y'"),
                                 array('NctRecord.id' => $ids)
                             );
-    
+
                          echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
                         } else {
                             echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
@@ -1084,7 +1072,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $volumes = $this->Volume->getVolsList();
         $nct = $this->Nct->getNctList();
         $omc_customer = $this->OmcCustomer->getOmcCustomerList();
-     
+
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','nct','omc_customer'));

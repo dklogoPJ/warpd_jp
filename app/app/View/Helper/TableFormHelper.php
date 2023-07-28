@@ -31,7 +31,7 @@
 class TableFormHelper extends AppHelper {
 
 
-    function render_preview($name,$columns = array(),$data=array(),$class='table table-bordered'){
+    function render_preview($name, $columns = array(), $data=array(), $class='table table-bordered'){
         $columns_count = count($columns);
         $table = "<table id='{$name}' width='100%' class='{$class}'>";
             $table .= "<thead>";
@@ -60,7 +60,7 @@ class TableFormHelper extends AppHelper {
     }
 
 
-    function render($name,$columns = array(),$data=array(),$class='table table-bordered'){
+    function render($name, $columns = array(), $data=array(), $class='table table-bordered'){
         $table = "<table id='{$name}' width='100%' class='form-tables {$class}'>";
         $table .= "<thead>";
         $table .= "<tr>";
@@ -106,6 +106,73 @@ class TableFormHelper extends AppHelper {
         $table .= "</table>";
 
         return array('table'=>$table,"fields"=>$fields);
+    }
+
+
+    function renderDailySalesTableForm ($param , $class='table table-bordered') {
+       // debug($param);
+        $table = "<table width='100%' class='form-tables {$class}'>";
+        $table .= "<thead>";
+        $table .= "<tr>";
+        $fields = array();
+
+        foreach($param['headers'] as $column){
+            $table .= "<th>";
+            $table .= $column['name'];
+            $table .= "</th>";
+            $fields[] = $column;
+        }
+        $table .= "</tr>";
+        $table .= "</thead>";
+
+        $table .= "<tbody>";
+        //Render Data here
+        foreach($param['fields'] as $row_columns){
+            //$record_id = $record['record_id'];
+            //$values = $record['values'];
+            $table .= "<tr>";
+            foreach($row_columns as $field){
+
+
+             /*   'id' => 'super_1_1',
+				'name' => 'super_1',
+				'value' => 'Super 1',
+				'is_primary_field' => true,
+				'is_editable' => false,
+				'options' => array()*/
+
+
+                $field_id = $field['id'];
+
+                $table .= "<td data-field_id='{$field_id}'>";
+                $table .= $field['value'];
+                $table .= "</td>";
+
+               // $control_field = ($field['control_field']) ? 'yes':'no';
+               // $rule_type = $field['rule_type'];
+              /*  if(isset($values[$field_id])){
+                    $cell_value = $values[$field_id]['value'];
+                    if(is_numeric($cell_value)){
+                        $cell_value = $this->formatNumber($cell_value,'money',2);
+                    }
+                    $cell_value_id = $values[$field_id]['id'];
+                    $table .= "<td data-control_field='{$control_field}' data-rule_type='{$rule_type}' data-field_id='{$field_id}' data-value='{$cell_value}' data-value_id='{$cell_value_id}'>";
+                    $table .= $cell_value;
+                    $table .= "</td>";
+                }
+                else{
+                    $table .= "<td data-control_field='{$control_field}' data-rule_type='{$rule_type}' data-field_id='{$field_id}' data-value='' data-value_id=''>";
+                    $table .= '';
+                    $table .= "</td>";
+                }*/
+            }
+            $table .= "</tr>";
+        }
+        $table .= "</tbody>";
+
+        $table .= "</table>";
+
+       return $table;
     }
 
 }

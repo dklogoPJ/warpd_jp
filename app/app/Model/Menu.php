@@ -53,4 +53,43 @@ class Menu extends AppModel
         }
         return $arr;
     }
+
+    function createMenu($params) {
+        $query = $this->find('first',array(
+            'conditions'=> array(
+                'Menu.id'=> $params['id']
+            ),
+            'recursive'=>-1
+        ));
+        if($query) {
+            $this->id = $query['Menu']['id'];
+        }
+        if ($this->save($params)) {
+            return $this->id;
+        }
+        return null;
+    }
+
+    function getMenuByUrl($controller, $action) {
+        return $this->find('first',array(
+            'conditions'=>array(
+                'Menu.controller'=> $controller,
+                'Menu.action'=> $action
+            ),
+            'recursive'=>-1
+        ));
+    }
+
+    function deleteMenu($menu_id, $user_id) {
+        $save = $this->updateAll(
+            array('deleted' => "'y'"),
+            array(
+                'Menu.id' => $menu_id,
+            )
+        );
+        //Unbind menu from all menu user groups
+        $MenuGroup = ClassRegistry::init('MenuGroup');
+        $MenuGroup->deleteMenuGroupsByMenuId($menu_id, $user_id);
+        return $save;
+    }
 }

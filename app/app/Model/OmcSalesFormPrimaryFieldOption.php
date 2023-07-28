@@ -1,7 +1,5 @@
 <?php
-class OmcSalesFormField extends AppModel
-{
-
+class OmcSalesFormPrimaryFieldOption extends AppModel {
     /**
      * associations
      */
@@ -13,17 +11,16 @@ class OmcSalesFormField extends AppModel
             'order' => '',
             'limit' => '',
             'dependent' => false
-        )
+        ),
     );
 
-    function deleteField($form_id,$user_id){
+    function deleteOption($option_id, $user_id){
         return $this->updateAll(
             array('deleted' => "'y'",'modified_by'=>$user_id),
             array(
-                'OmcSalesFormField.id' => $form_id,
+                'OmcSalesFormPrimaryFieldOption.id' => $option_id,
             )
         );
     }
-
 
 }
