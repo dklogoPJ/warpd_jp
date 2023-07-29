@@ -16,7 +16,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         'OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary',
         'OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption',
         'OmcCustomerOrder','OmcCustomer','ProductType','Volume','NctRecord','Nct',
-        'OmcCustomerDailySaleRecord'
+        'OmcCustomerDailySale','OmcCustomerDailySaleField'
     );
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -28,109 +28,51 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
 
     function index($form_key = '') {
+        $this->setPermission($form_key);
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
         $sheet_date = date('Y-m-d');
+        $today_sales_sheet = date('Y-m-d');
+        $previous_day_sales_sheet = date('Y-m-d',strtotime("-1 days"));
 
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $this->autoLayout = false;
-            $authUser = $this->Auth->user();
+            //$authUser = $this->Auth->user();
             $post = $this->sanitize($_POST);
-            $sheet = $this->OmcSalesSheet->getSheet($company_profile['id'],$company_profile['omc_id'],$sheet_date);
-            $sheet_id = 0;
-            if($sheet){
-                $sheet_id = $sheet['OmcSalesSheet']['id'];
-            }
-            else{
-                $this->OmcSalesSheet->setUpSheet($company_profile['id'],$company_profile['omc_id']);
-                $sheet = $this->OmcSalesSheet->getSheet($company_profile['id'],$company_profile['omc_id'],$sheet_date);
-                $sheet_id = $sheet['OmcSalesSheet']['id'];
-            }
-            $post['sheet'] = $sheet_id;
-            $record_id = intval($post['record_id']);
-            $new = false;
-            if($record_id == 0){//New Row or Record
-                $new = true;
-                $record_id = $this->OmcSalesRecord->createRecord($sheet_id,$post['form_id']);
-            }
-            foreach($post['field_values'] as $key => $d){
-                $post['field_values'][$key]['omc_sales_record_id'] = $record_id;
-                $post['field_values'][$key]['modified_by'] = $authUser['id'];
-                if($new){
-                    $post['field_values'][$key]['created_by'] = $authUser['id'];
-                }
-            }
-
             $action_type = $post['form_action_type'];
-            //Form Save
-            if($action_type == 'form_save'){
-                if ($this->OmcSalesValue->saveAll($post['field_values'])) {
-                    $rec = $this->OmcSalesRecord->getRecordById($record_id);
-                    if($new){
-                        return json_encode(array('code' => 0, 'msg' => 'Record Saved!', 'data'=>$rec));
-                    }
-                    else{
-                        return json_encode(array('code' => 0, 'msg' => 'Record Updated!', 'data'=>$rec));
-                    }
+
+            if($action_type == 'create_sales_sheet'){
+                $new = $this->OmcCustomerDailySale->setupFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $post['form_key'], $today_sales_sheet);
+                if($new){
+                    return json_encode(array('code' => 0, 'msg' => 'Sales sheet created!'));
                 }
-                else {
-                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred whiles saving the record.'));
+                else{
+                    return json_encode(array('code' => 1, 'msg' => 'Could not create sales sheet!'));
+                }
+            } elseif ($action_type == 'delete_sales_sheet') {
+                $new = $this->OmcCustomerDailySale->deleteFormSaleSheet($post['form_sales_sheet_id']);
+                if($new){
+                    return json_encode(array('code' => 0, 'msg' => 'Sales sheet deleted!'));
+                }
+                else{
+                    return json_encode(array('code' => 1, 'msg' => 'Could not delete sales sheet!'));
+                }
+            } elseif ($action_type == 'form_save_sales_record') {
+                if($this->OmcCustomerDailySaleField->saveAll($post['field_values'])) {
+                    return json_encode(array('code' => 0, 'msg' => 'Sales sheet record saved!'));
+                }
+                else{
+                    return json_encode(array('code' => 1, 'msg' => 'Could not save sales sheet record.'));
                 }
             }
         }
 
-        $to_days_sales_record = $this->OmcCustomerDailySaleRecord->setupFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $form_key);
-
-        // $this->OmcSalesForm->initPrePopulateForms($company_profile['omc_id'],$company_profile['id'],$sheet_date);
-
-        //$sale_form_data = $this->OmcSalesForm->getSalesForm($company_profile['omc_id'], $form_key);
-
-      //  debug($sale_form_data);
-
-       /* $forms_n_fields = array();
-        $form = $sale_form_data['OmcSalesForm'];
-        $fields = $sale_form_data['OmcSalesFormField'];
-        if(!empty($fields)){
-            //group forms and fields
-            $fields_arr = array();
-            foreach($sale_form_data['OmcSalesFormField'] as $field){
-                if($field['deleted'] == 'n'){
-                    $fields_arr[$field['id']]=array(
-                        'id'=>$field['id'],
-                        'form_id'=>$field['omc_sales_form_id'],
-                        'groups'=>$field['groups'],
-                        'field_name'=>$field['field_name'],
-                        'field_type'=>$field['field_type'],
-                        'control_field'=>$field['control_field'],
-                        'field_type_values'=>$field['field_type_values'],
-                        'field_required'=>$field['field_required'],
-                        'rule_type'=>$field['rule_type'],
-                        'on_focus'=>$field['on_focus'],
-                        'on_blur'=>$field['on_blur'],
-                        'on_change'=>$field['on_change'],
-                        'before_render'=>$field['before_render'],
-                        'after_render'=>$field['after_render']
-                    );
-                }
-            }
-            //Get form Values
-            $form_data_record_raw = $this->OmcSalesSheet->getFormData($form['id'],$company_profile['id'],$company_profile['omc_id'],$sheet_date);
-            $form_data_records = $form_data_record_raw['data'];
-            $forms_n_fields = array(
-                'id' => $form['id'],
-                'name' => $form['form_name'],
-                'render_type' => $form['render_type'],
-                'fields'=>$fields_arr,
-                'values'=>$form_data_records
-            );
-        }*/
-
-
+        $current_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $form_key, $today_sales_sheet);
         //Get Previous Days Records
-        $previous_day_records = $this->OmcSalesForm->getPreviousDayData($company_profile['omc_id'],$company_profile['id'], $form_key);
-        $current_day_records = $this->OmcSalesForm->getCurrentDayData($company_profile['omc_id'],$company_profile['id'], $form_key);
-        //debug($current_day_records);
+        $previous_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'],$company_profile['id'], $form_key, $previous_day_sales_sheet);
+
+       // debug($current_day_records);
 
         $price_change_data = array();
         foreach($this->price_change as $pn => $pr){
@@ -143,8 +85,12 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $menu = $this->Menu->getMenuByUrl('OmcCustomerDailySales', $form_key);
         $menu_title = $menu['Menu']['menu_name'];
 
-        //debug($to_days_sales_record);
-        $this->set(compact('permissions','company_profile','to_days_sales_record','price_change_data','previous_day_records','current_day_records','menu_title'));
+        $sales_sheet_id = 0;
+        if($current_day_records) {
+            $sales_sheet_id = $current_day_records['form']['omc_customer_daily_sales_id'];
+        }
+
+        $this->set(compact('permissions','company_profile','price_change_data','previous_day_records','current_day_records','menu_title', 'form_key', 'sales_sheet_id'));
     }
 
     function indexOriginal(){

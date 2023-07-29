@@ -11,7 +11,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
     var $name = 'OmcCustomer';
     # set the model to use
-    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange');
+    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -28,8 +28,8 @@ class OmcCustomerController extends OmcCustomerAppController
         $company_profile = $this->global_company;
         $date = date('Y-m-d');
         $last_stock_updates = $this->getStockBoard();
-        $widget_data_cash_credit_summary = $this->OmcCashCreditSummary->widget_cash_credit_summary($company_profile['id'],$company_profile['omc_id'],$date);
-        $widget_daily_sales_product = $this->OmcDailySalesProduct->widget_daily_sale_product($company_profile['id'],$company_profile['omc_id'],$date);
+        $widget_data_cash_credit_summary = array();
+        $widget_daily_sales_product = array();
         $pie_daily_sales_product = array();
         foreach($widget_daily_sales_product as $row){
             if($row['value'] != null){
@@ -38,7 +38,7 @@ class OmcCustomerController extends OmcCustomerAppController
                 );
             }
         }
-        $widget_bulk_stock_calc = $this->OmcBulkStockCalculation->widget_bulk_stock_calc($company_profile['id'],$company_profile['omc_id'],$date);
+        $widget_bulk_stock_calc = array();
         $bar_data = array(
             'x-axis'=>array(),
             'series'=>array(

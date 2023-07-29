@@ -21,9 +21,12 @@ var SalesForm = {
         });
 
         self.bind_sales_forms();
+        $("#sales-forms #form_reset").click();
         self.bind_form_fields();
         self.bind_form_primary_field_option();
+        $("#sales-form-fields #field_reset").click();
         self.render_form_fields();
+        $("#sales-form-primary-field-option #pf_option_reset").click();
         self.render_form_primary_field_option();
     },
 
@@ -505,17 +508,15 @@ var SalesForm = {
         }
     },
 
-    reset_select_option: function (jquerySelect2Obj, select_dom_id, form_id, selected_ids){
+    reset_select_option: function (collection, value_prop, text_prop, jquerySelect2Obj, select_dom_id, selected_ids){
         jquerySelect2Obj.select2('destroy');
-        if(form_id) {
-            var fields = $forms_fields[form_id]['fields'];
             var select = document.getElementById(select_dom_id);
             select.options.length = 0;
-            for(var nx in fields){
+            for(var nx in collection){
                 var opt = document.createElement('option');
-                opt.value = fields[nx].id;
-                opt.text = fields[nx].field_name;
-                opt.selected = selected_ids.indexOf(fields[nx].id) >= 0
+                opt.value = collection[nx][value_prop];
+                opt.text = collection[nx][text_prop];
+                opt.selected = selected_ids.indexOf(collection[nx].id) >= 0
                 try{ //Standard
                     select.add(opt,null) ;
                 }
@@ -523,18 +524,25 @@ var SalesForm = {
                     select.add(opt) ;
                 }
             }
-        }
         jquerySelect2Obj.select2();
     },
 
     reset_form_field_action_sources: function (form_id, selected_ids=[]){
         var jquerySelect2Obj = $("#sales-form-fields #field_action_sources");
-        this.reset_select_option(jquerySelect2Obj, 'field_action_sources', form_id, selected_ids);
+        var fields = $forms_fields[form_id]['fields'];
+        this.reset_select_option(fields, 'id', 'field_name', jquerySelect2Obj, 'field_action_sources', selected_ids);
     },
 
     reset_primary_field_total_options_list: function (form_id, selected_ids=[]){
         var jquerySelect2Obj = $("#sales-form-primary-field-option #pf_total_option_list");
-        this.reset_select_option(jquerySelect2Obj, 'pf_total_option_list', form_id, selected_ids);
+        var pf_options = $forms_fields[form_id]['primary_field_options'];
+        this.reset_select_option(pf_options, 'id', 'option_name', jquerySelect2Obj, 'pf_total_option_list', selected_ids);
+    },
+
+    reset_primary_field_total_fields_list: function (form_id, selected_ids=[]){
+        var jquerySelect2Obj = $("#sales-form-primary-field-option #pf_total_field_list");
+        var fields = $forms_fields[form_id]['fields'];
+        this.reset_select_option(fields, 'id', 'field_name', jquerySelect2Obj, 'pf_total_field_list', selected_ids);
     },
 
     bind_form_primary_field_option:function(){
@@ -543,6 +551,7 @@ var SalesForm = {
         $("#form_primary_field_tab").click(function(){
             var form_id = $("#sales-form-primary-field-option #pf_omc_sales_form_id").val();
             self.reset_primary_field_total_options_list(form_id);
+            self.reset_primary_field_total_fields_list(form_id);
             $("#sales-form-primary-field-option #primary_field_html b").html($forms_fields[form_id].primary_field_name);
         });
 
@@ -574,6 +583,7 @@ var SalesForm = {
             $("#sales-form-primary-field-option #pf_option_action_type").val('option_save');
             var form_id = $("#sales-form-primary-field-option #pf_omc_sales_form_id").val();
             self.reset_primary_field_total_options_list(form_id);
+            self.reset_primary_field_total_fields_list(form_id);
             $("table#primary-field-option_list_table tbody tr").removeClass('selected');
             self.tr_edit = null;
         });
@@ -603,6 +613,7 @@ var SalesForm = {
         $("#sales-form-primary-field-option #pf_omc_sales_form_id").change(function(){
             $("#sales-form-primary-field-option #primary_field_html b").html($forms_fields[$(this).val()].primary_field_name);
             self.reset_primary_field_total_options_list($(this).val());
+            self.reset_primary_field_total_fields_list($(this).val());
             $("#sales-form-primary-field-option #pf_option_reset").click();
             self.render_form_primary_field_option();
         });
@@ -610,30 +621,42 @@ var SalesForm = {
         $("#sales-form-primary-field-option #pf_is_total_no").click(function(){
             var val = $(this).val();
             $("#sales-form-primary-field-option #pf_option_is_total").val(val);
-            $("#pf_total_fields_wrapper").hide('slow');
+            $(".pf_total_options_and_fields_wrapper").hide('slow');
             $("#sales-form-primary-field-option").validate().cancelSubmit = false;
             var form_id = $("#sales-form-primary-field-option #pf_omc_sales_form_id").val();
             self.reset_primary_field_total_options_list(form_id);
+            self.reset_primary_field_total_fields_list(form_id);
         });
 
         $("#sales-form-primary-field-option #pf_is_total_yes").click(function(){
             var val = $(this).val();
             $("#sales-form-primary-field-option #pf_option_is_total").val(val);
-            $("#pf_total_fields_wrapper").show('slow');
+            $(".pf_total_options_and_fields_wrapper").show('slow');
             //$("#sales-form-primary-field-option").validate().cancelSubmit = true;
             if(self.tr_edit){
                 var form_id = self.tr_edit.attr('data-form_id');
                 var option_id = self.tr_edit.attr('data-pf_option_id');
                 var pf_option = $forms_fields[form_id]['primary_field_options'][option_id];
                 if(pf_option) {
-                    self.reset_primary_field_total_options_list(form_id, pf_option.total_option_list.split(','));
+                    if(pf_option.total_option_list) {
+                        self.reset_primary_field_total_options_list(form_id, pf_option.total_option_list.split(','));
+                    } else {
+                        self.reset_primary_field_total_options_list(form_id);
+                    }
+
+                    if(pf_option.total_field_list) {
+                        self.reset_primary_field_total_fields_list(form_id, pf_option.total_field_list.split(','));
+                    } else {
+                        self.reset_primary_field_total_fields_list(form_id);
+                    }
                 } else {
-                    self.reset_primary_field_total_options_list(form_id);
+                    self.reset_primary_field_total_fields_list(form_id);
                 }
             }
         });
 
         $("#sales-form-primary-field-option #pf_total_option_list").select2();
+        $("#sales-form-primary-field-option #pf_total_field_list").select2();
     },
 
 
@@ -643,9 +666,12 @@ var SalesForm = {
         var url = $salesFormPrimaryFieldOption.attr('action');
         var opts_arr = $("#sales-form-primary-field-option #pf_total_option_list").val();
         var opts_str = opts_arr ? opts_arr.toString() : '';
-        var query = $salesFormPrimaryFieldOption.serialize()+"&pf_total_option_list="+opts_str;
+        var field_arr = $("#sales-form-primary-field-option #pf_total_field_list").val();
+        var field_str = field_arr ? field_arr.toString() : '';
+        var query = $salesFormPrimaryFieldOption.serialize()+"&pf_total_option_list="+opts_str+"&pf_total_field_list="+field_str;
         var salesFormPrimaryFieldOptionObjCollection = $salesFormPrimaryFieldOption.serializeArray();
         salesFormPrimaryFieldOptionObjCollection.push({name: 'pf_total_option_list', value: opts_str})
+        salesFormPrimaryFieldOptionObjCollection.push({name: 'pf_total_field_list', value: field_str})
 
         $.ajax({
             url:url,
@@ -670,6 +696,7 @@ var SalesForm = {
                         'order' : self.getValue('pf_order', salesFormPrimaryFieldOptionObjCollection),
                         'is_total' : self.getValue('pf_option_is_total', salesFormPrimaryFieldOptionObjCollection),
                         'total_option_list' : self.getValue('pf_total_option_list', salesFormPrimaryFieldOptionObjCollection),
+                        'total_field_list' : self.getValue('pf_total_field_list', salesFormPrimaryFieldOptionObjCollection),
                         'option_action_type' : self.getValue('pf_option_action_type', salesFormPrimaryFieldOptionObjCollection)
                     };
                     alertify.success(txt);
@@ -702,7 +729,8 @@ var SalesForm = {
                 'option_name': post_data['option_name'],
                 'order': post_data['order'],
                 'is_total': post_data['is_total'],
-                'total_option_list': post_data['total_option_list']
+                'total_option_list': post_data['total_option_list'],
+                'total_field_list': post_data['total_field_list']
             };
         }
         if(action_type === 'option_delete'){

@@ -9,7 +9,7 @@ class OmcSalesForm extends AppModel
             'dependent' => false,
             'conditions' => '',
             'fields' => '',
-            'order' => '',
+            'order' =>  array('OmcSalesFormField.field_order'=>'asc'),
             'limit' => '',
             'offset' => '',
             'exclusive' => '',
@@ -22,7 +22,7 @@ class OmcSalesForm extends AppModel
             'dependent' => false,
             'conditions' => '',
             'fields' => '',
-            'order' => '',
+            'order' => array('OmcSalesFormPrimaryFieldOption.order'=>'asc'),
             'limit' => '',
             'offset' => '',
             'exclusive' => '',
@@ -80,14 +80,33 @@ class OmcSalesForm extends AppModel
         ));
     }
 
+    function getSalesFormByKey($omc_id, $form_key) {
+        $conditions = array('OmcSalesForm.omc_id'=>$omc_id, 'OmcSalesForm.form_key'=>$form_key, 'OmcSalesForm.deleted'=>'n');
+        return $this->find('first',array(
+            'fields'=>array('OmcSalesForm.id','OmcSalesForm.form_name'),
+            'conditions'=>$conditions,
+            'recursive'=> -1
+        ));
+    }
+
     function getSalesFormForSetUp($omc_id, $form_key) {
         $conditions = array('OmcSalesForm.omc_id'=>$omc_id, 'OmcSalesForm.form_key'=>$form_key, 'OmcSalesForm.deleted'=>'n');
         return $this->find('first',array(
             'fields'=>array('OmcSalesForm.id','OmcSalesForm.form_name'),
             'conditions'=>$conditions,
             'contain'=>array(
-                'OmcSalesFormField'=>array('fields' => array('OmcSalesFormField.id','OmcSalesFormField.field_name')),
-                'OmcSalesFormPrimaryFieldOption'=>array('fields' => array('OmcSalesFormPrimaryFieldOption.id', 'OmcSalesFormPrimaryFieldOption.option_name'))
+                'OmcSalesFormField'=>array(
+                    'fields' => array(
+                        'OmcSalesFormField.id',
+                        'OmcSalesFormField.field_name'
+                    ),
+                ),
+                'OmcSalesFormPrimaryFieldOption'=>array(
+                    'fields' => array(
+                        'OmcSalesFormPrimaryFieldOption.id',
+                        'OmcSalesFormPrimaryFieldOption.option_name'
+                    )
+                )
             )
         ));
     }

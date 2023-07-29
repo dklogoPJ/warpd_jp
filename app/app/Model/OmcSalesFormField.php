@@ -18,7 +18,7 @@ class OmcSalesFormField extends AppModel
 
     function deleteField($form_id,$user_id){
         return $this->updateAll(
-            array('deleted' => "'y'",'modified_by'=>$user_id),
+            array('deleted' => "'y'", 'field_required' => "'No'", 'modified_by'=>$user_id),
             array(
                 'OmcSalesFormField.id' => $form_id,
             )

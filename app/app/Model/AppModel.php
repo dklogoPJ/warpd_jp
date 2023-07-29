@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+//use Cake\Datasource\ConnectionManager;
+
 App::uses('Model', 'Model');
 
 /**
@@ -109,6 +111,14 @@ class AppModel extends Model
             $enum[] = trim( $value, "'" );
         }
         return $enum;
+    }
+
+    function resetAutoincrement($table = null) {
+        if(!$table) {
+            $table = $this->table;
+        }
+        $db = ConnectionManager::getDataSource('default');
+        return $db->rawQuery("ALTER TABLE {$table} AUTO_INCREMENT = 1");
     }
     
 }

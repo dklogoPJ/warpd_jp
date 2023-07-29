@@ -110,61 +110,33 @@ class TableFormHelper extends AppHelper {
 
 
     function renderDailySalesTableForm ($param , $class='table table-bordered') {
-       // debug($param);
         $table = "<table width='100%' class='form-tables {$class}'>";
         $table .= "<thead>";
         $table .= "<tr>";
-        $fields = array();
 
         foreach($param['headers'] as $column){
             $table .= "<th>";
             $table .= $column['name'];
             $table .= "</th>";
-            $fields[] = $column;
         }
         $table .= "</tr>";
         $table .= "</thead>";
 
         $table .= "<tbody>";
         //Render Data here
-        foreach($param['fields'] as $row_columns){
-            //$record_id = $record['record_id'];
-            //$values = $record['values'];
-            $table .= "<tr>";
+        foreach($param['fields'] as $tr_id => $row_columns){
+            $table .= "<tr data-id='{$tr_id}'>";
             foreach($row_columns as $field){
-
-
-             /*   'id' => 'super_1_1',
-				'name' => 'super_1',
-				'value' => 'Super 1',
-				'is_primary_field' => true,
-				'is_editable' => false,
-				'options' => array()*/
-
-
                 $field_id = $field['id'];
-
-                $table .= "<td data-field_id='{$field_id}'>";
-                $table .= $field['value'];
-                $table .= "</td>";
-
-               // $control_field = ($field['control_field']) ? 'yes':'no';
-               // $rule_type = $field['rule_type'];
-              /*  if(isset($values[$field_id])){
-                    $cell_value = $values[$field_id]['value'];
-                    if(is_numeric($cell_value)){
-                        $cell_value = $this->formatNumber($cell_value,'money',2);
-                    }
-                    $cell_value_id = $values[$field_id]['id'];
-                    $table .= "<td data-control_field='{$control_field}' data-rule_type='{$rule_type}' data-field_id='{$field_id}' data-value='{$cell_value}' data-value_id='{$cell_value_id}'>";
-                    $table .= $cell_value;
-                    $table .= "</td>";
+                $row_id = $field['row_id'];
+                $element_column_id = $field['element_column_id'];
+                $cell_value = $field['value'];
+                if(is_numeric($cell_value)){
+                    $cell_value = $this->formatNumber($cell_value,'money',2);
                 }
-                else{
-                    $table .= "<td data-control_field='{$control_field}' data-rule_type='{$rule_type}' data-field_id='{$field_id}' data-value='' data-value_id=''>";
-                    $table .= '';
-                    $table .= "</td>";
-                }*/
+                $table .= "<td data-id='{$field_id}' data-row-id='{$row_id}'  data-column-id='{$element_column_id}'>";
+                $table .= $cell_value;
+                $table .= "</td>";
             }
             $table .= "</tr>";
         }

@@ -155,7 +155,7 @@ class OmcDailySalesController extends OmcAppController
             'type'=>'omc_customer',
             'title'=>$data['form_name'],
             'description'=>$data['form_name'],
-            'permission_controls'=>'A,E,PX',
+            'permission_controls'=>'A,E,D,PX',
             'parent'=>114,
             'required'=>'',
             'menu_group'=>'Operations',
@@ -284,6 +284,7 @@ class OmcDailySalesController extends OmcAppController
                     'order'=>$post['pf_order'],
                     'is_total'=>$post['pf_option_is_total'],
                     'total_option_list'=>$post['pf_total_option_list'],
+                    'total_field_list'=>$post['pf_total_field_list'],
                     'modified_by'=>$authUser['id']
                 ) ;
 
@@ -367,7 +368,8 @@ class OmcDailySalesController extends OmcAppController
                         'option_name'=>$option['option_name'],
                         'order'=>$option['order'],
                         'is_total'=>$option['is_total'],
-                        'total_option_list'=>$option['total_option_list']
+                        'total_option_list'=>$option['total_option_list'],
+                        'total_field_list'=>$option['total_field_list']
                     );
                 }
             }

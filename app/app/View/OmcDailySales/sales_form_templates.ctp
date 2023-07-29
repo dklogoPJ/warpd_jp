@@ -201,10 +201,17 @@
                                             </div>
                                         </div>
 
-                                        <div class="row-form clearfix" id="pf_total_fields_wrapper" style="border-top-width: 0px; display:none">
-                                            <div class="span4">Total Field List:</div>
+                                        <div class="row-form clearfix pf_total_options_and_fields_wrapper" id="" style="border-top-width: 0px; display:none">
+                                            <div class="span4">Total Options List:</div>
                                             <div class="span8">
                                                 <select name="pf_total_option_list[]" id="pf_total_option_list" multiple="multiple" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix pf_total_options_and_fields_wrapper" id="" style="border-top-width: 0px; display:none">
+                                            <div class="span4">Total Fields List:</div>
+                                            <div class="span8">
+                                                <select name="pf_total_field_list[]" id="pf_total_field_list" multiple="multiple" style="width: 100%;"></select>
                                             </div>
                                         </div>
 
