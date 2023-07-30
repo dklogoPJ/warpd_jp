@@ -35,6 +35,7 @@ class OmcCustomerDailySaleField extends AppModel
                 'OmcSalesFormField.field_type',
                 'OmcSalesFormField.field_type_values',
                 'OmcSalesFormField.field_required',
+                'OmcSalesFormField.field_disabled',
                 'OmcSalesFormField.field_event',
                 'OmcSalesFormField.field_action',
                 'OmcSalesFormField.field_action_sources',

@@ -184,6 +184,23 @@
                                             <div class="span8"><input type="text" name="pf_option_name" id="pf_option_name" value="" required class="" /></div>
                                         </div>
 
+
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">Product Link:</div>
+                                            <div class="span8">
+                                                <select name="pf_product_type_id" id="pf_product_type_id">
+                                                    <option value="">None</option>
+                                                    <?php
+                                                    foreach($all_products as $opt){
+                                                        ?>
+                                                        <option value="<?php echo $opt['id']; ?>"><?php echo $opt['name']; ?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="row-form clearfix" style="border-top-width: 0px;">
                                             <div class="span4">Order:</div>
                                             <div class="span8"><input type="text" name="pf_order" id="pf_order" value="" required class="" /></div>
@@ -323,6 +340,16 @@
                                         </div>
 
                                         <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">Field Disabled:</div>
+                                            <div class="span8">
+                                                <select name="field_disabled" id="field_disabled" class="span4" required>
+                                                    <option value="n">No</option>
+                                                    <option value="y">Yes</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
                                             <div class="span4">Field Event:</div>
                                             <div class="span8">
                                                 <select name="field_event" id="field_event">
@@ -356,6 +383,13 @@
                                             <div class="span4">Field Action Sources:</div>
                                             <div class="span8">
                                                 <select name="field_action_sources[]" id="field_action_sources" multiple="multiple" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix field_event_wrapper" style="border-top-width: 0px; display:none">
+                                            <div class="span4">Field Action Targets:</div>
+                                            <div class="span8">
+                                                <select name="field_action_targets[]" id="field_action_targets" multiple="multiple" style="width: 100%;"></select>
                                             </div>
                                         </div>
 

@@ -61,6 +61,7 @@ var DailySales = {
                 $("table.form-tables tbody tr").removeClass('selected');
                 $(this).addClass('selected');
                 self.active_row = $(this);
+                self.calculateSelectedRowTotal(self.active_row);
             }
         });
     },
@@ -127,6 +128,12 @@ var DailySales = {
                 });
             }
 
+            self.updateCurrentData(tr_id, field_values);
+            self.calculateAllRowsTotals(); //Re calculate to get the latest update
+
+            //Get all totals and save them too
+
+            Array.prototype.push.apply(field_values, self.getAllRowsTotals());
 
             var save = {
                 'form_action_type':'form_save_sales_record',
@@ -152,8 +159,6 @@ var DailySales = {
                     }
                     if (response.code === 0) {
                         alertify.success(txt);
-                        self.updateCurrentData(tr_id, field_values)
-                        //self.updateRow(field_values);
                         self.clearEditing();
                         if(typeof callback == "function"){
                             callback();
@@ -263,7 +268,7 @@ var DailySales = {
 
     renderRowFormElements: function(){
         var self = this;
-
+        var is_total_row = false;
         if(self.active_row.length > 0){
             self.active_row.addClass('editing');
             self.active_row.find("td").each(function(){
@@ -273,9 +278,13 @@ var DailySales = {
                 var field_type = '';
                 var el = '';
                 var f = current_day_records['fields'][row_id][field_id];
+                if(f.is_total_row === true) {
+                    //Means this td belongs to a row that is flagged for totaling
+                    is_total_row = true;
+                }
                 var default_val = f.value;
-                if(f.is_primary_field === false && f.is_editable === true) {
-                    var formField = self.getFormField(field_id, f.options, default_val);
+                if(f.is_primary_field === false && f.is_total_row === false && f.is_editable === true) {
+                    var formField = self.getFormField(field_id, f, default_val);
                     field_type = formField.type;
                     el = formField.field;
                     default_val = '';
@@ -286,6 +295,9 @@ var DailySales = {
             });
 
             self.row_editing_in_progress = true;
+            if(is_total_row) {
+                self.row_editing_in_progress = false;
+            }
         }
         else{
             alertify.error("You have to select a record before you can edit.");
@@ -293,11 +305,85 @@ var DailySales = {
     },
 
 
-
-    getFormField:function(field_id, options, default_val){
+    calculateAllRowsTotals:function(){
         var self = this;
+        $("table.form-tables tbody tr").each(function(){
+            self.calculateSelectedRowTotal($(this));
+        });
+    },
+
+    calculateSelectedRowTotal: function(tr){
+        var self = this;
+        if(tr.length > 0) {
+            tr.find("td").each(function(){
+                var td = $(this);
+                var row_id = td.attr('data-row-id');
+                var field_id = td.attr('data-id');
+                var f = current_day_records['fields'][row_id][field_id];
+                if(f.is_total_row === true) {
+                    var r = self.calculateColumnTotal(row_id, field_id);
+                    if(r) {
+                        current_day_records['fields'][row_id][field_id].value = r;
+                        td.html(r);
+                    }
+                }
+            });
+        }
+    },
+
+    getAllRowsTotals:function(){
+        var self = this;
+        var saves = [];
+        $("table.form-tables tbody tr").each(function(){
+            Array.prototype.push.apply(saves, self.getRowTotals($(this)));
+        });
+        return saves;
+    },
+
+    getRowTotals: function(tr){
+        var self = this;
+        var field_values = [];
+        if(tr.length > 0) {
+            tr.find("td").each(function(){
+                var td = $(this);
+                var row_id = td.attr('data-row-id');
+                var field_id = td.attr('data-id');
+                var f = current_day_records['fields'][row_id][field_id];
+                if(f.is_total_row === true) {
+                    var r = self.calculateColumnTotal(row_id, field_id);
+                    if(r) {
+                        field_values.push({'id':field_id, 'value':r});
+                    }
+                }
+            });
+        }
+        return field_values;
+    },
+
+    calculateColumnTotal: function(row_id, field_id){
+        var result = [];
+        var f = current_day_records['fields'][row_id][field_id];
+        var is_total_options = f.is_total_options;
+        const total_field_list = is_total_options.total_field_list.split(',');
+        const total_option_list = is_total_options.total_option_list.split(',');
+        //Check if this column needs a total
+        if(total_field_list.indexOf(f.element_column_id) >= 0) {
+            total_option_list.forEach(option_row_id => {
+                var g = EventActions.getFieldValue(option_row_id, f.element_column_id, 'value', current_day_records['fields']);
+                if(g) {
+                    result.push(parseFloat(g));
+                }
+            });
+        }
+        return result.length > 0 ? result.reduce(EventActions.sum) : false;
+    },
+
+    getFormField:function(field_id, fieldObj, default_val){
+        var self = this;
+        var options = fieldObj.options;
         var field_type = options['field_type'];
         var field_required = options['field_required'];
+        var field_disabled = options['field_disabled'];
         var field_type_values = options['field_type_values'];
         var field_event = options['field_event'];
         var field_action = options['field_action'];
@@ -332,10 +418,36 @@ var DailySales = {
             element.val(default_val);
         }
 
+        //Add other element properties
+        if( field_disabled === 'y') {
+            element.attr('readonly','readonly');
+        }
+
         //Add event binding where applicable
-        if(field_event && field_action && field_action_sources && field_action_targets) {
+        if(field_event && field_action && field_action_targets) {
             element.on( field_event, function() {
-                self.onElementEventCallback(field_action, field_action_sources.split(','), field_action_targets.split(','));
+                //Field sources will depend on action type
+                var options = {
+                    search_row: '',
+                    search_column: '',
+                    current_value: ''
+                };
+                var action_sources = field_action_sources.split(',');
+                var source_type = 'fields';
+
+                if(field_action === 'previous_value' || field_action === 'month_to_date') {
+                    source_type = 'custom';
+                    action_sources = previous_day_records['fields']
+                    options['search_row'] = fieldObj.primary_field_option_row_id
+                    options['search_column'] = fieldObj.element_column_id
+                    options['current_value'] = $(this).val()
+                } else if(field_action === 'price_change') {
+                    source_type = 'custom';
+                    action_sources = price_change_data
+                    options['search_row'] = fieldObj.product_type_id
+                }
+
+                self.onElementEventCallback(field_action, source_type, action_sources, field_action_targets.split(','), options);
             });
         }
 
@@ -343,41 +455,31 @@ var DailySales = {
     },
 
 
-    onElementEventCallback: function (action, action_sources, action_targets) {
+    onElementEventCallback: function (action, source_type, action_sources, action_targets, options={}) {
         var self = this;
         var sources_values = [];
-        action_sources.forEach(function (source_id) {
-            self.active_row.find("td[data-column-id='" + source_id + "']").each(function(){
-                var td = $(this);
-                var field_type = td.attr('data-field_type');
-                var el = '';
-                if(field_type === 'Text'){
-                    el = td.find('input');
-                }
-                else if(field_type === 'Drop Down'){
-                    el = td.find('select');
-                }
-                var val = el.val();
-                val = val.trim();
-                sources_values.push(parseFloat(val));
+        if(source_type === 'fields') {
+            action_sources.forEach(function (source_id) {
+                self.active_row.find("td[data-column-id='" + source_id + "']").each(function(){
+                    var td = $(this);
+                    var field_type = td.attr('data-field_type');
+                    var el = '';
+                    if(field_type === 'Text'){
+                        el = td.find('input');
+                    }
+                    else if(field_type === 'Drop Down'){
+                        el = td.find('select');
+                    }
+                    var val = el.val();
+                    val = val.trim();
+                    sources_values.push(parseFloat(val));
+                });
             });
-        });
-
-        var result = '';
-        const sum = (accumulator, number) => accumulator + number;
-        const subtract = (accumulator, number) =>  accumulator - number;
-        const multiply = (accumulator, number) =>  accumulator * number;
-        const division = (accumulator, number) =>  accumulator / number;
-
-        if(action === 'sum') {
-            result = sources_values.reduce(sum);
-        }else if(action === 'subtract') {
-            result = sources_values.reduce(subtract);
-        }else if(action === 'multiply') {
-            result = sources_values.reduce(multiply);
-        }else if(action === 'division') {
-            result = sources_values.reduce(division);
+        } else {
+            sources_values = action_sources;
         }
+
+        var result = EventActions.getValue(action, sources_values, options.search_row, options.search_column, options.current_value);
 
         action_targets.forEach(function (target_id) {
             self.active_row.find("td[data-column-id='" + target_id + "']").each(function(){

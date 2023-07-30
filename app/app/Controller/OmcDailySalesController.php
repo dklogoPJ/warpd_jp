@@ -11,7 +11,10 @@ class OmcDailySalesController extends OmcAppController
 
     var $name = 'OmcDailySales';
     # set the model to use
-    var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm','OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction');
+    var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm',
+        'OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction',
+        'ProductType'
+    );
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -243,10 +246,11 @@ class OmcDailySalesController extends OmcAppController
                     'field_type'=>$post['field_type'],
                     'field_type_values'=>$post['field_type_values'],
                     'field_required'=>$post['field_required'],
+                    'field_disabled'=>$post['field_disabled'],
                     'field_event'=>$post['field_event'],
                     'field_action'=>$post['field_action'],
                     'field_action_sources'=> $post['field_action_sources_str'],
-                    'field_action_targets'=> $post['field_id'] != 0 ?  $post['field_id'] : null,
+                    'field_action_targets'=> $post['field_action_targets_str'],
                     'modified_by'=>$authUser['id']
                 ) ;
 
@@ -281,6 +285,7 @@ class OmcDailySalesController extends OmcAppController
                     'id'=>$post['pf_option_id'],
                     'omc_sales_form_id'=>$post['pf_omc_sales_form_id'],
                     'option_name'=>$post['pf_option_name'],
+                    'product_type_id'=>$post['pf_product_type_id'],
                     'order'=>$post['pf_order'],
                     'is_total'=>$post['pf_option_is_total'],
                     'total_option_list'=>$post['pf_total_option_list'],
@@ -352,9 +357,11 @@ class OmcDailySalesController extends OmcAppController
                         'field_type'=>$field['field_type'],
                         'field_type_values'=>$field['field_type_values'],
                         'field_required'=>$field['field_required'],
+                        'field_disabled'=>$field['field_disabled'],
                         'field_event'=>$field['field_event'],
                         'field_action'=>$field['field_action'],
-                        'field_action_sources'=>$field['field_action_sources']
+                        'field_action_sources'=>$field['field_action_sources'],
+                        'field_action_targets'=>$field['field_action_targets']
                     );
                 }
             }
@@ -366,6 +373,7 @@ class OmcDailySalesController extends OmcAppController
                         'id'=>$option['id'],
                         'form_id'=>$option['omc_sales_form_id'],
                         'option_name'=>$option['option_name'],
+                        'product_type_id'=>$option['product_type_id'],
                         'order'=>$option['order'],
                         'is_total'=>$option['is_total'],
                         'total_option_list'=>$option['total_option_list'],
@@ -389,11 +397,10 @@ class OmcDailySalesController extends OmcAppController
 
         $sale_form_element_events = $this->SalesFormElementEvent->getKeyValuePair();
         $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
+        $all_products = $this->ProductType->getProductList();
 
-        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','all_products'));
     }
-
-
 
     function station_sales(){
         $permissions = $this->action_permission;

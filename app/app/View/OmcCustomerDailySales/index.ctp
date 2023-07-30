@@ -151,6 +151,6 @@
     var form_key = <?php echo json_encode($form_key); ?>;
 </script>
 <?php
+echo $this->Html->script('scripts/omc_customer/event_actions.js');
 echo $this->Html->script('scripts/omc_customer/daily_sales.js');
-echo $this->Html->script('scripts/omc_customer/form_rules2.js');
 ?>

@@ -123,15 +123,15 @@ class OmcSalesForm extends AppModel
         return $save;
     }
 
-    function getFormHeaders ($form_id) {
-        $data = $this->getFormForPreview($form_id);
+    function getFormHeaders ($form_id, $filter_ids = array()) {
+        $data = $this->getFormForPreview($form_id, $filter_ids);
         if($data) {
             return $data['fields'];
         }
         return array();
     }
 
-    function getFormForPreview($form_id){
+    function getFormForPreview($form_id, $filter_ids = array()){
         $fd = $this->find('first',array(
             'conditions'=>array('OmcSalesForm.id'=>$form_id),
             'contain'=>array(
@@ -144,10 +144,18 @@ class OmcSalesForm extends AppModel
                 'name'=>$fd['OmcSalesForm']['primary_field']
             );
             foreach($fd['OmcSalesFormField'] as $field){
-                if($field['deleted'] == 'n'){
-                    $fields[]=array(
-                        'name'=>$field['field_name']
-                    );
+                if(count($filter_ids) > 0) {
+                    if($field['deleted'] == 'n' && in_array($field['id'], $filter_ids)){
+                        $fields[]=array(
+                            'name'=>$field['field_name']
+                        );
+                    }
+                } else {
+                    if($field['deleted'] == 'n'){
+                        $fields[]=array(
+                            'name'=>$field['field_name']
+                        );
+                    }
                 }
             }
             return array(

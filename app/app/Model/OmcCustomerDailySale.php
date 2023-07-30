@@ -173,11 +173,11 @@ class OmcCustomerDailySale extends AppModel
                 'name'=> $params['OmcSalesForm']['form_name'],
                 'omc_customer_daily_sales_id'=> $params['OmcCustomerDailySale']['id'],
                 'record_dt'=> $params['OmcCustomerDailySale']['record_dt']
-            ),
-            'headers' => $this->OmcSalesForm->getFormHeaders($params['OmcSalesForm']['id'])
+            )
         );
 
         $fields_arr = array();
+        $cached_header_ids = array();
 
         foreach ($params['OmcCustomerDailySalePrimaryField'] as $row) {
             $field_row = array();
@@ -187,12 +187,19 @@ class OmcCustomerDailySale extends AppModel
             $field_row[$custom_id] = array(
                 'id'=> $custom_id,
                 'row_id'=> $row['id'],
+                'primary_field_option_row_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
                 'element_column_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
                 'name' => $pf_name,
                 'value' => $row['OmcSalesFormPrimaryFieldOption']['option_name'],
+                'product_type_id' => $row['OmcSalesFormPrimaryFieldOption']['product_type_id'],
                 'is_primary_field' => true,
                 'is_editable' => false,
-                'options' => array()
+                'options' => array(),
+                'is_total_row' => $row['OmcSalesFormPrimaryFieldOption']['is_total'] == 'yes',
+                'is_total_options' => array(
+                    'total_option_list' => $row['OmcSalesFormPrimaryFieldOption']['total_option_list'],
+                    'total_field_list' => $row['OmcSalesFormPrimaryFieldOption']['total_field_list']
+                )
             );
 
             foreach ($row['OmcCustomerDailySaleField'] as $inner_row) {
@@ -200,18 +207,27 @@ class OmcCustomerDailySale extends AppModel
                 $field_row[$inner_row['id']] = array(
                     'id'=> $inner_row['id'],
                     'row_id'=> $row['id'],
+                    'primary_field_option_row_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
                     'element_column_id'=> $inner_row['OmcSalesFormField']['id'],
                     'name' => $pf_inner_name,
                     'value' => $inner_row['value'],
+                    'product_type_id' => $row['OmcSalesFormPrimaryFieldOption']['product_type_id'],
                     'is_primary_field' => false,
                     'is_editable' => true,
-                    'options' => $inner_row['OmcSalesFormField']
+                    'options' => $inner_row['OmcSalesFormField'],
+                    'is_total_row' => $row['OmcSalesFormPrimaryFieldOption']['is_total'] == 'yes',
+                    'is_total_options' => array(
+                        'total_option_list' => $row['OmcSalesFormPrimaryFieldOption']['total_option_list'],
+                        'total_field_list' => $row['OmcSalesFormPrimaryFieldOption']['total_field_list']
+                    )
                 );
+                $cached_header_ids[] = $inner_row['OmcSalesFormField']['id'];
             }
 
             $fields_arr[$row['id']] = $field_row;
         }
-
+        $cached_header_ids = array_unique($cached_header_ids);
+        $formatted_data['headers'] = $this->OmcSalesForm->getFormHeaders($params['OmcSalesForm']['id'], $cached_header_ids);
         $formatted_data['fields'] = $fields_arr;
 
         return $formatted_data;

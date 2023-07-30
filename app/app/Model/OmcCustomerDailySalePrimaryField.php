@@ -47,7 +47,11 @@ class OmcCustomerDailySalePrimaryField extends AppModel
                 'OmcCustomerDailySalePrimaryField.*',
                 'OmcSalesFormPrimaryFieldOption.id',
                 'OmcSalesFormPrimaryFieldOption.option_name',
-                'OmcSalesFormPrimaryFieldOption.order'
+                'OmcSalesFormPrimaryFieldOption.product_type_id',
+                'OmcSalesFormPrimaryFieldOption.order',
+                'OmcSalesFormPrimaryFieldOption.is_total',
+                'OmcSalesFormPrimaryFieldOption.total_option_list',
+                'OmcSalesFormPrimaryFieldOption.total_field_list'
             ),
             'conditions'=> array('OmcCustomerDailySalePrimaryField.omc_customer_daily_sale_id'=> $omc_customer_daily_sale_id),
             'joins' =>
