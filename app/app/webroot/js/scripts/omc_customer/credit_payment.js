@@ -32,16 +32,12 @@ var Order = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'customer_name', width:120, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
-                {display:'Invoice No.', name:'invoice_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Invoice Date.', name:'invoice_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:products}},
-                {display:'Sales Quantity (ltr)', name:'sales_qty', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"multiply", "sources":["sales_qty","price"], "targets":["sales_amount"]}'}},
-                {display:'Price', name:'price', width:90, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Delivery Method', name:'delivery_method', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:delivery_method}},
-                {display:'Sales Amount (GHs.)', name:'sales_amount', width:130, sortable:true, align:'left',format_number:true, hide:false, editable:{form:'text',readonly:'readonly', validate:'', defval:''}},
-                {display:'Staff Name', name:'staff_name', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
+                {display:'Customer Name', name:'customer_name', width:170, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
+                {display:'Receipt No.', name:'receipt_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Receipt Date.', name:'receipt_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
+                {display:'Payment Amount (GHs.)', name:'payment_amount', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Payment Method', name:'payment_method', width:140, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:payment_method}},
+                {display:'Payment Instrument No.', name:'payment_instrument', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
             formFields:btn_actions,
             searchitems:[

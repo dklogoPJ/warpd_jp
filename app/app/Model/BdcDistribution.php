@@ -879,4 +879,19 @@ class BdcDistribution extends AppModel
         }
     }
 
+    function getInvoiceNo($order_id =0){
+        $bdcDistribution = $this->find('first', array(
+            'fields' => array('BdcDistribution.id'),
+            'conditions' => array('BdcDistribution.order_id' => $order_id),
+            'contain' => array('OmcBdcDistribution' => array('fields' => array('OmcBdcDistribution.invoice_number'))),
+            'recursive' => 1
+        ));
+
+       // pr($bdcDistribution);
+        if($bdcDistribution){
+            return $bdcDistribution['OmcBdcDistribution'][0]['invoice_number'];
+        }
+        return '';
+    }
+
 }

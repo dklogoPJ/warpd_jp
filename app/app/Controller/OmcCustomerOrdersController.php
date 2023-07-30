@@ -11,7 +11,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
     var $name = 'OmcCustomerOrders';
     # set the model to use
-    var $uses = array('Order', 'ProductType', 'OmcCustomerOrder', 'OmcCustomer', 'Volume', 'OmcBdcDistribution', 'OmcCustomerDistribution', 'TemperatureCompensation','OmcCustomerPriceChange','OmcTank');
+    var $uses = array('Order', 'ProductType', 'OmcCustomerOrder', 'OmcCustomer', 'Volume', 'OmcBdcDistribution', 'OmcCustomerDistribution', 'TemperatureCompensation','OmcCustomerPriceChange','OmcTank','BdcDistribution');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -308,7 +308,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $contain = array(
                         'Omc' => array('fields' => array('Omc.id', 'Omc.name')),
                         'ProductType' => array('fields' => array('ProductType.id', 'ProductType.name')),
-                        'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'Order' => array('fields' => array('Order.id'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
                     $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
@@ -331,6 +332,10 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                 $order_time_elapsed = $time_hr . ' hr(s)';
                             }
 
+                            $order_id = $obj['Order']['id'];
+                            //Get invoice number of the distribution
+                            $invoice_no = $this->BdcDistribution->getInvoiceNo($order_id);
+
                             $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'number', 0) : '';
                             $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0) : '';
                             $delivery_date = isset($obj['OmcCustomerOrder']['discharge_date']) ? $this->covertDate($obj['OmcCustomerOrder']['discharge_date'], 'mysql_flip') : '';
@@ -340,7 +345,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                 'cell' => array(
                                     $obj['OmcCustomerOrder']['id'],
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'], 'mysql_flip'),
-                                    //$order_time_elapsed,
+                                    $invoice_no,
                                     $obj['ProductType']['name'],
                                     $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'number', 0),
                                     $delivery_quantity,

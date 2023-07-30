@@ -52,7 +52,7 @@ var OmcTrucks = {
             },
             columnControl:false,
             sortname:"id",
-            sortorder:"desc",
+            sortorder:"asc",
             usepager:true,
             useRp:true,
             rp:15,

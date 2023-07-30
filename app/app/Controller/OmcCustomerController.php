@@ -11,7 +11,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
     var $name = 'OmcCustomer';
     # set the model to use
-    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange');
+    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange','CustomerCreditSetting','CustomerCredit','CustomerCreditPayment');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -731,55 +731,41 @@ class OmcCustomerController extends OmcCustomerAppController
 
                     //get users id for this company only
                     $condition_array = array(
-                        'OmcCustomerOrder.omc_customer_id' => $company_profile['id'],
-                        'OmcCustomerOrder.deleted' => 'n'
+                        'CustomerCredit.omc_customer_id' => $company_profile['id'],
+                        'CustomerCredit.deleted' => 'n'
                     );
 
                     $contain = array(
-                        'Omc'=>array('fields' => array('Omc.id', 'Omc.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
 
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->CustomerCredit->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
-                            $bigger_time = date('Y-m-d H:i:s');
-                            if($obj['OmcCustomerOrder']['order_status'] == 'Complete'){
-                                $bigger_time = $obj['OmcCustomerOrder']['omc_modified'];
-                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
-                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
-                                $order_time_elapsed = $time_hr.' hr(s)';
-                            }
-                            else{
-                                $time_hr = $this->count_time_between_dates($obj['OmcCustomerOrder']['dealer_created'],$bigger_time,'hours');
-                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
-                                $order_time_elapsed =  $time_hr.' hr(s)';
-                            }
 
-                            $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'money',0) : '';
-                            $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0) : '';
-                            $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
+                            $sales_amount =  isset($obj['CustomerCredit']['sales_amount']) ? $this->formatNumber($obj['CustomerCredit']['sales_amount'],'money',0) : '';
+                            $invoice_date =  isset($obj['CustomerCredit']['invoice_date']) ? $this->covertDate($obj['CustomerCredit']['invoice_date'],'mysql_flip') : '';
                             
                         
                             $return_arr[] = array(
-                                'id' => $obj['OmcCustomerOrder']['id'],
+                                'id' => $obj['CustomerCredit']['id'],
                                 'cell' => array(
-                                    $id='',
-                                    $customer_name = '',
-                                    $invoice_no = '',
-                                    $invoice_date = '',
-                                    $product_type_id = '',
-                                    $sales_qty = '',
-                                    $price = '',
-                                    $delivery_method = '',
-                                    $sales_amount = '',
-                                    $staff_name = '',
-                                    $comments = '',
+                                    $obj['CustomerCredit']['id'],
+                                    $obj['CustomerCredit']['customer_name'],
+                                    $obj['CustomerCredit']['invoice_no'],
+                                    $invoice_date,
+                                    $obj['ProductType']['name'],
+                                    $obj['CustomerCredit']['sales_qty'],
+                                    $obj['CustomerCredit']['price'],
+                                    $obj['CustomerCredit']['delivery_method'],
+                                    $sales_amount,
+                                    $obj['CustomerCredit']['staff_name'],
+                                    $obj['CustomerCredit']['comments']
                                 )
                             );
                         }
@@ -792,20 +778,41 @@ class OmcCustomerController extends OmcCustomerAppController
                     break;
 
                 case 'save' :
-                    $data = array('OmcCustomerOrder' => $_POST);
 
-                    if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
-                        $order_id  = $this->OmcCustomerOrder->id;
-                        //Array Data here 
+                    if ($_POST['id'] == 0) {//Mew
+                        if (!in_array('A', $permissions)) {
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    } else {
+                        if (!in_array('E', $permissions)) {
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+                    $data = array('CustomerCredit' => $_POST);
+
+                    if ($_POST['id'] == 0) {
+                        $data['CustomerCredit']['created_by'] = $authUser['id'];
+                    } else {
+                        $data['CustomerCredit']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['CustomerCredit']['omc_customer_id'] = $company_profile['id'];
+                    $data['CustomerCredit']['invoice_date'] = $this->covertDate($_POST['invoice_date'], 'mysql') . ' ' . date('H:i:s');
+                    $data['CustomerCredit']['sales_amount'] = str_replace(',', '', $_POST['sales_amount']);
+
+                    if ($this->CustomerCredit->save($this->sanitize($data))) {
+                        $credit_id  = $this->CustomerCredit->id;
+                        
                         //Activity Log
-                        $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
+                        $log_description = $this->getLogMessage('UpdateCustomerCredit')." (Order #".$credit_id.")";
                         $this->logActivity('Order',$log_description);
 
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$order_id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$credit_id));
                         }
                     } else {
                         echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -824,6 +831,150 @@ class OmcCustomerController extends OmcCustomerAppController
         $end_dt = date('t-m-Y');
         $group_by = 'monthly';
         $group_by_title = date('F');
+       // $customer_name_lists = $this->get_customer_name_list();
+        $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+        $delivery_method = array('0'=>array('id'=>'Fleet - Cars','name'=>'Fleet - Cars'),'1'=>array('id'=>'Fleet - Trucks','name'=>'Fleet - Trucks'),'2'=>array('id'=>'Fleet - Site Vehicles','name'=>'Fleet - Site Vehicles'),'3'=>array('id'=>'Fuel Bowser','name'=>'Fuel Bowser'),'4'=>array('id'=>'Fuel - Mobile Tanks','name'=>'Fuel - Mobile Tanks'));
+        
+
+        $order_filter = $this->order_filter;
+        $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+        $volumes = $this->Volume->getVolsList();
+        $graph_title = $group_by_title.", Orders-Consolidated";
+
+        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','delivery_method'));
+    }
+
+
+
+    function omc_customer_credit_payment($type = 'get'){
+        
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+            
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** @var $filter  */
+                    $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'complete_orders' ;
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    //get users id for this company only
+                    $condition_array = array(
+                        'CustomerCreditPayment.omc_customer_id' => $company_profile['id'],
+                        'CustomerCreditPayment.deleted' => 'n'
+                    );
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                    $data_table = $this->CustomerCreditPayment->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditPayment.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->CustomerCreditPayment->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            
+                            $payment_amount =  isset($obj['CustomerCreditPayment']['payment_amount']) ? $this->formatNumber($obj['CustomerCreditPayment']['payment_amount'],'money',0) : '';
+                            $receipt_date =  isset($obj['CustomerCreditPayment']['receipt_date']) ? $this->covertDate($obj['CustomerCreditPayment']['receipt_date'],'mysql_flip') : '';
+                            
+                        
+                            $return_arr[] = array(
+                                'id' => $obj['CustomerCreditPayment']['id'],
+                                'cell' => array(
+                                    $obj['CustomerCreditPayment']['id'],
+                                    $obj['CustomerCreditPayment']['customer_name'],
+                                    $obj['CustomerCreditPayment']['receipt_no'],
+                                    $receipt_date,
+                                    $payment_amount,
+                                    $obj['CustomerCreditPayment']['payment_method'],
+                                    $obj['CustomerCreditPayment']['payment_instrument']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    $data = array('CustomerCreditPayment' => $_POST);
+
+                    if ($_POST['id'] == 0) {//Mew
+                        if (!in_array('A', $permissions)) {
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    } else {
+                        if (!in_array('E', $permissions)) {
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+                    $data = array('CustomerCreditPayment' => $_POST);
+
+                    if ($_POST['id'] == 0) {
+                        $data['CustomerCreditPayment']['created_by'] = $authUser['id'];
+                    } else {
+                        $data['CustomerCreditPayment']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['CustomerCreditPayment']['omc_customer_id'] = $company_profile['id'];
+                    $data['CustomerCreditPayment']['receipt_date'] = $this->covertDate($_POST['receipt_date'], 'mysql') . ' ' . date('H:i:s');
+                    $data['CustomerCreditPayment']['payment_amount'] = str_replace(',', '', $_POST['payment_amount']);
+
+                    if ($this->CustomerCreditPayment->save($this->sanitize($data))) {
+                        $payment_id  = $this->CustomerCreditPayment->id;
+                        
+                        //Activity Log
+                        $log_description = $this->getLogMessage('UpdateCustomerCredit')." (Order #".$payment_id.")";
+                        $this->logActivity('Order',$log_description);
+
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$payment_id));
+                        }
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    //echo debug($data);
+                    break;
+
+                case 'load':
+
+                    break;
+            }
+        }
+
+        $products_lists = $this->get_products();
+        $start_dt = date('01-m-Y');
+        $end_dt = date('t-m-Y');
+        $group_by = 'monthly';
+        $group_by_title = date('F');
+        $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+        $payment_method = array('0'=>array('id'=>'Cash','name'=>'Cash'),'1'=>array('id'=>'NCT','name'=>'NCT'),'2'=>array('id'=>'Cheque','name'=>'Cheque'),'3'=>array('id'=>'Credit Note','name'=>'Credit Note'));
+        
 
         
         /* $bdclists =array(array('name'=>'All','value'=>0));
@@ -840,7 +991,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm'));
+        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method'));
     }
     
 

@@ -33,7 +33,7 @@ var Order = {
             colModel:[
                 {display:'Order Id', name:'id', width:70, sortable:false, align:'left', hide:false},
                 {display:'Order Date', name:'order_date', width:100, sortable:false, align:'left', hide:false},
-                //{display:'Time Elapsed', name:'time_elapsed', width:85, sortable:false, align:'left', hide:false},
+                {display:'Invoice No', name:'invoice_no', width:90, sortable:false, align:'left', hide:false, format_number:false},
 				{display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
                 {display:'Order Quantity', name:'order_quantity', width:100, sortable:true, align:'left', hide:false},
                 {display:'Delivery Quantity', name:'delivery_quantity', width:120, sortable:true, align:'left', hide:false},

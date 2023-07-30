@@ -1378,7 +1378,7 @@ class OmcAdminController extends OmcAppController
                     /** The current page */
                     $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
                     /** Sort column */
-                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
                     /** Sort order */
                     $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
                     /** Search column */
