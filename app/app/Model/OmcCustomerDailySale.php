@@ -92,6 +92,50 @@ class OmcCustomerDailySale extends AppModel
     }
 
 
+    function getFormSaleSheetForExport($omc_customer_id, $form_id, $record_date) {
+
+        $processedData = $this->getFormSaleSheetForReport($omc_customer_id, $form_id, $record_date);
+        if($processedData) {
+            $export_header = array();
+            $export_data = array();
+            $sheet_name = $processedData['form']['name'];
+
+            foreach($processedData['headers'] as $item) {
+                $export_header[] = $item['name'];
+            }
+
+            foreach($processedData['fields'] as $row) {
+                $row_data = array();
+                foreach($row as $column) {
+                    $row_data[] = $column['value'];
+                }
+                $export_data[] = $row_data;
+            }
+
+            return array(
+                array(
+                    'header'=> $export_header,
+                    'data'=> $export_data,
+                    'sheet_name'=> $sheet_name
+                )
+            );
+        }
+        return false;
+    }
+
+    function getFormSaleSheetForReport($omc_customer_id, $form_id, $record_date) {
+        $condition = array(
+            'OmcCustomerDailySale.omc_customer_id'=>$omc_customer_id,
+            'OmcCustomerDailySale.omc_sale_form_id'=> $form_id,
+            'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%"
+        );
+        $query = $this->getRecord($condition);
+        if($query) {
+            return $this->processSaleSheet($query);
+        }
+        return false;
+    }
+
     function getFormSaleSheet($omc_id, $omc_customer_id, $form_key, $record_date) {
         $OmcSalesForm = ClassRegistry::init('OmcSalesForm');
         $form = $OmcSalesForm->getSalesFormByKey($omc_id, $form_key);

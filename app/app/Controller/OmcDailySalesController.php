@@ -13,7 +13,7 @@ class OmcDailySalesController extends OmcAppController
     # set the model to use
     var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm',
         'OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction',
-        'ProductType'
+        'ProductType','OmcCustomerDailySale'
     );
 
     # Set the layout to use
@@ -405,65 +405,25 @@ class OmcDailySalesController extends OmcAppController
     function station_sales(){
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
-        $omc_id = $company_profile['id'];
 
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $this->autoLayout = false;
-            $authUser = $this->Auth->user();
             $data = $this->request->data;
             $post = $this->sanitize($data);
             $station = $post['Query']['station'];
             $sales_form_id = $post['Query']['sales_form_id'];
             $sheet_date =  $this->covertDate($post['Query']['record_dt'],'mysql');
-            $sale_forms_data = $this->OmcSalesForm->getAllSalesForms($omc_id,$sales_form_id);
-            $forms_n_fields = array();
-            foreach($sale_forms_data as $form_arr){
-                $form = $form_arr['OmcSalesForm'];
-                $fields = $form_arr['OmcSalesFormField'];
-                if(!empty($fields)){
-                    //group forms and fields
-                    $fields_arr = array();
-                    foreach($form_arr['OmcSalesFormField'] as $field){
-                        if($field['deleted'] == 'n'){
-                            $fields_arr[$field['id']]=array(
-                                'id'=>$field['id'],
-                                'form_id'=>$field['omc_sales_form_id'],
-                                'groups'=>$field['groups'],
-                                'field_name'=>$field['field_name'],
-                                'field_type'=>$field['field_type'],
-                                'field_type_values'=>$field['field_type_values'],
-                                'field_required'=>$field['field_required']
-                            );
-                        }
-                    }
-                    //Get form Values
-                    $form_data_records = array();
-                    $form_data_record_raw = $this->OmcSalesSheet->getFormData($form['id'],$station,$omc_id,$sheet_date);
-                    $form_data_records = $form_data_record_raw['data'];
-                    $forms_n_fields[$form['id']] = array(
-                        'id' => $form['id'],
-                        'name' => $form['form_name'],
-                        'fields'=>$fields_arr,
-                        'values'=>$form_data_records
-                    );
-                }
-            }
 
+            $sales_records = $this->OmcCustomerDailySale->getFormSaleSheetForReport($station, $sales_form_id, $sheet_date);
 
             $view = new View($this, false);
-            $view->set(compact('forms_n_fields')); // set variables
+            $view->set(compact('sales_records')); // set variables
             $view->viewPath = 'Elements/omc/'; // render an element
             $html = $view->render('preview_station'); // get the rendered markup
 
             return json_encode(array('code' => 0, 'msg' => 'Records Found!', 'html'=>$html));
 
-          /*  if ($from_data) {
-
-            }
-            else {
-                return json_encode(array('code' => 1, 'msg' => 'No Records Found!'));
-            }*/
         }
 
         $omc_customers_lists = $this->get_customer_list();
@@ -471,9 +431,8 @@ class OmcDailySalesController extends OmcAppController
         foreach($omc_customers_lists as $data){
             $station_opt[$data['id']] = $data['name'];
         }
-
         $sales_forms = $this->OmcSalesForm->getSalesFormOnly($company_profile['id']);
-        $form_sales_opt = array('0'=>'All Sales Form');
+        $form_sales_opt = array();
         foreach($sales_forms as $data){
             $form_sales_opt[$data['OmcSalesForm']['id']] = $data['OmcSalesForm']['form_name'];
         }
@@ -495,7 +454,7 @@ class OmcDailySalesController extends OmcAppController
             $sales_form_id = $post['data_sales_form_id'];
             $sheet_date =  $this->covertDate($post['data_record_dt'],'mysql');
 
-            $export_data = $this->OmcSalesSheet->getExportData($sales_form_id,$station,$company_profile['id'],$sheet_date);
+            $export_data = $this->OmcCustomerDailySale->getFormSaleSheetForExport($station, $sales_form_id, $sheet_date);
 
             if ($export_data) {
                 $omc_customers_lists = $this->get_customer_list();
@@ -510,7 +469,7 @@ class OmcDailySalesController extends OmcAppController
                 $download = true;
                 $list_data = $export_data;
                 $filename = $station_name." Daily Sale ".$sheet_date;
-                $res = $this->convertToExcelBook($list_data,$filename);
+                $res = $this->convertToExcelBook($list_data, $filename);
                 $objPHPExcel = $res['excel_obj'];
                 $filename = $res['filename'];
             }

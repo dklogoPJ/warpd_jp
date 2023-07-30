@@ -72,8 +72,6 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         //Get Previous Days Records
         $previous_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'],$company_profile['id'], $form_key, $previous_day_sales_sheet);
 
-       // debug($current_day_records);
-
         $price_change_data = array();
         foreach($this->price_change as $pn => $pr){
             $price_change_data[$pr['product_type_id']] = array(
