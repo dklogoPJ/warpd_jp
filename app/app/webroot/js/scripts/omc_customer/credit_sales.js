@@ -63,7 +63,7 @@ var Order = {
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:370,
+            height:300,
             subgrid:{
                 use:false
             },
