@@ -877,149 +877,51 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
     function nct_sales_record($type = 'get')
     {   
         $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+        $sheet_id = $this->OmcSalesSheet->setUpSheet($company_profile['id'],$company_profile['omc_id']);
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $this->autoLayout = false;
             $authUser = $this->Auth->user();
-            $company_profile = $this->global_company;
-
-            switch ($type) {
-                case 'get' :
-                    /**  Get posted data */
-                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
-                    /** The current page */
-                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
-                    /** Sort column */
-                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
-                    /** Sort order */
-                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
-                    /** Search column */
-                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
-                    /** @var $filter  */
-                    $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'complete_orders' ;
-                    /** Search string */
-                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
-                    $limit = $rp;
-                    $start = ($page - 1) * $rp;
-
-                    //get users id for this company only
-                    $condition_array = array(
-                        'NctRecord.omc_customer_id' => $company_profile['id'],
-                        'NctRecord.deleted' => 'n'
-                    );
-
-                    $contain = array(
-                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
-                    );
-
-                    $data_table = $this->NctRecord->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "NctRecord.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->NctRecord->find('count', array('conditions' => $condition_array, 'recursive' => -1));
-                    $total_records = $data_table_count;
-
-                    if ($data_table) {
-                        $return_arr = array();
-                        foreach ($data_table as $obj) {
-                            $return_arr[] = array(
-                                'id' => $obj['NctRecord']['id'],
-                                'cell' => array(
-                                    $obj['NctRecord']['id'],
-                                    $this->covertDate($obj['NctRecord']['record_date'], 'mysql_flip'),
-                                    $obj['NctRecord']['nct_channel'],
-                                    $this->formatNumber($obj['NctRecord']['amount'], 'number', 0)
-                                )
-                            );
-                        }
-                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
-                    }
-                    else {
-                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
-                    }
-
-                    break;
-
-                case 'save' :
-                    if ($_POST['id'] == 0) {//Mew
-                        if (!in_array('A', $permissions)) {
-                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
-                        }
-                    } else {
-                        if (!in_array('E', $permissions)) {
-                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
-                        }
-                    }
-
-                    $data = array('NctRecord' => $_POST);
-                    if ($_POST['id'] == 0) {
-                        $data['NctRecord']['created_by'] = $authUser['id'];
-                    } else {
-                        $data['NctRecord']['modified_by'] = $authUser['id'];
-                    }
-                    $data['NctRecord']['omc_customer_id'] = $company_profile['id'];
-                    $data['NctRecord']['amount'] = str_replace(',', '', $_POST['amount']);
-                    $data['NctRecord']['record_date'] = $this->covertDate($_POST['record_date'], 'mysql') . ' ' . date('H:i:s');
-
-                    if ($this->NctRecord->save($this->sanitize($data))) {
-                        $nct_record_id  = $this->NctRecord->id;
-                        //Array Data here
-                        //Activity Log
-                        $log_description = $this->getLogMessage('UpdateNctRecord')." (Nct Record #".$nct_record_id.")";
-                        $this->logActivity('Order',$log_description);
-
-                        if($_POST['id'] > 0){
-                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
-                        }
-                        else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$nct_record_id));
-                        }
-                    } else {
-                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
-                    }
-                    //echo debug($data);
-                    break;
-
-                case 'load':
-
-                    break;
-
-                case 'delete':
-                        $ids = $_POST['ids'];
-                        $modObj = ClassRegistry::init('NctRecord');
-                        $result = $modObj->updateAll(
-                            array('NctRecord.deleted' => "'y'"),
-                            array('NctRecord.id' => $ids)
-                        );
-                        if ($result) {
-                            $modObj = ClassRegistry::init('NctRecord');
-                            $modObj->updateAll(
-                                array('NctRecord.deleted' => "'y'"),
-                                array('NctRecord.id' => $ids)
-                            );
-
-                         echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
-                        } else {
-                            echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
-                        }
-                        break;
+            $post = $this->sanitize($_POST);
+            $post['modified_by'] = $authUser['id'];
+            $post = $this->total_daily_sales_product($post);
+            if ($this->OmcDailySalesProduct->save($post)) {
+                //Update Operators Credit
+                $this->OmcOperatorsCredit->setUp($sheet_id,$company_profile['id'],$company_profile['omc_id']);
+                return json_encode(array('code' => 0, 'msg' => 'Record Saved!', 'data'=>$post));
+            }
+            else {
+                return json_encode(array('code' => 1, 'msg' => 'Some errors occurred whiles saving the record.'));
             }
         }
+        $form_data = $this->OmcDailySalesProduct->setUp($sheet_id,$company_profile['omc_id']);
+        $table_setup = $this->OmcDailySalesProduct->getTableSetup();
+        $table_total_setup = $this->OmcDailySalesProduct->getTotalTableSetup();
+        $previous_data_raw = $this->OmcDailySalesProduct->getPreviousDayData($company_profile['id'],$company_profile['omc_id']);
+        $previous_data = array();
+        foreach($previous_data_raw as $spd){
+            $previous_data[] = $spd['OmcDailySalesProduct'];
+        }
+        $data = $this->OmcDsrpDataOption->find('first',array(
+            'conditions'=>array('omc_id'=>$company_profile['omc_id']),
+            'recursive'=>-1
+        ));
+        $control_data = array();
+        $control_data['bulk_stock_position_products'] = unserialize($data['OmcDsrpDataOption']['bulk_stock_position_products']);
+        $control_data['daily_sales_products'] = unserialize($data['OmcDsrpDataOption']['daily_sales_products']);
+        $control_data['lubricants_products'] = unserialize($data['OmcDsrpDataOption']['lubricants_products']);
 
-        $products_lists = $this->get_products();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
-        $group_by = 'monthly';
-        $group_by_title = date('F');
+        $price_change_data = array();
+        foreach($this->price_change as $pn => $pr){
+            $price_change_data[$pr['product_type_id']] = array(
+                'name'=>$pn,
+                'value'=>$pr['price']
+            );
+        }
 
-        $order_filter = $this->order_filter;
 
-        $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
-
-        $volumes = $this->Volume->getVolsList();
-        $nct = $this->Nct->getNctList();
-        $omc_customer = $this->OmcCustomer->getOmcCustomerList();
-
-        $graph_title = $group_by_title.", Orders-Consolidated";
-
-        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','nct','omc_customer'));
+        $this->set(compact('permissions','form_data','table_setup','previous_data','control_data','price_change_data','table_total_setup'));
     }
 
 }

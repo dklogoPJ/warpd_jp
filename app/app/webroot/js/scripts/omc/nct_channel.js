@@ -46,11 +46,13 @@ var OmcTrucks = {
                 use:true,
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
-                edit:inArray('E',permissions)
+                edit:inArray('E',permissions),
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:false,
             sortname:"id",
-            sortorder:"desc",
+            sortorder:"asc",
             usepager:true,
             useRp:true,
             rp:15,

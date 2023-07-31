@@ -10,7 +10,7 @@ class OmcAdminController extends OmcAppController
 
     var $name = 'OmcAdmin';
     # set the model to use
-    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct');
+    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct','CustomerCreditSetting');
     # Set the layout to use
     var $layout = 'omc_layout';
 
@@ -1228,6 +1228,139 @@ class OmcAdminController extends OmcAppController
     }
 
 
+    function credit_customer_setting($type = 'get')
+    {
+        $company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'CustomerCreditSetting.deleted' => 'n'
+                    );
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                   
+                    $data_table = $this->CustomerCreditSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->CustomerCreditSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['CustomerCreditSetting']['id'],
+                                'cell' => array(
+                                    $obj['CustomerCreditSetting']['id'],
+                                    $obj['CustomerCreditSetting']['customer_name'],
+                                    $obj['CustomerCreditSetting']['business_type'],
+                                    $obj['OmcCustomer']['name'],
+                                    $obj['CustomerCreditSetting']['territory'],
+                                    $obj['CustomerCreditSetting']['credit_limit'],
+                                    $obj['CustomerCreditSetting']['credit_days'],
+                                    $obj['CustomerCreditSetting']['agreement_sign'],
+                                    $obj['CustomerCreditSetting']['risk_rating']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
+                   
+
+                    $data = array('CustomerCreditSetting' => $_POST);
+        
+                    if($_POST['id'] == 0){
+                        $data['CustomerCreditSetting']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['CustomerCreditSetting']['modified_by'] = $authUser['id'];
+                    }
+
+                    if ($this->CustomerCreditSetting->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->CustomerCreditSetting->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                    case 'delete':
+                        $ids = $_POST['ids'];
+                        $modObj = ClassRegistry::init('CustomerCreditSetting');
+                        $result = $modObj->updateAll(
+                            array('CustomerCreditSetting.deleted' => "'y'"),
+                            array('CustomerCreditSetting.id' => $ids)
+                        );
+                        if ($result) {
+                            $modObj = ClassRegistry::init('CustomerCreditSetting');
+                            $modObj->updateAll(
+                                array('CustomerCreditSetting.deleted' => "'y'"),
+                                array('CustomerCreditSetting.id' => $ids)
+                            );
+    
+                         echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                        } else {
+                            echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                        }
+                        break;
+            }
+        }
+
+        
+        $station_list = $this->get_customer_list();
+        $yes_no = array('0'=>array('id'=>'Yes','name'=>'Yes'),'1'=>array('id'=>'No','name'=>'No'));
+        $risk_rate = array('0'=>array('id'=>'Low','name'=>'Low'),'1'=>array('id'=>'Medium','name'=>'Medium'),'2'=>array('id'=>'High','name'=>'High'));
+
+        $this->set(compact('yes_no','station_list','risk_rate'));
+
+    }
+
+
     function nct_channel_setup($type = 'get')
     {
         //$company_profile = $this->global_company;
@@ -1245,7 +1378,7 @@ class OmcAdminController extends OmcAppController
                     /** The current page */
                     $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
                     /** Sort column */
-                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
                     /** Sort order */
                     $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
                     /** Search column */

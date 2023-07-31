@@ -31,16 +31,13 @@ var Order = {
             reload_after_edit:true,
             dataType:'json',
             colModel:[
-                {display:'Order Id', name:'id', width:70, sortable:false, align:'left', hide:false},
-                {display:'Order Date', name:'order_date', width:100, sortable:false, align:'left', hide:false},
-                {display:'Invoice No', name:'invoice_no', width:90, sortable:false, align:'left', hide:false, format_number:false},
-				{display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
-                {display:'Order Quantity', name:'order_quantity', width:100, sortable:true, align:'left', hide:false},
-                {display:'Delivery Quantity', name:'delivery_quantity', width:120, sortable:true, align:'left', hide:false},
-                {display:'Received Quantity', name:'received_quantity', width:150, sortable:true, align:'left', hide:false},
-                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false},
-                {display:'Delivery Date', name:'delivery_date', width:100, sortable:false, align:'left', hide:false}
-
+                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
+                {display:'Customer Name', name:'customer_name', width:170, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
+                {display:'Receipt No.', name:'receipt_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Receipt Date.', name:'receipt_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
+                {display:'Payment Amount (GHs.)', name:'payment_amount', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Payment Method', name:'payment_method', width:140, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:payment_method}},
+                {display:'Payment Instrument No.', name:'payment_instrument', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
             formFields:btn_actions,
             searchitems:[
@@ -52,8 +49,8 @@ var Order = {
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
                 edit:inArray('E',permissions),
-                confirmSave:false
-               // confirmSaveText:"If this order gets processed by te OMC, you can't change it afterwords. \n Are you sure the information you entered is correct ?"
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:true,
             sortname:"id",
@@ -70,6 +67,9 @@ var Order = {
                 jLib.message($title, $message, $type);
             }
         });
+
+
+        
 
         $('input.datepicker').live('focus', function(){
             if (false == $(this).hasClass('hasDatepicker')) {
