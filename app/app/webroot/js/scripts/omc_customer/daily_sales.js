@@ -437,10 +437,11 @@ var DailySales = {
 
                 if(field_action === 'previous_value' || field_action === 'month_to_date') {
                     source_type = 'custom';
-                    action_sources = previous_day_records['fields']
+                    var arr_column_sources = action_sources;
+                    action_sources = previous_day_records['fields'];
                     options['search_row'] = fieldObj.primary_field_option_row_id
-                    options['search_column'] = fieldObj.element_column_id
-                    options['current_value'] = $(this).val()
+                    options['search_column'] = arr_column_sources[0] ? arr_column_sources[0] : '';
+                    options['current_value'] = $(this).val();
                 } else if(field_action === 'price_change') {
                     source_type = 'custom';
                     action_sources = price_change_data
