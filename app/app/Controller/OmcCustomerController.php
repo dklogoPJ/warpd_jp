@@ -704,6 +704,8 @@ class OmcCustomerController extends OmcCustomerAppController
     function omc_customer_credit_sales($type = 'get'){
 
         $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+        $omc_customer_id = $company_profile['id'];
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $this->autoLayout = false;
@@ -834,14 +836,14 @@ class OmcCustomerController extends OmcCustomerAppController
        // $customer_name_lists = $this->get_customer_name_list();
         $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
         $delivery_method = array('0'=>array('id'=>'Fleet - Cars','name'=>'Fleet - Cars'),'1'=>array('id'=>'Fleet - Trucks','name'=>'Fleet - Trucks'),'2'=>array('id'=>'Fleet - Site Vehicles','name'=>'Fleet - Site Vehicles'),'3'=>array('id'=>'Fuel Bowser','name'=>'Fuel Bowser'),'4'=>array('id'=>'Fuel - Mobile Tanks','name'=>'Fuel - Mobile Tanks'));
-
+        $all_customers_products_prices = $this->OmcCustomerPriceChange->getAllProductsPumpPrices($company_profile['id']);
 
         $order_filter = $this->order_filter;
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
         $volumes = $this->Volume->getVolsList();
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','delivery_method'));
+        $this->set(compact('all_customers_products_prices','omc_customer_id','volumes','permissions', 'products_lists','graph_title','g_data','order_filter','customer_name_lists','delivery_method'));
     }
 
 
@@ -974,7 +976,6 @@ class OmcCustomerController extends OmcCustomerAppController
         $group_by_title = date('F');
         $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
         $payment_method = array('0'=>array('id'=>'Cash','name'=>'Cash'),'1'=>array('id'=>'NCT','name'=>'NCT'),'2'=>array('id'=>'Cheque','name'=>'Cheque'),'3'=>array('id'=>'Credit Note','name'=>'Credit Note'));
-
 
 
         /* $bdclists =array(array('name'=>'All','value'=>0));

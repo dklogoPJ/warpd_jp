@@ -92,6 +92,8 @@
     var volumes = <?php echo json_encode($volumes); ?>;
     var customer_name_lists = <?php echo json_encode($customer_name_lists); ?>;
     var delivery_method = <?php echo json_encode($delivery_method); ?>;
+    var $all_customers_products_prices = <?php echo json_encode($all_customers_products_prices); ?>;
+    var $omc_customer_id = <?php echo json_encode($omc_customer_id); ?>;
 </script>
 
 <!-- Le Script -->

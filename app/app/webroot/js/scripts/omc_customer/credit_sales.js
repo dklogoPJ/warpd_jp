@@ -35,7 +35,7 @@ var Order = {
                 {display:'Customer Name', name:'customer_name', width:120, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
                 {display:'Invoice No.', name:'invoice_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Invoice Date.', name:'invoice_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:products}},
+                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products}},
                 {display:'Sales Quantity (ltr)', name:'sales_qty', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"multiply", "sources":["sales_qty","price"], "targets":["sales_amount"]}'}},
                 {display:'Price', name:'price', width:70, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Delivery Method', name:'delivery_method', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:delivery_method}},
@@ -72,9 +72,6 @@ var Order = {
             }
         });
 
-
-        
-
         $('input.datepicker').live('focus', function(){
             if (false == $(this).hasClass('hasDatepicker')) {
                 $(this).datepicker({
@@ -99,6 +96,19 @@ var Order = {
         $('.quantity-class').live('focus', function(){
             if (false == $(this).hasClass('hasMore')) {
                 $(this).select_more();
+            }
+        });
+
+        $(".product_type_id-class").live('change',function () {
+            var product_type_id = $(this).val();
+            var omc_customer_id = $omc_customer_id;
+            var row_tr = $(this).parent().parent().parent();
+            var row_id = $(row_tr).attr('data-id');
+            if($all_customers_products_prices[omc_customer_id] !== undefined && $all_customers_products_prices[omc_customer_id][product_type_id] !== undefined) {
+                var unit_price = parseFloat($all_customers_products_prices[omc_customer_id][product_type_id]);
+                $(row_tr).find('td div #price_'+row_id).val(unit_price);
+            } else {
+                $(row_tr).find('td div #price_'+row_id).val('');
             }
         });
     },
@@ -137,6 +147,7 @@ var Order = {
             ]
         }).flexReload();
     },
+
 
     attach_file:function(grid){
         var row_ids = FlexObject.getSelectedRowIds(grid);
