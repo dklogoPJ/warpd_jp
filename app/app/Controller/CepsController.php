@@ -133,7 +133,7 @@ class CepsController extends CepsAppController
                                     $obj['Omc']['name'],
                                     $obj['Depot']['name'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber( $obj['Order']['approved_quantity'],'money',0),
+                                    $this->formatNumber( $obj['Order']['approved_quantity'],'number',0),
                                     $cep_feedback
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
@@ -438,7 +438,7 @@ class CepsController extends CepsAppController
                             $bdc_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['bdc_approval']])? $this->waybill_feedback[$obj['Waybill']['bdc_approval']] : 'Not Yet Approved';
                             $cep_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['ceps_approval']])? $this->waybill_feedback[$obj['Waybill']['ceps_approval']] : 'Not Yet Approved';
 
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Waybill']['id'],
                                 'cell' => array(

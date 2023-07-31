@@ -23,7 +23,7 @@ var Order = {
             btn_actions.push({type:'buttom', name:'Attachment', bclass:'attach', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-       // btn_actions.push({type:'select',name: 'Order Status', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:order_filter});
+       btn_actions.push({type:'select',name: 'Select Customer To View Ledger', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:customer_name_lists});
 
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
@@ -31,16 +31,15 @@ var Order = {
             reload_after_edit:true,
             dataType:'json',
             colModel:[
-                {display:'Order Id', name:'id', width:70, sortable:false, align:'left', hide:false},
-                {display:'Order Date', name:'order_date', width:100, sortable:false, align:'left', hide:false},
-                {display:'Invoice No', name:'invoice_no', width:90, sortable:false, align:'left', hide:false, format_number:false},
-				{display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
-                {display:'Order Quantity', name:'order_quantity', width:100, sortable:true, align:'left', hide:false},
-                {display:'Delivery Quantity', name:'delivery_quantity', width:120, sortable:true, align:'left', hide:false},
-                {display:'Received Quantity', name:'received_quantity', width:150, sortable:true, align:'left', hide:false},
-                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false},
-                {display:'Delivery Date', name:'delivery_date', width:100, sortable:false, align:'left', hide:false}
-
+                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
+                {display:'Invoice No.', name:'invoice_no', width:100, sortable:false, align:'left', hide:false},
+                {display:'Invoice Date.', name:'invoice_date', width:100, sortable:false, align:'left', hide:false},
+                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
+                {display:'Sales Quantity (ltr)', name:'sales_qty', width:140, sortable:false, align:'left', hide:false},
+                {display:'Price', name:'price', width:70, sortable:true, align:'left', hide:false},
+                {display:'Sales Amount (GHs.)', name:'sales_amount', width:130, sortable:true, align:'left',format_number:true, hide:false},
+                {display:'Cumm. Sales Amount (GHs.)', name:'cum_sales_amount', width:176, sortable:true, align:'left',format_number:true, hide:false},
+                {display:'Cumm. Balance (GHs.)', name:'cum_balance', width:176, sortable:true, align:'left',format_number:true, hide:false}
             ],
             formFields:btn_actions,
             searchitems:[
@@ -52,8 +51,8 @@ var Order = {
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
                 edit:inArray('E',permissions),
-                confirmSave:false
-               // confirmSaveText:"If this order gets processed by te OMC, you can't change it afterwords. \n Are you sure the information you entered is correct ?"
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:true,
             sortname:"id",
@@ -70,6 +69,9 @@ var Order = {
                 jLib.message($title, $message, $type);
             }
         });
+
+
+        
 
         $('input.datepicker').live('focus', function(){
             if (false == $(this).hasClass('hasDatepicker')) {
@@ -118,7 +120,7 @@ var Order = {
                 Order.attach_file(grid);
             }
         }
-        else if (com == 'Filter BDC' || com == 'Order Status') {
+        else if (com == 'Select Customer To View Ledger') {
             Order.filterGrid(json);
         }
     },

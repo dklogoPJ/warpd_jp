@@ -11,7 +11,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
     var $name = 'OmcCustomerOrders';
     # set the model to use
-    var $uses = array('Order', 'ProductType', 'OmcCustomerOrder', 'OmcCustomer', 'Volume', 'OmcBdcDistribution', 'OmcCustomerDistribution', 'TemperatureCompensation','OmcCustomerPriceChange','OmcTank');
+    var $uses = array('Order', 'ProductType', 'OmcCustomerOrder', 'OmcCustomer', 'Volume', 'OmcBdcDistribution', 'OmcCustomerDistribution', 'TemperatureCompensation','OmcCustomerPriceChange','OmcTank','BdcDistribution');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -127,7 +127,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     //$obj['OmcCustomer']['name'],
                                     //$obj['Omc']['name'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'number', 0),
                                     /*$this->mkt_feedback[$obj['Order']['delivery_priority']],*/
                                     $obj['OmcCustomerOrder']['intended_delivery_location'],
                                     $feedback
@@ -308,7 +308,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $contain = array(
                         'Omc' => array('fields' => array('Omc.id', 'Omc.name')),
                         'ProductType' => array('fields' => array('ProductType.id', 'ProductType.name')),
-                        'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'Order' => array('fields' => array('Order.id'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
                     $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
@@ -331,8 +332,12 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                 $order_time_elapsed = $time_hr . ' hr(s)';
                             }
 
-                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'money', 0) : '';
-                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'money', 0) : '';
+                            $order_id = $obj['Order']['id'];
+                            //Get invoice number of the distribution
+                            $invoice_no = $this->BdcDistribution->getInvoiceNo($order_id);
+
+                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'number', 0) : '';
+                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0) : '';
                             $delivery_date = isset($obj['OmcCustomerOrder']['discharge_date']) ? $this->covertDate($obj['OmcCustomerOrder']['discharge_date'], 'mysql_flip') : '';
 
                             $return_arr[] = array(
@@ -340,9 +345,9 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                 'cell' => array(
                                     $obj['OmcCustomerOrder']['id'],
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'], 'mysql_flip'),
-                                    //$order_time_elapsed,
+                                    $invoice_no,
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'number', 0),
                                     $delivery_quantity,
                                     $received_quantity,
                                     $obj['OmcCustomerOrder']['comments'],
@@ -489,10 +494,10 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
-                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'money', 0) : '';
-                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'money', 0) : '';
-                            //$shortage_quantity = isset($obj['OmcCustomerOrder']['shortage_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['shortage_quantity'], 'money', 0) : '';
-                            //$shortage_cost = isset($obj['OmcCustomerOrder']['shortage_cost']) ? $this->formatNumber($obj['OmcCustomerOrder']['shortage_cost'], 'money', 2) : '';
+                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'number', 0) : '';
+                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0) : '';
+                            //$shortage_quantity = isset($obj['OmcCustomerOrder']['shortage_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['shortage_quantity'], 'number', 0) : '';
+                            //$shortage_cost = isset($obj['OmcCustomerOrder']['shortage_cost']) ? $this->formatNumber($obj['OmcCustomerOrder']['shortage_cost'], 'number', 2) : '';
 
                             $product_id = $obj['ProductType']['id'];
                             $shortage_quantity = str_replace(',', '', $delivery_quantity) -  str_replace(',', '', $received_quantity);
@@ -509,11 +514,11 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['id'],
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'], 'mysql_flip'),
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'number', 0),
                                     $delivery_quantity,
                                     $received_quantity,
-                                    $this->formatNumber($shortage_quantity, 'money', 0),
-                                    $this->formatNumber($shortage_cost, 'money', 0),
+                                    $this->formatNumber($shortage_quantity, 'number', 0),
+                                    $this->formatNumber($shortage_cost, 'number', 0),
                                     $obj['OmcCustomerOrder']['truck_number'],
                                     $obj['OmcCustomerOrder']['driver'],
                                     $obj['OmcCustomerOrder']['comments']
@@ -780,7 +785,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     //$this->covertDate($obj['BdcDistribution']['waybill_date'],'mysql_flip'),
                                     $obj['OmcBdcDistribution']['invoice_number'],
                                     $obj['BdcDistribution']['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcBdcDistribution']['quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcBdcDistribution']['quantity'], 'number', 0),
                                     // $obj['Region']['name'],
                                     $obj['DeliveryLocation']['name'],
                                     $obj['OmcBdcDistribution']['transporter'],
@@ -975,8 +980,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                 $order_time_elapsed = $time_hr . ' hr(s)';
                             }
 
-                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'money', 0) : '';
-                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'money', 0) : '';
+                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'number', 0) : '';
+                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0) : '';
                             $delivery_date = isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'], 'mysql_flip') : '';
                             $tr_date = date("Y-m-d");
                             $station_name = $this->OmcCustomer->getCustomerList();
@@ -988,8 +993,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'], 'mysql_flip'),
                                     $obj['ProductType']['name'],
                                     $station_name[$obj['OmcCustomerOrder']['omc_customer_id']],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'money', 0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'number', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'], 'number', 0),
                                     $this->covertDate($tr_date, 'mysql_flip'),
                                     $obj['OmcCustomerOrder']['transporter'],
                                     $obj['OmcCustomerOrder']['tank_no'],
@@ -997,7 +1002,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['product_temp_depot'],
                                     $obj['OmcCustomerOrder']['product_density_station'],
                                     $obj['OmcCustomerOrder']['product_temp_station'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'], 'number', 0),
                                     $obj['OmcCustomerOrder']['tm_approval'],
                                     $obj['OmcCustomerOrder']['tm_comments']
                                 ),
@@ -1174,8 +1179,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                 $order_time_elapsed = $time_hr . ' hr(s)';
                             }
 
-                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'money', 0) : '';
-                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'money', 0) : '';
+                            $delivery_quantity = isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'], 'number', 0) : '';
+                            $received_quantity = isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0) : '';
                             $delivery_date = isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'], 'mysql_flip') : '';
                             $station_name = $this->OmcCustomer->getCustomerList();
 
@@ -1186,8 +1191,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'], 'mysql_flip'),
                                     $obj['ProductType']['name'],
                                     $station_name[$obj['OmcCustomerOrder']['omc_customer_id']],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'money', 0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'], 'number', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['loaded_quantity'], 'number', 0),
                                     $this->covertDate($obj['OmcCustomerOrder']['truck_arrival_date'], 'mysql_flip'),
                                     $obj['OmcCustomerOrder']['transporter'],
                                     $obj['OmcCustomerOrder']['tank_no'],
@@ -1195,9 +1200,9 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $obj['OmcCustomerOrder']['product_temp_depot'],
                                     $obj['OmcCustomerOrder']['product_density_station'],
                                     $obj['OmcCustomerOrder']['product_temp_station'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'], 'money', 0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_post_discharge'], 'money', 0),
-                                    $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'money', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_pre_discharge'], 'number', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['dipping_post_discharge'], 'number', 0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0),
                                     $this->covertDate($obj['OmcCustomerOrder']['discharge_date'], 'mysql_flip'),
                                     //$obj['OmcCustomerOrder']['discharge_date'],
                                     $obj['OmcCustomerOrder']['comments']
@@ -1274,6 +1279,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
         $this->set(compact('grid_data', 'omc_customers_lists', 'volumes', 'permissions', 'depot_lists', 'products_lists', 'bdc_list', 'graph_title', 'g_data', 'bdclists', 'order_filter'));
     }
+    
+    
 
 
     function temperature_compensation($type = 'get')
@@ -1333,8 +1340,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     if ($data_table) {
                         $return_arr = array();
                         foreach ($data_table as $obj) {
-                            $received_quantity = isset($obj['TemperatureCompensation']['received_quantity']) ? $this->formatNumber($obj['TemperatureCompensation']['received_quantity'], 'money', 0) : '';
-                            $variance_received_qty = isset($obj['TemperatureCompensation']['variance_received_qty']) ? $this->formatNumber($obj['TemperatureCompensation']['variance_received_qty'], 'money', 0) : '';
+                            $received_quantity = isset($obj['TemperatureCompensation']['received_quantity']) ? $this->formatNumber($obj['TemperatureCompensation']['received_quantity'], 'number', 0) : '';
+                            $variance_received_qty = isset($obj['TemperatureCompensation']['variance_received_qty']) ? $this->formatNumber($obj['TemperatureCompensation']['variance_received_qty'], 'number', 0) : '';
                             $invoice_date = isset($obj['TemperatureCompensation']['invoice_date']) ? $this->covertDate($obj['TemperatureCompensation']['invoice_date'], 'mysql_flip') : '';
 
                             $return_arr[] = array(
@@ -1448,6 +1455,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
         $this->set(compact('grid_data', 'omc_customers_lists', 'volumes', 'permissions', 'depot_lists', 'products_lists', 'bdc_list', 'graph_title', 'g_data', 'bdclists', 'order_filter', 'list_tm'));
     }
+
 
 
 }

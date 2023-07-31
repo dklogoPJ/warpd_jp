@@ -126,7 +126,7 @@ class DepotController extends DepotAppController
                             if($depot_feedback == 'Not Loaded'){
                                 $loaded_date = '';
                             }
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Order']['id'],
                                 'cell' => array(
@@ -138,7 +138,7 @@ class DepotController extends DepotAppController
                                     $obj['Omc']['name'],
                                     $obj['Cep']['name']." (Approved)",
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber( $obj['Order']['approved_quantity'],'money',0),
+                                    $this->formatNumber( $obj['Order']['approved_quantity'],'number',0),
                                     $obj['Order']['truck_no'],
                                     $depot_feedback,
                                     $loaded_quantity,
@@ -481,7 +481,7 @@ class DepotController extends DepotAppController
                             $bdc_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['bdc_approval']])? $this->waybill_feedback[$obj['Waybill']['bdc_approval']] : 'Not Yet Approved';
                             $cep_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['ceps_approval']])? $this->waybill_feedback[$obj['Waybill']['ceps_approval']] : 'Not Yet Approved';
 
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Waybill']['id'],
                                 'cell' => array(

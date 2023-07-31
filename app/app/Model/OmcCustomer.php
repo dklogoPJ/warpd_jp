@@ -124,6 +124,58 @@ class OmcCustomer extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'NctRecord' => array(
+            'className' => 'NctRecord',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'CustomerCreditSetting' => array(
+            'className' => 'CustomerCreditSetting',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'CustomerCredit' => array(
+            'className' => 'CustomerCredit',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'CustomerCreditPayment' => array(
+            'className' => 'CustomerCreditPayment',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
         
     );
@@ -199,6 +251,36 @@ class OmcCustomer extends AppModel
             $recursive
         ));
         return $cus_list;
+    }
+
+
+    function _getOmcCustomer($col){
+        $nt = array();
+        $r = $this->find('all',array(
+            'fields'=>array($col),
+            'conditions'=>array('NOT'=>array($col=>NULL),'deleted'=>'n'),
+            'order'=>array($col=>'Asc'),
+            'recursive'=>-1
+        ));
+        /*debug($r);
+        exit;*/
+        foreach($r as $k=>$data){
+            $nt[$data['OmcCustomer'][$col]] = $data['OmcCustomer'][$col];
+        }
+        asort($nt);
+        return $nt;
+    }
+
+    function getOmcCustomerList(){
+        $nts =  $this->_getOmcCustomer('name');
+        $ncts  = array();
+        foreach($nts as $nt){
+            $ncts[] = array(
+                'id'=>$nt,
+                'name'=>$nt
+            );
+        }
+        return $ncts;
     }
 
 }

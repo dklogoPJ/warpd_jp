@@ -44,9 +44,9 @@ var Order = {
                 {display:'Product Temp-Depot', name:'product_temp_depot', width:130, sortable:true, align:'left', hide:false},
                 {display:'Product Density Station', name:'product_density_station', width:150, sortable:true, align:'left', hide:false},
                 {display:'Product Temp-Station', name:'product_temp_station', width:170, sortable:true, align:'left', hide:false},
-                {display:'Dipping Pre-Discharge (ltr)', name:'dipping_pre_discharge', width:170, sortable:true, align:'left', hide:false},
-                {display:'Dipping Post-Discharge (ltr)', name:'dipping_post_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Received Qty (ltr)', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Dipping Pre-Discharge (ltr)', name:'dipping_pre_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'hidden', validate:'', defval:'',readonly:'readonly'}},
+                {display:'Dipping Post-Discharge (ltr)', name:'dipping_post_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'',  on_key_up:'{"action":"subtract", "sources":["dipping_post_discharge","dipping_pre_discharge"], "targets":["received_quantity"]}'}},
+                {display:'Received Qty (ltr)', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'',readonly:'readonly'}},
                 {display:'Discharge Date', name:'discharge_date', width:120, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
                 {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'',defval:''}}
 
@@ -61,8 +61,8 @@ var Order = {
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
                 edit:inArray('E',permissions),
-                confirmSave:false
-               // confirmSaveText:"If this order gets processed by te OMC, you can't change it afterwords. \n Are you sure the information you entered is correct ?"
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:true,
             sortname:"id",

@@ -29,15 +29,20 @@ var OmcTrucks = {
             btn_actions.push({type:'buttom', name:'Export All', bclass:'export', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }*/
-
+     
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Truck Number', name:'truck_no', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Capacity', name:'capacity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Transporter', name:'name', width:300, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
+                {display:'Customer Name', name:'customer_name', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Business Type', name:'business_type', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Station Name', name:'omc_customer_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:station_list}},
+                {display:'Territory', name:'territory', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Credit Limit', name:'credit_limit', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Credit Days', name:'credit_days', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Agreement Sign', name:'agreement_sign', width:100, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:yes_no}},
+                {display:'Risk Rating', name:'risk_rating', width:120, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:risk_rate}}
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -102,6 +107,7 @@ var OmcTrucks = {
         var url = $('#grid_delete_url').val();
         jLib.do_delete(url, grid);
     }
+
 };
 
 /* when the page is loaded */

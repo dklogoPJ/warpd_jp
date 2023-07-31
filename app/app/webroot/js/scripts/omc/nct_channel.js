@@ -34,8 +34,8 @@ var OmcTrucks = {
             url:$('#table-url').val(),
             dataType:'json',
             colModel:[
-                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'NCTs Channel Name', name:'name', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}
+                {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
+                {display:'NCTs Channel Name', name:'name', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -46,11 +46,13 @@ var OmcTrucks = {
                 use:true,
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
-                edit:inArray('E',permissions)
+                edit:inArray('E',permissions),
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:false,
             sortname:"id",
-            sortorder:"desc",
+            sortorder:"asc",
             usepager:true,
             useRp:true,
             rp:15,
