@@ -12,7 +12,6 @@ class OmcCustomerController extends OmcCustomerAppController
     var $name = 'OmcCustomer';
     # set the model to use
     var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange','CustomerCreditSetting','CustomerCredit','CustomerCreditPayment');
-    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
