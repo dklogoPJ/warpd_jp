@@ -89,7 +89,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
             $group = $first_group['id'];
         }
 
-        $menu_data = $this->Menu->getMenusToAssign('omc_customer',null);
+        $menu_data = $this->Menu->getMenusToAssign('omc_customer',null, $company_profile);
         $group_menu_data = $this->MenuGroup->getGroupMenusIds('omc_customer',$group,$company_profile['id']);
         $group_menu_ids = array_keys($group_menu_data);
 

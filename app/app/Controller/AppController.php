@@ -126,6 +126,9 @@ class AppController extends Controller
 
     public $global_company = array();
 
+    public $active_menu = null;
+    public $user_menus = null;
+
     var $company_modules = array();
 
 
@@ -133,6 +136,12 @@ class AppController extends Controller
     {
         $this->processUserCookie();
         $this->updateUserLoginTime();
+
+        $Menu = ClassRegistry::init('Menu');
+        $this->active_menu = $Menu->getMenuByUrl($this->params['controller'], $this->params['action']);
+        if($this->active_menu && $this->active_menu['Menu']['url_type'] === 'omc_customer_form_url_proxy'){//if not allowed, redirect to Router
+            $this->redirect(array('controller' => $this->params['controller'], 'action' => 'index/'.$this->params['action']));
+        }
 
         $User = ClassRegistry::init('User');
         $Bdc = ClassRegistry::init('Bdc');
@@ -149,7 +158,6 @@ class AppController extends Controller
             $company_modules = array();
             if($authUser){
                 $user_type = $authUser['user_type'];
-               //if ses_entity then use it rather than querying from db.
                 if($this->Session->check('ses_entity')){
                     $this->global_company = $this->Session->read('ses_entity');
                 }
@@ -219,8 +227,9 @@ class AppController extends Controller
             }
 
             $controller = $this->params['controller'];
+            $menuTitle = $this->active_menu ? $this->active_menu['Menu']['menu_name'] : '';
 
-            $this->set(compact('authUser','auth_user_view','company_profile','company_modules','controller'));
+            $this->set(compact('authUser','auth_user_view','company_profile','company_modules','controller','menuTitle'));
         }
     }
 
@@ -359,16 +368,17 @@ class AppController extends Controller
     function getMenus($type,$group_id,$comp_id,$validate_access_control)
     {
         $MenuGroup = ClassRegistry::init('MenuGroup');
-        $user_menus = $MenuGroup->getGroupMenus($type,$group_id,$comp_id);
+        $this->user_menus = $MenuGroup->getGroupMenus($type,$group_id,$comp_id);
         //debug($user_menus);
         if($validate_access_control){
-            $this->accessControlValidation($user_menus);
+            $this->accessControlValidation($this->user_menus);
         }
        /* else{
             debug("Don't validate");
             exit;
         }*/
         $permissions = $this->action_permission;
+        $user_menus = $this->user_menus;
         $this->set(compact('user_menus','permissions'));
     }
 
@@ -383,6 +393,9 @@ class AppController extends Controller
             return true;
         }
         if(stristr($controller, 'Common') !== false) {//Skip for Common
+            return true;
+        }
+        if(stristr($controller, 'OmcCustomerDailySales') !== false && stristr($action, 'index') !== false) {//Skip validation
             return true;
         }
         if(stristr($action, 'print_export') !== false) {//Skip for print and export functions
@@ -417,31 +430,48 @@ class AppController extends Controller
             return true;
         }
 
-        foreach($user_menus as $menu){
-            if($is_allowed){
-                break;
-            }
+        if($this->setPermission()){
+            $is_allowed = true;
+        }
+
+        if(!$is_allowed){//if not allowed, redirect to Router
+            $this->redirect(array('controller' => 'Router', 'action' => 'index'));
+        }
+    }
+
+    function setPermission ($custom_action = null) {
+        $action_permissions = $this->getPermissions($custom_action);
+        if($action_permissions) {
+            $this->action_permission = explode(',',$action_permissions);
+            return true;
+        }
+        return false;
+    }
+
+    function getPermissions ($custom_action = null) {
+        $action = $this->params['action'];
+        if($custom_action) {
+            $action = $custom_action;
+        }
+        $controller = $this->params['controller'];
+        $action_permissions = null;
+        foreach($this->user_menus as $menu){
             if(isset($menu['sub'])){
                 foreach($menu['sub'] as $inner_um){
                     if($controller == $inner_um['controller'] && $action == $inner_um['action']){
-                        $is_allowed = true;
-                        $this->action_permission = explode(',',$inner_um['permission']);
-
+                        $action_permissions = $inner_um['permission'];
                         break;
                     }
                 }
             }
             else{
                 if($controller == $menu['controller'] && $action == $menu['action']){
-                    $is_allowed = true;
-                    $this->action_permission = explode(',',$menu['permission']);
+                    $action_permissions = $menu['permission'];
+                    break;
                 }
             }
         }
-
-        if(!$is_allowed){//if not allowed, redirect to Router
-            $this->redirect(array('controller' => 'Router', 'action' => 'index'));
-        }
+        return $action_permissions;
     }
 
 

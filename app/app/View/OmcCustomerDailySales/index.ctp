@@ -21,6 +21,14 @@
     .isw-ok {
         background-position: 10% 50% ;
     }
+    .grid_menu {
+        line-height: 37px;
+        padding: 0 10px 0 10px;
+        margin: 10px;
+    }
+    .grid_menu i {
+        padding: 11px 0px !important;
+    }
 
     .selected td{
         color: #486B91;
@@ -50,7 +58,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1>Daily Sales Record : <?php echo date('l jS F Y');?> <small> </small></h1>
+        <h1><?php echo $menu_title.' : '.date('l jS F Y');?> <small> </small></h1>
     </div>
 
     <div class="row-fluid">
@@ -60,53 +68,65 @@
                 <div class="isw-list"></div>
                 <h1>Sales Record Sheet</h1>
                 <ul class="buttons">
-                    <li><a href="javascript:void(0);" id="add_row_btn" class="isw-empty_document"> &nbsp;  &nbsp; Add Row</a></li>
-                    <li><a href="javascript:void(0);" id="edit_row_btn" class="isw-edit"> &nbsp;  &nbsp; Edit Row</a></li>
-                    <li><a href="javascript:void(0);" id="cancel_row_btn" class="isw-cancel"> &nbsp;  &nbsp; Cancel</a></li>
-                    <li><a href="javascript:void(0);" id="save_row_btn" class="isw-ok"> &nbsp;  &nbsp; Save</a></li>
-                </ul>
-            </div>
-            <div class="block-fluid" id="form_tabs">
-                <ul id="sales-form-tabs">
                     <?php
-                    foreach($forms_n_fields as $f){
-                        $form_id = $f['id'];
-                        $form_name = $f['name'];
-                        $render_type = $f['render_type'];
-                        $tab_ref_id = "#tabs-".$form_id;
+                    if($current_day_records) {
                     ?>
-                        <li><a href="<?php echo $tab_ref_id; ?>" data-render_type="<?php echo $render_type; ?>"  data-form_id="<?php echo $form_id; ?>"  data-form_table_id="#form-table-<?php echo $form_id; ?>"><strong><?php echo $form_name; ?></strong></a></li>
+                        <?php
+                        if (in_array("D", $permissions)) {
+                        ?>
+                        <li><a href="javascript:void(0);" id="delete_sales_sheet_btn" class="grid_menu"><i class="isw-delete"></i> Delete Sales Sheet</a></li>
+                        <?php
+                        }
+                        ?>
+
+                        <?php
+                        if (in_array("E", $permissions)) {
+                            ?>
+                            <li><a href="javascript:void(0);" id="edit_row_btn" class="grid_menu"><i class="isw-edit"></i>Edit Row</a></li>
+                            <li><a href="javascript:void(0);" id="cancel_row_btn" class="grid_menu"><i class="isw-cancel"></i>Cancel Editing</a></li>
+                            <li><a href="javascript:void(0);" id="save_row_btn" class="grid_menu"><i class="isw-ok"></i>Save Row</a></li>
+                            <?php
+                        }
+                        ?>
                     <?php
                     }
                     ?>
+
                 </ul>
-                <?php
-                $form_field_rendered = array();
-                foreach($forms_n_fields as $f){
-                    $form_id = $f['id'];
-                    $tab_id = "tabs-".$form_id;
-                    $table_id = "form-table-".$form_id;
-                ?>
-                    <div id="<?php echo $tab_id; ?>">
-                        <div style="padding: 40px 10px 0px;">
+            </div>
+            <div class="block-fluid" id="form_tabs">
+                <div style="padding: 10px 10px 0px;">
+                    <div class="row-fluid">
+                        <?php
+                        if($current_day_records) {
+                        ?>
+                        <div class="span12">
+                            <div style="height: 550px; overflow-x: auto; overflow-y: auto;">
+                                <?php
+                                echo $this->TableForm->renderDailySalesTableForm($current_day_records);
+                                ?>
+                            </div>
+                        </div>
+                        <?php
+                        } else {
+                        ?>
+                        <div class="span12">
                             <div class="row-fluid">
-                                <div class="span12">
-                                    <div class="block-fluid">
-                                        <div style="height: 550px; overflow-x: auto; overflow-y: auto;">
-                                            <?php
-                                            $table_n_fields = $this->TableForm->render($table_id,$f['fields'],$f['values']);
-                                            $form_field_rendered[$form_id] = $table_n_fields['fields'];
-                                            echo $table_n_fields['table'];
-                                            ?>
-                                        </div>
-                                    </div>
+                                <div class="span12" style="text-align: center; margin-bottom: 20px;">
+                                    <h5><?php echo $menu_title." has no sales sheet for today. Please click on the button below to create the sales sheet." ?> </h5>
+                                </div>
+                            </div>
+                            <div class="row-fluid">
+                                <div class="span12" style="text-align: center; margin-bottom: 20px;">
+                                    <button type="button" class="btn" id="new_sales_sheet_btn"><i class="isw-empty_document"></i> Creat Sales Sheet</button>
                                 </div>
                             </div>
                         </div>
+                        <?php
+                        }
+                        ?>
                     </div>
-                <?php
-                }
-                ?>
+                </div>
             </div>
         </div>
 
@@ -118,18 +138,19 @@
 
 
 <!-- URLs -->
+<input type="hidden" id="form-sales-sheet-id" value="<?php echo $sales_sheet_id; ?>" />
 <input type="hidden" id="form-save-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'index')); ?>" />
 
 <!-- Le Script -->
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
-    var forms_n_fields = <?php echo json_encode($forms_n_fields); ?>;
-    var form_field_rendered = <?php echo json_encode($form_field_rendered); ?>;
+   // var form_field_rendered = <?php // echo json_encode($form_field_rendered); ?>;
     var price_change_data = <?php echo json_encode($price_change_data); ?>;
     var previous_day_records = <?php echo json_encode($previous_day_records); ?>;
     var current_day_records =  <?php echo json_encode($current_day_records); ?>;
+    var form_key = <?php echo json_encode($form_key); ?>;
 </script>
 <?php
+echo $this->Html->script('scripts/omc_customer/event_actions.js');
 echo $this->Html->script('scripts/omc_customer/daily_sales.js');
-echo $this->Html->script('scripts/omc_customer/form_rules2.js');
 ?>
