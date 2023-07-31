@@ -164,7 +164,7 @@ class OmcDailySalesController extends OmcAppController
             'menu_group'=>'Operations',
             'controller'=>'OmcCustomerDailySales',
             'action'=>$menu_action,
-            'url_type'=>'proxy',
+            'url_type'=>'omc_customer_form_url_proxy',
             'icon'=>'icon-file',
             'menu_name'=>$data['form_name'],
             'order'=>$data['form_order']
@@ -205,6 +205,7 @@ class OmcDailySalesController extends OmcAppController
                     'order'=>$post['form_order'],
                     'description'=>$post['form_description'],
                     'primary_field'=>$post['form_primary_field'],
+                    'omc_customer_list'=>$post['form_omc_customer_list_str'],
                     'omc_id'=>$post['omc_id'],
                     'modified_by'=>$authUser['id']
                 )) ;
@@ -388,6 +389,7 @@ class OmcDailySalesController extends OmcAppController
                 'name' => $form['form_name'],
                 'description' => $form['description'],
                 'order' => $form['order'],
+                'omc_customer_list' => $form['omc_customer_list'],
                 'primary_field_name' => $form['primary_field'],
                 'primary_field_options'=>$primary_field_options_arr,
                 'fields'=>$fields_arr
@@ -397,9 +399,17 @@ class OmcDailySalesController extends OmcAppController
 
         $sale_form_element_events = $this->SalesFormElementEvent->getKeyValuePair();
         $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
-        $all_products = $this->ProductType->getProductList();
+        $all_products = $this->ProductType->getProductList(); //TODO get AND FILTER the product list for the OMC
+        $omc_customers_list = $this->get_customer_list();
+        $customers = array(array('id'=>'all', 'name'=> 'All Customers'));
+        foreach($omc_customers_list as $data){
+            $customers[] = array(
+                'id' => $data['id'],
+                'name' => $data['name']
+            );
+        }
 
-        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','all_products'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','all_products', 'customers'));
     }
 
     function station_sales(){

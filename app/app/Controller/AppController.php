@@ -139,7 +139,7 @@ class AppController extends Controller
 
         $Menu = ClassRegistry::init('Menu');
         $this->active_menu = $Menu->getMenuByUrl($this->params['controller'], $this->params['action']);
-        if($this->active_menu && $this->active_menu['Menu']['url_type'] === 'proxy'){//if not allowed, redirect to Router
+        if($this->active_menu && $this->active_menu['Menu']['url_type'] === 'omc_customer_form_url_proxy'){//if not allowed, redirect to Router
             $this->redirect(array('controller' => $this->params['controller'], 'action' => 'index/'.$this->params['action']));
         }
 

@@ -74,6 +74,11 @@ var SalesForm = {
             $("#sales-forms #form_order").val(form.order);
             $("#sales-forms #form_description").val(form.description);
             $("#sales-forms #form_primary_field").val(form.primary_field_name);
+            if(form.omc_customer_list) {
+                self.reset_form_customer_list(form.omc_customer_list.split(','));
+            } else {
+                self.reset_form_customer_list(['all']);
+            }
         });
 
         $("#sales-forms #form_reset").click(function(){
@@ -84,6 +89,7 @@ var SalesForm = {
             $("#sales-forms #form_description").val('');
             $("#sales-forms #form_primary_field").val('');
             $("#sales-forms #form_action_type").val('form_save');
+            self.reset_form_customer_list(['all']);
 
             $("table#sales_form_list tbody tr").removeClass('selected');
             self.tr_edit = null;
@@ -110,14 +116,32 @@ var SalesForm = {
                 });
             }
         });
+
+        $("#sales-forms #omc_customer_list").select2();
     },
 
     save_form:function(){
         var self = this;
         var $salesForms = $("#sales-forms");
         var url = $salesForms.attr('action');
-        var query = $salesForms.serialize();
+        var form_customers_arr =  $("#sales-forms #form_omc_customer_list").val();
+        var form_customers_str = form_customers_arr ? form_customers_arr.toString() : '';
+        var query = $salesForms.serialize()+"&form_omc_customer_list_str="+form_customers_str;
         var formObjCollection = $salesForms.serializeArray();
+        formObjCollection.push({name: 'omc_customer_list', value: form_customers_str});
+
+
+       /* var field_action_sources_arr = $("#sales-form-fields #field_action_sources").val();
+        var field_action_sources_str = field_action_sources_arr ? field_action_sources_arr.toString() : '';
+        var field_action_targets_arr = $("#sales-form-fields #field_action_targets").val();
+        var field_action_targets_str = field_action_targets_arr ? field_action_targets_arr.toString() : '';
+        var query = $salesFormFields.serialize()+"&field_type_values="+field_type_values+"&field_action_sources_str="+field_action_sources_str+"&field_action_targets_str="+field_action_targets_str;
+        var salesFormFieldsObjCollection = $salesFormFields.serializeArray();
+        salesFormFieldsObjCollection.push({name: 'field_type_values', value: field_type_values});
+        salesFormFieldsObjCollection.push({name: 'field_action_sources', value: field_action_sources_str});
+        salesFormFieldsObjCollection.push({name: 'field_action_targets', value: field_action_targets_str});
+*/
+
 
         $.ajax({
             url:url,
@@ -143,6 +167,7 @@ var SalesForm = {
                         'order' : self.getValue('form_order', formObjCollection),
                         'description' : self.getValue('form_description', formObjCollection),
                         'primary_field_name' :  self.getValue('form_primary_field', formObjCollection),
+                        'omc_customer_list' : self.getValue('omc_customer_list', formObjCollection),
                         'action_type' : self.getValue('form_action_type', formObjCollection),
                         'omc_id' : self.getValue('omc_id', formObjCollection)
                     };
@@ -178,6 +203,7 @@ var SalesForm = {
                 $forms_fields[form_id]['description'] = post_data['description'];
                 $forms_fields[form_id]['order'] = post_data['order'];
                 $forms_fields[form_id]['primary_field_name'] = post_data['primary_field_name'];
+                $forms_fields[form_id]['omc_customer_list'] = post_data['omc_customer_list'];
             }
         }
         if(action_type === 'form_delete'){
@@ -419,6 +445,16 @@ var SalesForm = {
             }
         });
 
+        //TODO Re implement this, it's causing conflict with action sources hide and show from other event changes
+     /*   $("#sales-form-fields #field_action").change(function(){
+            var val = $(this).val();
+            var $fieldActionSourcesContainer = $("#field_action_sources_wrapper");
+            $fieldActionSourcesContainer.show('slow');
+            if(val === 'price_change' ) {
+                $fieldActionSourcesContainer.hide('slow');
+            }
+        });*/
+
         $("#sales-form-fields #field_action_sources").select2();
         $("#sales-form-fields #field_action_targets").select2();
     },
@@ -567,6 +603,11 @@ var SalesForm = {
                 }
             }
         jquerySelect2Obj.select2();
+    },
+
+    reset_form_customer_list: function (selected_ids=[]){
+        var jquerySelect2Obj = $("#sales-forms #form_omc_customer_list");
+        this.reset_select_option($customers, 'id', 'name', jquerySelect2Obj, 'form_omc_customer_list', selected_ids);
     },
 
     reset_form_field_action_sources: function (form_id, selected_ids=[]){

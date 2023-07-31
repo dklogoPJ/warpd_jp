@@ -127,7 +127,8 @@ class OmcCustomerDailySale extends AppModel
         $condition = array(
             'OmcCustomerDailySale.omc_customer_id'=>$omc_customer_id,
             'OmcCustomerDailySale.omc_sale_form_id'=> $form_id,
-            'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%"
+            'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%",
+            'OmcCustomerDailySale.deleted' => "n"
         );
         $query = $this->getRecord($condition);
         if($query) {
@@ -143,7 +144,8 @@ class OmcCustomerDailySale extends AppModel
             $condition = array(
                 'OmcCustomerDailySale.omc_customer_id'=>$omc_customer_id,
                 'OmcCustomerDailySale.omc_sale_form_id'=> $form['OmcSalesForm']['id'],
-                'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%"
+                'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%",
+                'OmcCustomerDailySale.deleted' => "n"
             );
             $query = $this->getRecord($condition);
             if($query) {
@@ -164,7 +166,8 @@ class OmcCustomerDailySale extends AppModel
             $condition = array(
                 'OmcCustomerDailySale.omc_customer_id'=>$omc_customer_id,
                 'OmcCustomerDailySale.omc_sale_form_id'=> $form_id,
-                'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%"
+                'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%",
+                'OmcCustomerDailySale.deleted' => "n"
             );
             $sale_sheet_record_raw = $this->getRecord($condition);
 
@@ -279,11 +282,18 @@ class OmcCustomerDailySale extends AppModel
 
 
     function deleteFormSaleSheet ($id) {
-        $query = $this->delete($id, true);
+        return $this->updateAll(
+            array('deleted' => "'y'"),
+            array(
+                'OmcCustomerDailySale.id' => $id,
+            )
+        );
+
+       /* $query = $this->delete($id, true);
         $this->resetAutoincrement();
         $this->resetAutoincrement($this->OmcCustomerDailySalePrimaryField->table);
-        $this->resetAutoincrement(ClassRegistry::init('OmcCustomerDailySaleField')->table);
-        return $query;
+        $this->resetAutoincrement(ClassRegistry::init('OmcCustomerDailySaleField')->table);*/
+      //  return $query;
     }
 
 }

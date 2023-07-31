@@ -85,6 +85,13 @@
                                             <div class="span8"><input type="text" name="form_order" id="form_order" value="" required class=""></div>
                                         </div>
 
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">Customers:</div>
+                                            <div class="span8">
+                                                <select name="form_omc_customer_list[]" id="form_omc_customer_list" multiple="multiple" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+
 
                                         <div class="footer tar">
                                             <input type="hidden"  name="form_action_type" id="form_action_type" value="form_save" >
@@ -364,7 +371,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row-form clearfix field_event_wrapper" style="border-top-width: 0px; display:none"">
+                                        <div class="row-form clearfix field_event_wrapper" style="border-top-width: 0px; display:none">
                                             <div class="span4">Field Action:</div>
                                             <div class="span8">
                                                 <select name="field_action" id="field_action">
@@ -379,7 +386,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row-form clearfix field_event_wrapper" style="border-top-width: 0px; display:none">
+                                        <div class="row-form clearfix field_event_wrapper" id="field_action_sources_wrapper" style="border-top-width: 0px; display:none">
                                             <div class="span4">Field Action Sources:</div>
                                             <div class="span8">
                                                 <select name="field_action_sources[]" id="field_action_sources" multiple="multiple" style="width: 100%;"></select>
@@ -462,6 +469,7 @@
     var $sale_form_options = <?php echo json_encode($sale_form_options); ?>;
     var $sale_form_element_events = <?php echo json_encode($sale_form_element_events); ?>;
     var $sale_form_element_actions = <?php echo json_encode($sale_form_element_actions); ?>;
+    var $customers = <?php echo json_encode($customers); ?>;
 </script>
 <!-- Le Script -->
 <?php

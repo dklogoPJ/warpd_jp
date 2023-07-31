@@ -83,7 +83,7 @@ class OmcSalesForm extends AppModel
     function getSalesFormByKey($omc_id, $form_key) {
         $conditions = array('OmcSalesForm.omc_id'=>$omc_id, 'OmcSalesForm.form_key'=>$form_key, 'OmcSalesForm.deleted'=>'n');
         return $this->find('first',array(
-            'fields'=>array('OmcSalesForm.id','OmcSalesForm.form_name'),
+            'fields'=>array('OmcSalesForm.id','OmcSalesForm.form_name','OmcSalesForm.omc_customer_list'),
             'conditions'=>$conditions,
             'recursive'=> -1
         ));
