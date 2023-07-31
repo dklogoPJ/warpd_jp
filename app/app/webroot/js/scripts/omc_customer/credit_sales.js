@@ -23,7 +23,7 @@ var Order = {
             btn_actions.push({type:'buttom', name:'Attachment', bclass:'attach', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-       // btn_actions.push({type:'select',name: 'Order Status', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:order_filter});
+//       btn_actions.push({type:'select',name: 'Select Customer To View Ledger', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:customer_name_lists});
 
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
@@ -122,7 +122,7 @@ var Order = {
                 Order.attach_file(grid);
             }
         }
-        else if (com == 'Filter BDC' || com == 'Order Status') {
+        else if (com == 'Select Customer To View Ledger') {
             Order.filterGrid(json);
         }
     },
