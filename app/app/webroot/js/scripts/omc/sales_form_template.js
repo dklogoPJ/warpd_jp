@@ -434,14 +434,12 @@ var SalesForm = {
         $("#sales-form-fields #field_disabled").change(function(){
             var val = $(this).val();
             var $fieldEvent = $("#sales-form-fields #field_event");
-            //$fieldEvent.removeAttr("disabled");
             $fieldEvent.find('option').removeAttr("disabled");
             if(val === 'y' ) {
                 //Disable all other event options except Focus In
-                ['none','focusout','keyup','change'].forEach( e => {
+                ['focusout','keyup','change'].forEach( e => {
                     $fieldEvent.find('option[value="' + e + '"]').attr("disabled","disabled");
                 });
-                $fieldEvent.val('focus').change();
             }
         });
 
@@ -464,7 +462,8 @@ var SalesForm = {
         var $salesFormFields = $("#sales-form-fields");
         var url = $salesFormFields.attr('action');
         var field_type_values = $("#sales-form-fields #field_type_values").val();
-        var field_action_sources_arr = $("#sales-form-fields #field_action_sources").val();
+        var field_action_sources_arr_obj = $("#sales-form-fields #field_action_sources").select2("data");
+        var field_action_sources_arr = field_action_sources_arr_obj.map((x) => {return x.id});
         var field_action_sources_str = field_action_sources_arr ? field_action_sources_arr.toString() : '';
         var field_action_targets_arr = $("#sales-form-fields #field_action_targets").val();
         var field_action_targets_str = field_action_targets_arr ? field_action_targets_arr.toString() : '';
@@ -588,21 +587,52 @@ var SalesForm = {
 
     reset_select_option: function (collection, value_prop, text_prop, jquerySelect2Obj, select_dom_id, selected_ids){
         jquerySelect2Obj.select2('destroy');
-            var select = document.getElementById(select_dom_id);
-            select.options.length = 0;
-            for(var nx in collection){
-                var opt = document.createElement('option');
-                opt.value = collection[nx][value_prop];
-                opt.text = collection[nx][text_prop];
-                opt.selected = selected_ids.indexOf(collection[nx].id) >= 0
-                try{ //Standard
-                    select.add(opt,null) ;
+        var new_collection = [];
+        //convert collection to array of objects
+        for(var nx in collection) {
+            new_collection.push(collection[nx]);
+        }
+
+        var sorted_collection = []
+        var selected_items_collection = []
+        //Filter out the items that where selected. To get only the items that where not selected.
+        var non_selected_items_collection = new_collection.filter(function(el) {
+            return selected_ids.indexOf(el[value_prop]) === -1;
+        });
+
+        if(selected_ids.length > 0) {
+            //push the selected ids items in order as they appear in the selected_ids array
+            selected_ids.forEach(function(key) {
+                var found = false;
+                var t = new_collection.find(function(item) {
+                    return item[value_prop] === key;
+                });
+
+                if(t) {
+                    selected_items_collection.push(t);
                 }
-                catch(error){ //IE Only
-                    select.add(opt) ;
-                }
+            });
+            sorted_collection = selected_items_collection.concat(non_selected_items_collection);
+        } else {
+            sorted_collection = new_collection;
+        }
+
+        var select = document.getElementById(select_dom_id);
+        select.options.length = 0;
+        for(var nx in sorted_collection) {
+            var opt = document.createElement('option');
+            opt.value = sorted_collection[nx][value_prop];
+            opt.text = sorted_collection[nx][text_prop];
+            try{ //Standard
+                select.add(opt,null) ;
             }
+            catch(error){ //IE Only
+                select.add(opt) ;
+            }
+        }
+
         jquerySelect2Obj.select2();
+        jquerySelect2Obj.select2('val', selected_ids);
     },
 
     reset_form_customer_list: function (selected_ids=[]){
