@@ -425,7 +425,7 @@ var DailySales = {
 
         //Add event binding where applicable
         if(field_event && field_action && field_action_targets) {
-            element.on( field_event, function() {
+            var eventCallbackFunc = function() {
                 //Field sources will depend on action type
                 var options = {
                     search_row: '',
@@ -447,16 +447,22 @@ var DailySales = {
                     action_sources = price_change_data
                     options['search_row'] = fieldObj.product_type_id
                 }
+                self.onElementEventCallback(field_event, field_action, source_type, action_sources, field_action_targets.split(','), options);
+            }
 
-                self.onElementEventCallback(field_action, source_type, action_sources, field_action_targets.split(','), options);
-            });
+            //Handling custom events and standard events
+            if(field_event === 'disable_on_data') {
+                element.on( 'focus', eventCallbackFunc);
+            } else {
+                element.on( field_event, eventCallbackFunc);
+            }
         }
 
         return {'field':element,'type':field_type};
     },
 
 
-    onElementEventCallback: function (action, source_type, action_sources, action_targets, options={}) {
+    onElementEventCallback: function (event, action, source_type, action_sources, action_targets, options={}) {
         var self = this;
         var sources_values = [];
         if(source_type === 'fields') {
@@ -494,6 +500,9 @@ var DailySales = {
                     el = td.find('select');
                 }
                 el.val(result);
+                if(result && event === 'disable_on_data') {
+                    el.attr( 'readonly', 'readonly');
+                }
             });
         });
     },
