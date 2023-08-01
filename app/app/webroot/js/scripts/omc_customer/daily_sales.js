@@ -493,16 +493,24 @@ var DailySales = {
                 var td = $(this);
                 var field_type = td.attr('data-field_type');
                 var el = '';
+
                 if(field_type === 'Text'){
                     el = td.find('input');
                 }
                 else if(field_type === 'Drop Down'){
                     el = td.find('select');
                 }
+                var el_data = el.val();//get the current data entered by user
                 el.val(result);
+
                 if(result && event === 'disable_on_data') {
                     el.attr( 'readonly', 'readonly');
                 }
+
+                if(el_data && event === 'disable_on_data') {
+                    el.val(el_data);
+                }
+
             });
         });
     },
