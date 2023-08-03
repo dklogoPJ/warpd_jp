@@ -41,14 +41,14 @@ class LpgSetting extends AppModel
         /*debug($r);
         exit;*/
         foreach($r as $k=>$data){
-            $nt[$data['Nct'][$col]] = $data['Nct'][$col];
+            $nt[$data['LpgSetting'][$col]] = $data['LpgSetting'][$col];
         }
         asort($nt);
         return $nt;
     }
 
     function getLpgList(){
-        $nts =  $this->_getLpg('lpg_type');
+        $nts =  $this->_getLpg('name');
         $ncts  = array();
         foreach($nts as $nt){
             $ncts[] = array(

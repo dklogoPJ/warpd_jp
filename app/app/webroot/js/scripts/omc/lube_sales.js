@@ -36,7 +36,7 @@ var OmcTrucks = {
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
                 {display:'Station Category', name:'station_category', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Lubes', name:'lubes', width:180, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Lubes', name:'name', width:180, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
                 {display:'Unit Volume (ltr)', name:'unit_volume', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
                 {display:'Total Qty Per Pack', name:'total_qty_per_pack', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'', on_key_up:'{"action":"multiply", "sources":["unit_volume","total_qty_per_pack"], "targets":["pack_volume"]}'}},
                 {display:'Pack Volume (ltr)', name:'pack_volume', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'',readonly:'readonly'}},

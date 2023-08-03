@@ -41,14 +41,14 @@ class LubeSetting extends AppModel
         /*debug($r);
         exit;*/
         foreach($r as $k=>$data){
-            $nt[$data['Nct'][$col]] = $data['Nct'][$col];
+            $nt[$data['LubeSetting'][$col]] = $data['LubeSetting'][$col];
         }
         asort($nt);
         return $nt;
     }
 
     function getLubeList(){
-        $nts =  $this->_getLube('lubes');
+        $nts =  $this->_getLube('name');
         $ncts  = array();
         foreach($nts as $nt){
             $ncts[] = array(

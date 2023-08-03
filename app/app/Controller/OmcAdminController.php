@@ -1525,7 +1525,7 @@ class OmcAdminController extends OmcAppController
                                 'cell' => array(
                                     $obj['LubeSetting']['id'],
                                     $obj['LubeSetting']['station_category'],
-                                    $obj['LubeSetting']['lubes'],
+                                    $obj['LubeSetting']['name'],
                                     $obj['LubeSetting']['unit_volume'],
                                     $obj['LubeSetting']['total_qty_per_pack'],
                                     $obj['LubeSetting']['pack_volume'],
@@ -1651,7 +1651,7 @@ class OmcAdminController extends OmcAppController
                                 'id' => $obj['LpgSetting']['id'],
                                 'cell' => array(
                                     $obj['LpgSetting']['id'],
-                                    $obj['LpgSetting']['lpg_type'],
+                                    $obj['LpgSetting']['name'],
                                     $obj['LpgSetting']['unit_volume'],
                                     $obj['LpgSetting']['unit_price'],
                                     $obj['LpgSetting']['price_per_kg']
