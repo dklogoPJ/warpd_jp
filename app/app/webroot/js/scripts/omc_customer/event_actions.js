@@ -18,7 +18,7 @@ var EventActions = {
         }else if(action === 'month_to_date') {
             result = this.month_to_date(current_value, search_row, search_column, source_data);
         }else if(action === 'price_change') {
-            result = this.price_change(search_row, source_data);
+            result = this.price_change(search_row, search_column, source_data);
         }
 
         return result;
@@ -66,11 +66,12 @@ var EventActions = {
         return source_data.reduce(this.sum);
     },
 
-    price_change: function (key, haystack) {
-        if (typeof haystack[key] == "undefined") {
-            return '';
+    price_change: function (key, value_property, collection) {
+        var found_item = collection.find(x => x.id === key);
+        if(found_item) {
+            return found_item[value_property];
         }
-        return haystack[key].value;
+        return ''
     }
 
 };

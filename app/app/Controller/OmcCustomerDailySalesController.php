@@ -16,7 +16,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         'OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary',
         'OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption',
         'OmcCustomerOrder','OmcCustomer','ProductType','Volume','NctRecord','Nct',
-        'OmcCustomerDailySale','OmcCustomerDailySaleField'
+        'OmcCustomerDailySale','OmcCustomerDailySaleField','LpgSetting','LubeSetting'
     );
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -73,12 +73,15 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $previous_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'],$company_profile['id'], $form_key, $previous_day_sales_sheet);
 
         $price_change_data = array();
-        foreach($this->price_change as $pn => $pr){
-            $price_change_data[$pr['product_type_id']] = array(
-                'name'=>$pn,
-                'value'=>$pr['price']
-            );
+        foreach($this->price_change as $pr){
+            $price_change_data[] = $pr;
         }
+
+        $all_external_data_sources = array(
+            'products'=> $price_change_data,
+            'lpg_settings'=> $this->LpgSetting->getProductList($company_profile['id']),
+            'lube_settings'=> $this->LubeSetting->getProductList($company_profile['id'])
+        );
 
         $menu = $this->Menu->getMenuByUrl('OmcCustomerDailySales', $form_key);
         $menu_title = $menu['Menu']['menu_name'];
@@ -88,7 +91,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
             $sales_sheet_id = $current_day_records['form']['omc_customer_daily_sales_id'];
         }
 
-        $this->set(compact('permissions','company_profile','price_change_data','previous_day_records','current_day_records','menu_title', 'form_key', 'sales_sheet_id'));
+        $this->set(compact('permissions','company_profile','all_external_data_sources','previous_day_records','current_day_records','menu_title', 'form_key', 'sales_sheet_id'));
     }
 
     function indexOriginal(){

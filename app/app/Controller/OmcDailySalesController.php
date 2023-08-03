@@ -13,7 +13,7 @@ class OmcDailySalesController extends OmcAppController
     # set the model to use
     var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm',
         'OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction',
-        'ProductType','OmcCustomerDailySale'
+        'ProductType','OmcCustomerDailySale','LpgSetting','LubeSetting'
     );
 
     # Set the layout to use
@@ -251,6 +251,7 @@ class OmcDailySalesController extends OmcAppController
                     'field_event'=>$post['field_event'],
                     'field_action'=>$post['field_action'],
                     'field_action_sources'=> $post['field_action_sources_str'],
+                    'field_action_source_column'=> $post['field_action_source_column'],
                     'field_action_targets'=> $post['field_action_targets_str'],
                     'modified_by'=>$authUser['id']
                 ) ;
@@ -286,7 +287,8 @@ class OmcDailySalesController extends OmcAppController
                     'id'=>$post['pf_option_id'],
                     'omc_sales_form_id'=>$post['pf_omc_sales_form_id'],
                     'option_name'=>$post['pf_option_name'],
-                    'product_type_id'=>$post['pf_product_type_id'],
+                    'option_link_type'=>$post['pf_option_link_type'],
+                    'option_link_id'=>$post['pf_option_link_id'],
                     'order'=>$post['pf_order'],
                     'is_total'=>$post['pf_option_is_total'],
                     'total_option_list'=>$post['pf_total_option_list'],
@@ -362,6 +364,7 @@ class OmcDailySalesController extends OmcAppController
                         'field_event'=>$field['field_event'],
                         'field_action'=>$field['field_action'],
                         'field_action_sources'=>$field['field_action_sources'],
+                        'field_action_source_column'=>$field['field_action_source_column'],
                         'field_action_targets'=>$field['field_action_targets']
                     );
                 }
@@ -374,7 +377,8 @@ class OmcDailySalesController extends OmcAppController
                         'id'=>$option['id'],
                         'form_id'=>$option['omc_sales_form_id'],
                         'option_name'=>$option['option_name'],
-                        'product_type_id'=>$option['product_type_id'],
+                        'option_link_type'=>$option['option_link_type'],
+                        'option_link_id'=>$option['option_link_id'],
                         'order'=>$option['order'],
                         'is_total'=>$option['is_total'],
                         'total_option_list'=>$option['total_option_list'],
@@ -399,7 +403,34 @@ class OmcDailySalesController extends OmcAppController
 
         $sale_form_element_events = $this->SalesFormElementEvent->getKeyValuePair();
         $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
-        $all_products = $this->ProductType->getProductList(); //TODO get AND FILTER the product list for the OMC
+        $all_option_link_types = array(
+            array('id'=>'', 'name'=>'None', 'data'=>array(), 'columns'=>array(
+                array('id'=>'', 'name'=>'None')
+            )),
+            array('id'=>'products', 'name'=>'Products', 'data'=>$this->ProductType->getProductList(), //TODO get AND FILTER the product list for the OMC
+                'columns'=>array(
+                    array('id'=>'products:price', 'name'=>'Products: price')
+                )
+            ),
+            array('id'=>'lpg_settings', 'name'=>'LPG Settings', 'data'=>$this->LpgSetting->getProductList($company_profile['id']),
+                'columns'=>array(
+                    array('id'=>'lpg_settings:unit_volume', 'name'=>'LPG Settings: unit_volume'),
+                    array('id'=>'lpg_settings:unit_price', 'name'=>'LPG Settings: unit_price'),
+                    array('id'=>'lpg_settings:price_per_kg', 'name'=>'LPG Settings:price_per_kg')
+                )
+            ),
+            array('id'=>'lube_settings', 'name'=>'Lube Settings', 'data'=>$this->LubeSetting->getProductList($company_profile['id']),
+                'columns'=>array(
+                    array('id'=>'lube_settings:unit_volume', 'name'=>'Lube Settings: unit_volume'),
+                    array('id'=>'lube_settings:total_qty_per_pack', 'name'=>'Lube Settings: total_qty_per_pack'),
+                    array('id'=>'lube_settings:pack_volume', 'name'=>'Lube Settings: pack_volume'),
+                    array('id'=>'lube_settings:unit_cost_price', 'name'=>'Lube Settings: unit_cost_price'),
+                    array('id'=>'lube_settings:unit_selling_price', 'name'=>'Lube Settings: unit_selling_price'),
+                    array('id'=>'lube_settings:price_per_ltr', 'name'=>'Lube Settings: price_per_ltr')
+                )
+            )
+        );
+
         $omc_customers_list = $this->get_customer_list();
         $customers = array(array('id'=>'all', 'name'=> 'All Customers'));
         foreach($omc_customers_list as $data){
@@ -409,7 +440,7 @@ class OmcDailySalesController extends OmcAppController
             );
         }
 
-        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','all_products', 'customers'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions', 'customers', 'all_option_link_types'));
     }
 
     function station_sales(){

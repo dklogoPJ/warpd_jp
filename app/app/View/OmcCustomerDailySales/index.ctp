@@ -145,7 +145,7 @@
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
    // var form_field_rendered = <?php // echo json_encode($form_field_rendered); ?>;
-    var price_change_data = <?php echo json_encode($price_change_data); ?>;
+    var all_external_data_sources = <?php echo json_encode($all_external_data_sources); ?>;
     var previous_day_records = <?php echo json_encode($previous_day_records); ?>;
     var current_day_records =  <?php echo json_encode($current_day_records); ?>;
     var form_key = <?php echo json_encode($form_key); ?>;
