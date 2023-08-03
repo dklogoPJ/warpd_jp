@@ -59,4 +59,21 @@ class LubeSetting extends AppModel
         return $ncts;
     }
 
+    function getProductList($omc_customer_id = null){
+        $conditions = array('deleted' => 'n');
+        if($omc_customer_id != null){
+            $conditions['omc_customer_id'] = $omc_customer_id;
+        }
+        $query = $this->find('all', array(
+            'fields' => array('id', 'name','unit_volume','total_qty_per_pack','pack_volume','unit_cost_price','unit_selling_price','price_per_ltr'),
+            'conditions' => $conditions,
+            'recursive' => -1
+        ));
+        $lists = array();
+        foreach ($query as $value) {
+            $lists[] = $value['LubeSetting'];
+        }
+        return $lists;
+    }
+
 }

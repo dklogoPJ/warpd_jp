@@ -38,6 +38,7 @@ class OmcCustomerDailySaleField extends AppModel
                 'OmcSalesFormField.field_disabled',
                 'OmcSalesFormField.field_event',
                 'OmcSalesFormField.field_action',
+                'OmcSalesFormField.field_action_source_column',
                 'OmcSalesFormField.field_action_sources',
                 'OmcSalesFormField.field_action_targets'
             ),

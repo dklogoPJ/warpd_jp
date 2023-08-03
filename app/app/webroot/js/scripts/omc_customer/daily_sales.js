@@ -388,6 +388,7 @@ var DailySales = {
         var field_event = options['field_event'];
         var field_action = options['field_action'];
         var field_action_sources = options['field_action_sources'];
+        var field_action_source_column = options['field_action_source_column'];
         var field_action_targets = options['field_action_targets'];
         var element = '';
 
@@ -444,8 +445,15 @@ var DailySales = {
                     options['current_value'] = $(this).val();
                 } else if(field_action === 'price_change') {
                     source_type = 'custom';
-                    action_sources = price_change_data
-                    options['search_row'] = fieldObj.product_type_id
+                    action_sources = all_external_data_sources[fieldObj.option_link_type];
+                    options['search_row'] = fieldObj.option_link_id
+                    var a = field_action_source_column.split(":");
+                    options['search_column'] = a[1];
+
+                    console.log("fieldObj", fieldObj);
+                    console.log("action_sources", action_sources);
+                    console.log("field_action_source_column", field_action_source_column);
+                    console.log("a1", a[1]);
                 }
                 self.onElementEventCallback(field_event, field_action, source_type, action_sources, field_action_targets.split(','), options);
             }
