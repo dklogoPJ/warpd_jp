@@ -450,10 +450,6 @@ var DailySales = {
                     var a = field_action_source_column.split(":");
                     options['search_column'] = a[1];
 
-                    console.log("fieldObj", fieldObj);
-                    console.log("action_sources", action_sources);
-                    console.log("field_action_source_column", field_action_source_column);
-                    console.log("a1", a[1]);
                 }
                 self.onElementEventCallback(field_event, field_action, source_type, action_sources, field_action_targets.split(','), options);
             }
