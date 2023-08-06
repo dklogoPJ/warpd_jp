@@ -23,8 +23,7 @@ var Order = {
             btn_actions.push({type:'buttom', name:'Attachment', bclass:'attach', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-       // btn_actions.push({type:'select',name: 'Order Status', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:order_filter});
-
+        btn_actions.push({type:'select',name: 'Select Customer To View Ledger', id: 'filter_status',bclass: 'filter',onchange:self.handleGridEvent,options:customer_name_lists});
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
             reload_after_add:true,
@@ -32,10 +31,10 @@ var Order = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'customer_name', width:170, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
                 {display:'Receipt No.', name:'receipt_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Receipt Date.', name:'receipt_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
                 {display:'Payment Amount (GHs.)', name:'payment_amount', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Cumm. Payment Amount (GHs.)', name:'cumm_payment_amount', width:195, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Payment Method', name:'payment_method', width:140, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:payment_method}},
                 {display:'Payment Instrument No.', name:'payment_instrument', width:150,format_number: false, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
@@ -118,7 +117,7 @@ var Order = {
                 Order.attach_file(grid);
             }
         }
-        else if (com == 'Filter BDC' || com == 'Order Status') {
+        else if (com == 'Select Customer To View Ledger') {
             Order.filterGrid(json);
         }
     },
