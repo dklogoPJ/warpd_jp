@@ -51,7 +51,9 @@ var Order = {
                 use:true,
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
-                edit:inArray('E',permissions)
+                edit:inArray('E',permissions),
+                confirmSave:true,
+                confirmSaveText:"Approval status chosen cannot be changed afterwords.\n Are you sure the information you entered is correct ?"
             },
             columnControl:true,
             sortname:"id",
