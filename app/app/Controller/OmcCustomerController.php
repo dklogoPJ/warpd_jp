@@ -984,12 +984,8 @@ class OmcCustomerController extends OmcCustomerAppController
          }*/
 
         $order_filter = $this->order_filter;
-
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
-
         $volumes = $this->Volume->getVolsList();
-
-
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method'));
@@ -1198,12 +1194,8 @@ class OmcCustomerController extends OmcCustomerAppController
          }*/
 
         $order_filter = $this->order_filter;
-
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
-
         $volumes = $this->Volume->getVolsList();
-
-
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method'));

@@ -31,11 +31,12 @@ var OmcCustomers = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'name', width:300, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                /*{display:'Region', name:'region_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'',bclass:'region-class', options:region}},
-                {display:'District', name:'district_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:district}},*/
-                {display:'Address', name:'address', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Telephone', name:'telephone', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Customer Name', name:'name', width:170, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Owner', name:'owner', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Dealer', name:'dealer', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Station Type', name:'station_type', width:100, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:st_type}},
+                {display:'Address', name:'address', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
+                {display:'Telephone', name:'telephone', width:100, sortable:true, align:'left',format_number:false, hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Default Admin', name:'admin_username', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
                 {display:'Admin Password', name:'admin_pass', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}
             ],
@@ -48,7 +49,9 @@ var OmcCustomers = {
                 use:true,
                 url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
-                edit:inArray('E',permissions)
+                edit:inArray('E',permissions),
+                confirmSave:true,
+                confirmSaveText:"Are you sure the information you entered is correct ?"
             },
             columnControl:false,
             sortname:"id",
@@ -57,7 +60,7 @@ var OmcCustomers = {
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:300,
+            height:420,
             subgrid:{
                 use:false
             },

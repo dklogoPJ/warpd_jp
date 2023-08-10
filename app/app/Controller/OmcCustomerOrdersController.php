@@ -1012,8 +1012,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     'product_id' => $obj['ProductType']['id']
                                 ),
                                 'property' => array(
-                                    //'bg_color'=>$obj['OmcCustomerOrder']['row_bg_color'],
-                                    //'edit_row'=> $edit_row
+                                    'edit_row'=> $obj['OmcCustomerOrder']['pre_edit_row'],
                                 )
                             );
                         }
@@ -1040,6 +1039,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data['OmcCustomerOrder']['dealer_modified_by'] = $authUser['id'];
                     $data['OmcCustomerOrder']['truck_arrival_date'] =$tr_date;
                     $data['OmcCustomerOrder']['dipping_pre_discharge'] = str_replace(',', '', $_POST['dipping_pre_discharge']);
+                    $data['OmcCustomerOrder']['pre_edit_row']  = 'no';
 
 
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
@@ -1213,8 +1213,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     'product_id' => $obj['ProductType']['id']
                                 ),
                                 'property' => array(
-                                    //'bg_color'=>$obj['OmcCustomerOrder']['row_bg_color'],
-                                    //'edit_row'=> $edit_row
+                                    'edit_row'=> $obj['OmcCustomerOrder']['pro_edit_row'],
                                 )
                             );
                         }
@@ -1232,6 +1231,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     $data['OmcCustomerOrder']['discharge_date'] = $this->covertDate($_POST['discharge_date'], 'mysql') . ' ' . date('H:i:s');
                     $data['OmcCustomerOrder']['dipping_post_discharge'] = str_replace(',', '', $_POST['dipping_post_discharge']);
                     $data['OmcCustomerOrder']['received_quantity'] = str_replace(',', '', $_POST['received_quantity']);
+                    $data['OmcCustomerOrder']['pro_edit_row'] = 'no';
 
 
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {

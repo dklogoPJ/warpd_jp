@@ -534,6 +534,9 @@ class OmcOrdersController extends OmcAppController
 
                             $approved_quantity = '';
                             $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
+
+                            //echo $received_quantity;
+                            //echo $received_quantity;
                             
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
@@ -559,12 +562,12 @@ class OmcOrdersController extends OmcAppController
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
                                 $this->formatNumber($obj['Order']['order_quantity'],'number',0),
+                                $approved_quantity,
+                                $loaded_quantity,
                                 /*,$mkt_feed*/
                                 $obj['Order']['transporter'],
                                 $obj['Order']['truck_no'],
                                 /*$obj['Bdc']['name'],*/
-                                $approved_quantity,
-                                $loaded_quantity,
                                 $loaded_date,
                                 $received_quantity,
                                 $git_status,
@@ -854,11 +857,12 @@ class OmcOrdersController extends OmcAppController
                                    // $obj['OmcCustomer']['credit_limit'],
                                     $obj['ProductType']['name'],
                                     $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'number',0),
+                                    $obj['OmcCustomerOrder']['intended_delivery_location'],
+                                    $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
-                                    $marketing_feed,
                                     $approve,
                                     $depot_name,
-                                    $obj['OmcCustomerOrder']['intended_delivery_location']
+                                    $marketing_feed
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
                                     'order_status'=>$obj['OmcCustomerOrder']['order_status']
@@ -923,6 +927,7 @@ class OmcOrdersController extends OmcAppController
                                     'depot_id'=>$order_customer['OmcCustomerOrder']['depot_id'],
                                     'product_type_id'=>$order_customer['OmcCustomerOrder']['product_type_id'],
                                     'order_quantity'=>$order_customer['OmcCustomerOrder']['order_quantity'],
+                                    'approved_quantity'=>$order_customer['OmcCustomerOrder']['approved_quantity'],
                                     'omc_customer_order_id'=>$order_customer['OmcCustomerOrder']['id'],
                                     'omc_order_priority'=>$order_customer['OmcCustomerOrder']['delivery_priority'],
                                     'order_status'=>'New From Dealer',
@@ -1020,10 +1025,11 @@ class OmcOrdersController extends OmcAppController
         $order_filter = $this->order_filter;
 
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+        $volumes = $this->Volume->getVolsList();
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('omc_customers_lists', 'products_lists','depot_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+        $this->set(compact('omc_customers_lists', 'products_lists','depot_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));
     }
 
 
@@ -1129,6 +1135,7 @@ class OmcOrdersController extends OmcAppController
                                     $this->formatNumber($obj['OmcCustomer']['credit_limit'],'number',2),
                                     $obj['ProductType']['name'],
                                     $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'number',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
                                     //$obj['Depot']['name'],
                                     $priority,
@@ -2099,7 +2106,10 @@ class OmcOrdersController extends OmcAppController
 
                             $approved_quantity = '';
                             $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
-                            
+                            pr('test');
+                            pr($received_quantity);
+
+
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
                             }else{

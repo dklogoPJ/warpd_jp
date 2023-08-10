@@ -373,8 +373,9 @@ class OmcAdminController extends OmcAppController
                                 'cell' => array(
                                     $obj['OmcCustomer']['id'],
                                     $obj['OmcCustomer']['name'],
-                                    /*$obj['Region']['name'],
-                                    $obj['District']['name'],*/
+                                    $obj['OmcCustomer']['owner'],
+                                    $obj['OmcCustomer']['dealer'],
+                                    $obj['OmcCustomer']['station_type'],
                                     $obj['OmcCustomer']['address'],
                                     $obj['OmcCustomer']['telephone'],
                                     $obj['OmcCustomer']['admin_username'],
@@ -467,8 +468,9 @@ class OmcAdminController extends OmcAppController
         $district_lists = $data['district'];
         $glbl_region_district = $data['region_district'];
         //$location_list = $this->get_location_list();
-
-        $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list'));
+        $st_type = array('0'=>array('id'=>'COSS','name'=>'COSS'),'1'=>array('id'=>'DOCO','name'=>'DOCO'),'2'=>array('id'=>'DODO','name'=>'DODO'));
+        
+        $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list','st_type'));
 
     }
 
