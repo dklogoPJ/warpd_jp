@@ -471,6 +471,9 @@ var DailySales = {
                     options['compare_row_property'] = 'product_type_id';
                     var a = field_action_source_column.split(":");
                     options['return_property'] = a[1];
+
+                    console.log("options:", options);
+                    console.log("fieldObj:", fieldObj);
                 }
 
                 self.onElementEventCallback(field_event, field_action, action_sources, field_action_targets.split(','), options);
