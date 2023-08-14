@@ -6,6 +6,7 @@
     var district = <?php echo json_encode($district_lists);?>;
     var glbl_region_district = <?php echo json_encode($glbl_region_district);?>;
     var permissions = <?php echo json_encode($permissions); ?>;
+    var st_type = <?php echo json_encode($st_type); ?>;
 </script>
 
 <div class="workplace">

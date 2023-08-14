@@ -16,7 +16,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         'OmcBulkStockCalculation','OmcDailySalesProduct','OmcCashCreditSummary',
         'OmcOperatorsCredit','OmcCustomersCredit','OmcLube','OmcDsrpDataOption',
         'OmcCustomerOrder','OmcCustomer','ProductType','Volume','NctRecord','Nct',
-        'OmcCustomerDailySale','OmcCustomerDailySaleField'
+        'OmcCustomerDailySale','OmcCustomerDailySaleField','LpgSetting','LubeSetting'
     );
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -27,13 +27,22 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
     }
 
 
-    function index($form_key = '') {
+    function index($form_key = '', $record_dt = '') {
         $this->setPermission($form_key);
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
-        $sheet_date = date('Y-m-d');
-        $today_sales_sheet = date('Y-m-d');
-        $previous_day_sales_sheet = date('Y-m-d',strtotime("-1 days"));
+        $sales_sheet_date = date('Y-m-d');
+        $previous_sales_sheet_date = date('Y-m-d', strtotime('-1 day', strtotime($sales_sheet_date)));
+        if($record_dt) {
+            $sales_sheet_date = $record_dt;
+            $previous_sales_sheet_date = date('Y-m-d', strtotime('-1 day', strtotime($sales_sheet_date)));
+        }
+
+        $last7days = array();
+        for ($i =0; $i <= 6; $i++) {
+            $day = date('Y-m-d', strtotime("-$i day", strtotime(date('Y-m-d'))));
+            $last7days[$day] = $day;
+        }
 
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -43,7 +52,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
             $action_type = $post['form_action_type'];
 
             if($action_type == 'create_sales_sheet'){
-                $new = $this->OmcCustomerDailySale->setupFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $post['form_key'], $today_sales_sheet);
+                $new = $this->OmcCustomerDailySale->setupFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $post['form_key'], $post['sales_sheet_date']);
                 if($new){
                     return json_encode(array('code' => 0, 'msg' => 'Sales sheet created!'));
                 }
@@ -68,17 +77,20 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
             }
         }
 
-        $current_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $form_key, $today_sales_sheet);
+        $current_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $form_key, $sales_sheet_date);
         //Get Previous Days Records
-        $previous_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'],$company_profile['id'], $form_key, $previous_day_sales_sheet);
+        $previous_day_records = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'],$company_profile['id'], $form_key, $previous_sales_sheet_date);
 
         $price_change_data = array();
-        foreach($this->price_change as $pn => $pr){
-            $price_change_data[$pr['product_type_id']] = array(
-                'name'=>$pn,
-                'value'=>$pr['price']
-            );
+        foreach($this->price_change as $pr){
+            $price_change_data[] = $pr;
         }
+
+        $all_external_data_sources = array(
+            'products'=> $price_change_data,
+            'lpg_settings'=> $this->LpgSetting->getProductList($company_profile['id']),
+            'lube_settings'=> $this->LubeSetting->getProductList($company_profile['id'])
+        );
 
         $menu = $this->Menu->getMenuByUrl('OmcCustomerDailySales', $form_key);
         $menu_title = $menu['Menu']['menu_name'];
@@ -88,7 +100,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
             $sales_sheet_id = $current_day_records['form']['omc_customer_daily_sales_id'];
         }
 
-        $this->set(compact('permissions','company_profile','price_change_data','previous_day_records','current_day_records','menu_title', 'form_key', 'sales_sheet_id'));
+        $this->set(compact('permissions','company_profile','all_external_data_sources','previous_day_records','current_day_records','menu_title', 'form_key', 'sales_sheet_id', 'sales_sheet_date', 'last7days'));
     }
 
     function indexOriginal(){

@@ -92,7 +92,6 @@
                                             </div>
                                         </div>
 
-
                                         <div class="footer tar">
                                             <input type="hidden"  name="form_action_type" id="form_action_type" value="form_save" >
                                             <input type="hidden"  name="form_id" id="form_id" value="0" >
@@ -191,20 +190,25 @@
                                             <div class="span8"><input type="text" name="pf_option_name" id="pf_option_name" value="" required class="" /></div>
                                         </div>
 
-
                                         <div class="row-form clearfix" style="border-top-width: 0px;">
-                                            <div class="span4">Product Link:</div>
+                                            <div class="span4">Option Link Type:</div>
                                             <div class="span8">
-                                                <select name="pf_product_type_id" id="pf_product_type_id">
-                                                    <option value="">None</option>
+                                                <select name="pf_option_link_type" id="pf_option_link_type">
                                                     <?php
-                                                    foreach($all_products as $opt){
+                                                    foreach($all_option_link_types as $opt){
                                                         ?>
                                                         <option value="<?php echo $opt['id']; ?>"><?php echo $opt['name']; ?></option>
                                                         <?php
                                                     }
                                                     ?>
                                                 </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">Option Link Source: <span id="option_link_id_label"></span></div>
+                                            <div class="span8">
+                                                <select name="pf_option_link_id" id="pf_option_link_id"></select>
                                             </div>
                                         </div>
 
@@ -386,6 +390,29 @@
                                             </div>
                                         </div>
 
+                                        <div class="row-form clearfix field_event_wrapper" id="field_action_source_column_wrapper" style="border-top-width: 0px; display:none">
+                                            <div class="span4">Field Action Source Column:</div>
+                                            <div class="span8">
+                                                <select name="field_action_source_column" id="field_action_source_column">
+                                                    <?php
+                                                    foreach($all_option_link_types as $opt){
+                                                        ?>
+                                                        <optgroup label="<?php echo $opt['name']; ?>">
+                                                            <?php
+                                                            foreach($opt['columns'] as $col){
+                                                                ?>
+                                                                <option value="<?php echo $col['id']; ?>"><?php echo $col['name']; ?></option>
+                                                                <?php
+                                                            }
+                                                            ?>
+                                                        </optgroup>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="row-form clearfix field_event_wrapper" id="field_action_sources_wrapper" style="border-top-width: 0px; display:none">
                                             <div class="span4">Field Action Sources:</div>
                                             <div class="span8">
@@ -470,6 +497,7 @@
     var $sale_form_element_events = <?php echo json_encode($sale_form_element_events); ?>;
     var $sale_form_element_actions = <?php echo json_encode($sale_form_element_actions); ?>;
     var $customers = <?php echo json_encode($customers); ?>;
+    var $all_option_link_types = <?php echo json_encode($all_option_link_types); ?>;
 </script>
 <!-- Le Script -->
 <?php

@@ -7,6 +7,12 @@ var DailySales = {
     init:function(){
         var self = this;
 
+        $("#sales-sheet-dates").bind('change',function(){
+            var url = window.location.origin+$("#form-save-url").val()+"/index"+"/"+form_key+"/"+$(this).val();
+            window.location = url;
+            console.log("new location", url);
+        });
+
         self.initNewSalesSheet();
         self.initRowSelect();
         self.initRowMenus();
@@ -15,15 +21,18 @@ var DailySales = {
     initNewSalesSheet:function(){
         var self = this;
         $("#new_sales_sheet_btn").bind('click',function(){
-            var ques = "Are you want to create a new sales sheet for today ?";
+            var sales_sheet_dt = $("#sales-sheet-dates").val();
+            var ques = "Are you want to create a new sales sheet for "+sales_sheet_dt+"?";
             alertify.confirm( ques, function (e) {
                 if (e) {
                     //ajax create and reload on success
+                    //var todayDate = new Date().toISOString().slice(0, 10);
                     var save = {
                         'form_action_type': 'create_sales_sheet',
-                        'form_key': form_key
+                        'form_key': form_key,
+                        'sales_sheet_date': sales_sheet_dt
                     }
-                    //ajax
+
                     $.ajax({
                         url: $("#form-save-url").val(),
                         data:save,
@@ -388,6 +397,7 @@ var DailySales = {
         var field_event = options['field_event'];
         var field_action = options['field_action'];
         var field_action_sources = options['field_action_sources'];
+        var field_action_source_column = options['field_action_source_column'];
         var field_action_targets = options['field_action_targets'];
         var element = '';
 
@@ -425,64 +435,65 @@ var DailySales = {
 
         //Add event binding where applicable
         if(field_event && field_action && field_action_targets) {
-            element.on( field_event, function() {
+            var eventCallbackFunc = function() {
                 //Field sources will depend on action type
+
                 var options = {
+                    collection: [],
                     search_row: '',
                     search_column: '',
+                    compare_row_property: '',
+                    compare_column_property: '',
+                    return_property: '',
                     current_value: ''
                 };
                 var action_sources = field_action_sources.split(',');
-                var source_type = 'fields';
 
-                if(field_action === 'previous_value' || field_action === 'month_to_date') {
-                    source_type = 'custom';
-                    action_sources = previous_day_records['fields']
+                if(field_action === 'previous_value') {
+                    options['collection'] = previous_day_records['fields'];
                     options['search_row'] = fieldObj.primary_field_option_row_id
-                    options['search_column'] = fieldObj.element_column_id
-                    options['current_value'] = $(this).val()
+                    options['search_column'] = action_sources && action_sources[0] ? action_sources[0] : '';
+                    options['compare_row_property'] = 'primary_field_option_row_id';
+                    options['compare_column_property'] = 'element_column_id';
+                    options['return_property'] = 'value';
+                } else if (field_action === 'month_to_date') {
+                    var search_column =  action_sources && action_sources[1] ? action_sources[1] : '';
+                    action_sources = [action_sources && action_sources[0] ? action_sources[0] : '']
+                    options['collection'] = previous_day_records['fields'];
+                    options['search_row'] = fieldObj.primary_field_option_row_id
+                    options['search_column'] = search_column;
+                    options['compare_row_property'] = 'primary_field_option_row_id';
+                    options['compare_column_property'] = 'element_column_id';
+                    options['return_property'] = 'value';
                 } else if(field_action === 'price_change') {
-                    source_type = 'custom';
-                    action_sources = price_change_data
-                    options['search_row'] = fieldObj.product_type_id
+                    options['collection'] = all_external_data_sources[fieldObj.option_link_type];
+                    options['search_row'] = fieldObj.option_link_id;
+                    options['compare_row_property'] = 'product_type_id';
+                    var a = field_action_source_column.split(":");
+                    options['return_property'] = a[1];
                 }
 
-                self.onElementEventCallback(field_action, source_type, action_sources, field_action_targets.split(','), options);
-            });
+                self.onElementEventCallback(field_event, field_action, action_sources, field_action_targets.split(','), options);
+            }
+
+            //Handling custom events and standard events
+            if(field_event === 'disable_on_data') {
+                element.on( 'focus', eventCallbackFunc);
+            } else {
+                element.on( field_event, eventCallbackFunc);
+            }
         }
 
         return {'field':element,'type':field_type};
     },
 
 
-    onElementEventCallback: function (action, source_type, action_sources, action_targets, options={}) {
+    onElementEventCallback: function (event, action, action_sources, action_targets, options={}) {
         var self = this;
         var sources_values = [];
-        if(source_type === 'fields') {
-            action_sources.forEach(function (source_id) {
-                self.active_row.find("td[data-column-id='" + source_id + "']").each(function(){
-                    var td = $(this);
-                    var field_type = td.attr('data-field_type');
-                    var el = '';
-                    if(field_type === 'Text'){
-                        el = td.find('input');
-                    }
-                    else if(field_type === 'Drop Down'){
-                        el = td.find('select');
-                    }
-                    var val = el.val();
-                    val = val.trim();
-                    sources_values.push(parseFloat(val));
-                });
-            });
-        } else {
-            sources_values = action_sources;
-        }
 
-        var result = EventActions.getValue(action, sources_values, options.search_row, options.search_column, options.current_value);
-
-        action_targets.forEach(function (target_id) {
-            self.active_row.find("td[data-column-id='" + target_id + "']").each(function(){
+        action_sources.forEach(function (source_id) {
+            self.active_row.find("td[data-column-id='" + source_id + "']").each(function(){
                 var td = $(this);
                 var field_type = td.attr('data-field_type');
                 var el = '';
@@ -492,7 +503,37 @@ var DailySales = {
                 else if(field_type === 'Drop Down'){
                     el = td.find('select');
                 }
+                var val = el.val();
+                val = val.trim();
+                sources_values.push(parseFloat(val));
+            });
+        });
+
+        var result = EventActions.getValue(action, sources_values, options);
+
+        action_targets.forEach(function (target_id) {
+            self.active_row.find("td[data-column-id='" + target_id + "']").each(function(){
+                var td = $(this);
+                var field_type = td.attr('data-field_type');
+                var el = '';
+
+                if(field_type === 'Text'){
+                    el = td.find('input');
+                }
+                else if(field_type === 'Drop Down'){
+                    el = td.find('select');
+                }
+                var el_data = el.val();//get the current data entered by user
                 el.val(result);
+
+                if(result && event === 'disable_on_data') {
+                    el.attr( 'readonly', 'readonly');
+                }
+
+                if(el_data && event === 'disable_on_data') {
+                    el.val(el_data);
+                }
+
             });
         });
     },

@@ -1,7 +1,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1 style="font-size: 30px;">Credit Sales Record <small> Dashboard</small></h1>
+        <h1 style="font-size: 30px;">CM Customer Payment Ledger <small> Dashboard</small></h1>
     </div>
 
     <div class="row-fluid">
@@ -21,7 +21,7 @@
 
             <div class="head clearfix">
                 <div class="isw-text_document"></div>
-                <h1>Credit Sales Record Table</h1>
+                <h1>CM Customer Payment Ledger Table</h1>
             </div>
             <table id="flex" style="display:none;"></table>
 
@@ -72,12 +72,12 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_sales/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_sales/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_sales/load_details')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'cm_customer_payment_ledger/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'cm_customer_payment_ledger/save')); ?>" />
+<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'cm_customer_payment_ledger/load_details')); ?>" />
 
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_sales/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_sales/delete')); ?>" />
+<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'cm_customer_payment_ledger/load')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'cm_customer_payment_ledger/delete')); ?>" />
 
 
 <!-- This URL will be used by Ajax upload -->
@@ -91,12 +91,11 @@
     var permissions = <?php echo json_encode($permissions); ?>;
     var volumes = <?php echo json_encode($volumes); ?>;
     var customer_name_lists = <?php echo json_encode($customer_name_lists); ?>;
-    var delivery_method = <?php echo json_encode($delivery_method); ?>;
-    var $all_customers_products_prices = <?php echo json_encode($all_customers_products_prices); ?>;
-    var $omc_customer_id = <?php echo json_encode($omc_customer_id); ?>;
+    var payment_method = <?php echo json_encode($payment_method); ?>;
+   
 </script>
 
 <!-- Le Script -->
 <?php
-echo $this->Html->script('scripts/omc_customer/credit_sales.js');
+echo $this->Html->script('scripts/omc_customer/cm_payment.js');
 ?>

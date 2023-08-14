@@ -137,12 +137,12 @@ class ProductType extends AppModel
 
 
     function getProductList($product_ids = null){
-        $conditions = array('ProductType.deleted' => 'n');
+        $conditions = array('deleted' => 'n');
         if($product_ids != null){
-            $conditions['ProductType.id'] = $product_ids;
+            $conditions['id'] = $product_ids;
         }
         $products_type = $this->find('all', array(
-            'fields' => array('ProductType.id', 'ProductType.name','ProductType.short_name'),
+            'fields' => array('id', 'name','short_name'),
             'conditions' => $conditions,
             'recursive' => -1
         ));

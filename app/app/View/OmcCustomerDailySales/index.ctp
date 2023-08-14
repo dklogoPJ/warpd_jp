@@ -53,12 +53,32 @@
         white-space: nowrap !important;
     }
 
+    .label-override {
+        display: inline;
+        margin-top: 4px;
+        color: white;
+    }
+
+    .sales-sheet-dates-class {
+        margin-bottom: 0px;
+        margin-top: 4px;
+        width: 150px;
+    }
+    ul.buttons li  {
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+    ul.buttons li.spacer  {
+        width: 50px;
+    }
+
 </style>
 
 <div class="workplace">
 
     <div class="page-header">
-        <h1><?php echo $menu_title.' : '.date('l jS F Y');?> <small> </small></h1>
+        <h1><?php echo $menu_title.' : '.date('l jS F Y',strtotime($sales_sheet_date));?> <small> </small></h1>
     </div>
 
     <div class="row-fluid">
@@ -68,6 +88,24 @@
                 <div class="isw-list"></div>
                 <h1>Sales Record Sheet</h1>
                 <ul class="buttons">
+                    <li>
+                        <label for="sales-sheet-dates" class="label-override">Sales Sheets Dates:</label>
+                        <select class="sales-sheet-dates-class" name="sales-sheet-dates" id="sales-sheet-dates">
+                            <?php
+                            foreach($last7days as $key => $opt){
+                                ?>
+                                <option value="<?php echo $key; ?>" <?php echo $key == $sales_sheet_date ? 'selected':''  ?>><?php echo $opt; ?></option>
+                                <?php
+                            }
+                            ?>
+                        </select>
+                    </li>
+
+                    <li class="spacer">
+                        &nbsp;
+                    </li>
+
+
                     <?php
                     if($current_day_records) {
                     ?>
@@ -113,12 +151,12 @@
                         <div class="span12">
                             <div class="row-fluid">
                                 <div class="span12" style="text-align: center; margin-bottom: 20px;">
-                                    <h5><?php echo $menu_title." has no sales sheet for today. Please click on the button below to create the sales sheet." ?> </h5>
+                                    <h5><?php echo $menu_title." has no sales sheet on ".date('l jS F Y',strtotime($sales_sheet_date)).". Please click on the button below to create the sales sheet." ?> </h5>
                                 </div>
                             </div>
                             <div class="row-fluid">
                                 <div class="span12" style="text-align: center; margin-bottom: 20px;">
-                                    <button type="button" class="btn" id="new_sales_sheet_btn"><i class="isw-empty_document"></i> Creat Sales Sheet</button>
+                                    <button type="button" class="btn" id="new_sales_sheet_btn"><i class="isw-empty_document"></i> Creat Sales Sheet for <?php echo date('l jS F Y',strtotime($sales_sheet_date)) ?></button>
                                 </div>
                             </div>
                         </div>
@@ -145,7 +183,7 @@
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
    // var form_field_rendered = <?php // echo json_encode($form_field_rendered); ?>;
-    var price_change_data = <?php echo json_encode($price_change_data); ?>;
+    var all_external_data_sources = <?php echo json_encode($all_external_data_sources); ?>;
     var previous_day_records = <?php echo json_encode($previous_day_records); ?>;
     var current_day_records =  <?php echo json_encode($current_day_records); ?>;
     var form_key = <?php echo json_encode($form_key); ?>;

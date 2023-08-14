@@ -1,4 +1,4 @@
-var OmcCustomers = {
+var OmcTrucks = {
 
     selected_row_id:null,
     objGrid:null,
@@ -13,6 +13,10 @@ var OmcCustomers = {
         }
         if(inArray('E',permissions)){
             btn_actions.push({type:'buttom', name:'Edit', bclass:'edit', onpress:self.handleGridEvent});
+            btn_actions.push({separator:true});
+        }
+        if(inArray('D',permissions)){
+            btn_actions.push({type:'buttom', name:'Delete', bclass:'delete', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
         if(inArray('A',permissions) || inArray('E',permissions)){
@@ -30,15 +34,11 @@ var OmcCustomers = {
             url:$('#table-url').val(),
             dataType:'json',
             colModel:[
-                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'name', width:170, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Owner', name:'owner', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Dealer', name:'dealer', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Station Type', name:'station_type', width:100, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:st_type}},
-                {display:'Address', name:'address', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Telephone', name:'telephone', width:100, sortable:true, align:'left',format_number:false, hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Default Admin', name:'admin_username', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Admin Password', name:'admin_pass', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}
+                {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
+                {display:'LPG Types', name:'name', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Unit Volume (kg)', name:'unit_volume', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Unit Price (GHs)', name:'unit_price', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'', on_key_up:'{"action":"division", "sources":["unit_price","unit_volume"], "targets":["price_per_kg"]}'}},
+                {display:'Price Per KG (GHs)', name:'price_per_kg', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'',readonly:'readonly'}}
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -55,12 +55,12 @@ var OmcCustomers = {
             },
             columnControl:false,
             sortname:"id",
-            sortorder:"desc",
+            sortorder:"asc",
             usepager:true,
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:420,
+            height:400,
             subgrid:{
                 use:false
             },
@@ -69,50 +69,26 @@ var OmcCustomers = {
             }
         });
 
-
-        $(".region-class").live('change',function () {
-            var sel = $(this);
-            var value = sel.val();
-            var row_id = sel.parent().parent().parent().attr('data-id');
-            if(typeof glbl_region_district[value] == "undefined"){
-                return;
-            }
-            var d_options = glbl_region_district[value];
-            //console.log(customer_credit_data)
-            var select = document.getElementById('district_id_'+row_id);
-            select.options.length = 0;
-            for(nx in d_options){
-                var opt = document.createElement('option');
-                opt.value = nx;
-                opt.text = d_options[nx];
-                try{ //Standard
-                    select.add(opt,null) ;
-                }
-                catch(error){ //IE Only
-                    select.add(opt) ;
-                }
-            }
-        });
     },
 
     handleGridEvent:function (com, grid, json) {
         if (com == 'New') {
-            OmcCustomers.objGrid.flexBeginAdd();
+            OmcTrucks.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
             //var row = jLib.getSelectedRows(grid);
             var row = FlexObject.getSelectedRows(grid);
-            OmcCustomers.objGrid.flexBeginEdit(row[0]);
+            OmcTrucks.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {
-            OmcCustomers.objGrid.flexSaveChanges();
+            OmcTrucks.objGrid.flexSaveChanges();
         }
         else if (com == 'Cancel') {
-            OmcCustomers.objGrid.flexCancel();
+            OmcTrucks.objGrid.flexCancel();
         }
         else if (com == 'Delete') {
-            if (jLib.rowSelectedCheck(OmcCustomers.objGrid,grid)) {
-                OmcCustomers.delete_(grid);
+            if (FlexObject.rowSelectedCheck(OmcTrucks.objGrid,grid,1)) {
+                OmcTrucks.delete_(grid);
             }
         }
         else if (com == 'Export All') {
@@ -124,12 +100,12 @@ var OmcCustomers = {
 
     delete_:function (grid) {
         var self = this;
-        var url = $('#delete_url').val();
+        var url = $('#grid_delete_url').val();
         jLib.do_delete(url, grid);
     }
 };
 
 /* when the page is loaded */
 $(document).ready(function () {
-    OmcCustomers.init();
+    OmcTrucks.init();
 });

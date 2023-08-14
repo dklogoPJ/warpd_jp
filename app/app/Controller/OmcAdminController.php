@@ -10,7 +10,8 @@ class OmcAdminController extends OmcAppController
 
     var $name = 'OmcAdmin';
     # set the model to use
-    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct','CustomerCreditSetting');
+    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct','CustomerCreditSetting',
+                        'LubeSetting','LpgSetting');
     # Set the layout to use
     var $layout = 'omc_layout';
 
@@ -372,8 +373,9 @@ class OmcAdminController extends OmcAppController
                                 'cell' => array(
                                     $obj['OmcCustomer']['id'],
                                     $obj['OmcCustomer']['name'],
-                                    /*$obj['Region']['name'],
-                                    $obj['District']['name'],*/
+                                    $obj['OmcCustomer']['owner'],
+                                    $obj['OmcCustomer']['dealer'],
+                                    $obj['OmcCustomer']['station_type'],
                                     $obj['OmcCustomer']['address'],
                                     $obj['OmcCustomer']['telephone'],
                                     $obj['OmcCustomer']['admin_username'],
@@ -466,8 +468,9 @@ class OmcAdminController extends OmcAppController
         $district_lists = $data['district'];
         $glbl_region_district = $data['region_district'];
         //$location_list = $this->get_location_list();
-
-        $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list'));
+        $st_type = array('0'=>array('id'=>'COSS','name'=>'COSS'),'1'=>array('id'=>'DOCO','name'=>'DOCO'),'2'=>array('id'=>'DODO','name'=>'DODO'));
+        
+        $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list','st_type'));
 
     }
 
@@ -1464,6 +1467,254 @@ class OmcAdminController extends OmcAppController
                         $modObj->updateAll(
                             array('Nct.deleted' => "'y'"),
                             array('Nct.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+    }
+
+
+    function lube_sales_setting($type = 'get')
+    {
+        //$company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'LubeSetting.deleted' => 'n'
+                    );
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+                    
+                    $data_table = $this->LubeSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LubeSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->LubeSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['LubeSetting']['id'],
+                                'cell' => array(
+                                    $obj['LubeSetting']['id'],
+                                    $obj['LubeSetting']['station_category'],
+                                    $obj['LubeSetting']['name'],
+                                    $obj['LubeSetting']['unit_volume'],
+                                    $obj['LubeSetting']['total_qty_per_pack'],
+                                    $obj['LubeSetting']['pack_volume'],
+                                    $obj['LubeSetting']['unit_cost_price'],
+                                    $obj['LubeSetting']['unit_selling_price'],
+                                    $obj['LubeSetting']['price_per_ltr']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
+                    $data = array('LubeSetting' => $_POST);
+        
+                    if($_POST['id'] == 0){
+                        $data['LubeSetting']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['LubeSetting']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['LubeSetting']['omc_customer_id'] = $company_profile['id'];
+
+                    if ($this->LubeSetting->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('LubeSetting');
+                    $result = $modObj->updateAll(
+                        array('LubeSetting.deleted' => "'y'"),
+                        array('LubeSetting.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('LubeSetting');
+                        $modObj->updateAll(
+                            array('LubeSetting.deleted' => "'y'"),
+                            array('LubeSetting.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+    }
+
+
+
+    function lpg_sales_setting($type = 'get')
+    {
+        //$company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'LpgSetting.deleted' => 'n'
+                    );
+
+                    
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+                    
+                    $data_table = $this->LpgSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LpgSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->LpgSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['LpgSetting']['id'],
+                                'cell' => array(
+                                    $obj['LpgSetting']['id'],
+                                    $obj['LpgSetting']['name'],
+                                    $obj['LpgSetting']['unit_volume'],
+                                    $obj['LpgSetting']['unit_price'],
+                                    $obj['LpgSetting']['price_per_kg']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    
+                    $data = array('LpgSetting' => $_POST);
+        
+                    if($_POST['id'] == 0){
+                        $data['LpgSetting']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['LpgSetting']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['LpgSetting']['omc_customer_id'] = $company_profile['id'];
+
+                    if ($this->LpgSetting->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('LpgSetting');
+                    $result = $modObj->updateAll(
+                        array('LpgSetting.deleted' => "'y'"),
+                        array('LpgSetting.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('LpgSetting');
+                        $modObj->updateAll(
+                            array('LpgSetting.deleted' => "'y'"),
+                            array('LpgSetting.id' => $ids)
                         );
 
                      echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));

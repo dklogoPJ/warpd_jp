@@ -130,19 +130,6 @@ var SalesForm = {
         var formObjCollection = $salesForms.serializeArray();
         formObjCollection.push({name: 'omc_customer_list', value: form_customers_str});
 
-
-       /* var field_action_sources_arr = $("#sales-form-fields #field_action_sources").val();
-        var field_action_sources_str = field_action_sources_arr ? field_action_sources_arr.toString() : '';
-        var field_action_targets_arr = $("#sales-form-fields #field_action_targets").val();
-        var field_action_targets_str = field_action_targets_arr ? field_action_targets_arr.toString() : '';
-        var query = $salesFormFields.serialize()+"&field_type_values="+field_type_values+"&field_action_sources_str="+field_action_sources_str+"&field_action_targets_str="+field_action_targets_str;
-        var salesFormFieldsObjCollection = $salesFormFields.serializeArray();
-        salesFormFieldsObjCollection.push({name: 'field_type_values', value: field_type_values});
-        salesFormFieldsObjCollection.push({name: 'field_action_sources', value: field_action_sources_str});
-        salesFormFieldsObjCollection.push({name: 'field_action_targets', value: field_action_targets_str});
-*/
-
-
         $.ajax({
             url:url,
             data:query,
@@ -291,6 +278,7 @@ var SalesForm = {
 
         $("#form_fields_tab").click(function(){
             var form_id = $("#sales-form-fields #omc_sales_form_id").val();
+           // self.reset_form_field_action_column();
             self.reset_form_field_action_sources(form_id);
             self.reset_form_field_action_targets(form_id);
         });
@@ -305,8 +293,10 @@ var SalesForm = {
             $("#sales-form-fields #field_id").val(field.id);
             $("#sales-form-fields #field_name").val(field.field_name);
             $("#sales-form-fields #field_order").val(field.field_order);
+            $("#sales-form-fields #field_action").val(field.field_action);
+            $("#sales-form-fields #field_action_source_column").val(field.field_action_source_column);
+           // self.reset_form_field_action_column(field.field_action_source_column);
             $("#sales-form-fields #field_event").val( field.field_event).change();
-            $("#sales-form-fields #field_action").val( field.field_action);
             if(field.field_type === 'Text'){
                 $("#sales-form-fields #field_type_text").prop("checked", true).click();
             }
@@ -321,8 +311,10 @@ var SalesForm = {
             $("#sales-form-fields #field_id").val('0');
             $("#sales-form-fields #field_name").val('');
             $("#sales-form-fields #field_order").val('');
-            $("#sales-form-fields #field_event").val('none').change();
             $("#sales-form-fields #field_action").val('none');
+            $("#sales-form-fields #field_action_source_column").val('');
+          //  self.reset_form_field_action_column();
+            $("#sales-form-fields #field_event").val('none').change();
             $("#sales-form-fields #field_type").val('Text');
             $("#sales-form-fields #field_type_text").prop("checked", true).click();
             $("#sales-form-fields #field_required").val('No');
@@ -407,16 +399,21 @@ var SalesForm = {
             var form_id = $("#sales-form-fields #omc_sales_form_id").val();
             if(val === 'none' ) {
                 $(".field_event_wrapper").hide('slow');
-                $("#sales-form-fields #field_action").val('none');
+                $("#sales-form-fields #field_action").val('none').change();
                 self.reset_form_field_action_sources(form_id);
                 self.reset_form_field_action_targets(form_id);
             } else {
                 $(".field_event_wrapper").show('slow');
+                var fieldAction = $("#sales-form-fields #field_action");
+                fieldAction.change();
+                var fieldActionValue = fieldAction.val();
+
                 if(self.tr_edit){
                     var field_id = self.tr_edit.attr('data-field_id');
                     var field = $forms_fields[form_id]['fields'][field_id];
                     var action_sources_ids = field.field_action_sources;
-                    if(action_sources_ids) {
+
+                    if(action_sources_ids && fieldActionValue !== 'price_change') {
                         self.reset_form_field_action_sources(form_id, action_sources_ids.split(','));
                     } else {
                         self.reset_form_field_action_sources(form_id);
@@ -431,28 +428,39 @@ var SalesForm = {
             }
         });
 
-        $("#sales-form-fields #field_disabled").change(function(){
+        $("#sales-form-fields #field_action").change(function(){
             var val = $(this).val();
-            var $fieldEvent = $("#sales-form-fields #field_event");
-            //$fieldEvent.removeAttr("disabled");
-            $fieldEvent.find('option').removeAttr("disabled");
-            if(val === 'y' ) {
-                //Disable all other event options except Focus In
-                ['none','focusout','keyup','change'].forEach( e => {
-                    $fieldEvent.find('option[value="' + e + '"]').attr("disabled","disabled");
-                });
-                $fieldEvent.val('focus').change();
+            var $fieldActionSourcesWrapper = $("#field_action_sources_wrapper");
+            var $fieldActionSourceColumnWrapper = $("#field_action_source_column_wrapper");
+            if(val !== 'none' ) {
+                if(val === 'price_change' ) {
+                    $fieldActionSourcesWrapper.hide('slow');
+                    $fieldActionSourceColumnWrapper.show('slow');
+                } else {
+                    $fieldActionSourcesWrapper.show('slow');
+                    $fieldActionSourceColumnWrapper.hide('slow');
+                }
+            } else {
+                $("#sales-form-fields #field_action_source_column").val('');
+                $fieldActionSourceColumnWrapper.hide('slow');
+                $fieldActionSourcesWrapper.hide('slow');
             }
         });
 
-        //TODO Re implement this, it's causing conflict with action sources hide and show from other event changes
-     /*   $("#sales-form-fields #field_action").change(function(){
+        $("#sales-form-fields #field_disabled").change(function(){
             var val = $(this).val();
-            var $fieldActionSourcesContainer = $("#field_action_sources_wrapper");
-            $fieldActionSourcesContainer.show('slow');
-            if(val === 'price_change' ) {
-                $fieldActionSourcesContainer.hide('slow');
+            var $fieldEvent = $("#sales-form-fields #field_event");
+            $fieldEvent.find('option').removeAttr("disabled");
+            if(val === 'y' ) {
+                //Disable all other event options except Focus In
+                ['focusout','keyup','change'].forEach( e => {
+                    $fieldEvent.find('option[value="' + e + '"]').attr("disabled","disabled");
+                });
             }
+        });
+
+        /*$("#sales-form-primary-field-option #pf_option_link_type").change(function(){
+            self.reset_form_field_action_column();
         });*/
 
         $("#sales-form-fields #field_action_sources").select2();
@@ -464,7 +472,8 @@ var SalesForm = {
         var $salesFormFields = $("#sales-form-fields");
         var url = $salesFormFields.attr('action');
         var field_type_values = $("#sales-form-fields #field_type_values").val();
-        var field_action_sources_arr = $("#sales-form-fields #field_action_sources").val();
+        var field_action_sources_arr_obj = $("#sales-form-fields #field_action_sources").select2("data");
+        var field_action_sources_arr = field_action_sources_arr_obj.map((x) => {return x.id});
         var field_action_sources_str = field_action_sources_arr ? field_action_sources_arr.toString() : '';
         var field_action_targets_arr = $("#sales-form-fields #field_action_targets").val();
         var field_action_targets_str = field_action_targets_arr ? field_action_targets_arr.toString() : '';
@@ -501,6 +510,7 @@ var SalesForm = {
                         'field_disabled' : self.getValue('field_disabled', salesFormFieldsObjCollection),
                         'field_event' : self.getValue('field_event', salesFormFieldsObjCollection),
                         'field_action' : self.getValue('field_action', salesFormFieldsObjCollection),
+                        'field_action_source_column' : self.getValue('field_action_source_column', salesFormFieldsObjCollection),
                         'field_action_sources' : self.getValue('field_action_sources', salesFormFieldsObjCollection),
                         'field_action_targets' : self.getValue('field_action_targets', salesFormFieldsObjCollection),
                         'field_action_type' : self.getValue('field_action_type', salesFormFieldsObjCollection)
@@ -540,6 +550,7 @@ var SalesForm = {
                     'field_disabled': post_data['field_disabled'],
                     'field_event': post_data['field_event'],
                     'field_action': post_data['field_action'],
+                    'field_action_source_column': post_data['field_action_source_column'],
                     'field_action_sources': post_data['field_action_sources'],
                     'field_action_targets': post_data['field_action_targets']
                 };
@@ -586,52 +597,128 @@ var SalesForm = {
         }
     },
 
-    reset_select_option: function (collection, value_prop, text_prop, jquerySelect2Obj, select_dom_id, selected_ids){
-        jquerySelect2Obj.select2('destroy');
-            var select = document.getElementById(select_dom_id);
-            select.options.length = 0;
-            for(var nx in collection){
-                var opt = document.createElement('option');
-                opt.value = collection[nx][value_prop];
-                opt.text = collection[nx][text_prop];
-                opt.selected = selected_ids.indexOf(collection[nx].id) >= 0
-                try{ //Standard
-                    select.add(opt,null) ;
-                }
-                catch(error){ //IE Only
-                    select.add(opt) ;
-                }
+    reset_select_option: function (collection, value_prop, text_prop, select_dom_id, selected_id) {
+        var select = document.getElementById(select_dom_id);
+        select.options.length = 0;
+        for(var nx in collection) {
+            var opt = document.createElement('option');
+            opt.value = collection[nx][value_prop];
+            opt.text = collection[nx][text_prop];
+            opt.selected = collection[nx][value_prop] === selected_id;
+            try{ //Standard
+                select.add(opt,null) ;
             }
+            catch(error){ //IE Only
+                select.add(opt) ;
+            }
+        }
+    },
+
+    reset_option_link_ids:function (pf_option_link_type, selected_id = null) {
+        var jquerySelect2Obj = $("#sales-form-primary-field-option #pf_option_link_id");
+        var init_arr = [{'id':'', 'name':'None'}];
+        var collection = [];
+
+        var link_type = $all_option_link_types.find(item => item.id === pf_option_link_type);
+        if(link_type) {
+            collection = init_arr.concat(link_type['data']);
+        } else {
+            collection = init_arr.concat([]);
+        }
+        this.reset_select_option(collection, 'id', 'name', 'pf_option_link_id', selected_id);
+    },
+
+    reset_select2_option: function (collection, value_prop, text_prop, jquerySelect2Obj, select_dom_id, selected_ids){
+        jquerySelect2Obj.select2('destroy');
+        var new_collection = [];
+        //convert collection to array of objects
+        for(var nx in collection) {
+            new_collection.push(collection[nx]);
+        }
+
+        var sorted_collection = []
+        var selected_items_collection = []
+        //Filter out the items that where selected. To get only the items that where not selected.
+        var non_selected_items_collection = new_collection.filter(function(el) {
+            return selected_ids.indexOf(el[value_prop]) === -1;
+        });
+
+        if(selected_ids.length > 0) {
+            //push the selected ids items in order as they appear in the selected_ids array
+            selected_ids.forEach(function(key) {
+                var found = false;
+                var t = new_collection.find(function(item) {
+                    return item[value_prop] === key;
+                });
+
+                if(t) {
+                    selected_items_collection.push(t);
+                }
+            });
+            sorted_collection = selected_items_collection.concat(non_selected_items_collection);
+        } else {
+            sorted_collection = new_collection;
+        }
+
+        var select = document.getElementById(select_dom_id);
+        select.options.length = 0;
+        for(var nx in sorted_collection) {
+            var opt = document.createElement('option');
+            opt.value = sorted_collection[nx][value_prop];
+            opt.text = sorted_collection[nx][text_prop];
+            try{ //Standard
+                select.add(opt,null) ;
+            }
+            catch(error){ //IE Only
+                select.add(opt) ;
+            }
+        }
+
         jquerySelect2Obj.select2();
+        jquerySelect2Obj.select2('val', selected_ids);
     },
 
     reset_form_customer_list: function (selected_ids=[]){
         var jquerySelect2Obj = $("#sales-forms #form_omc_customer_list");
-        this.reset_select_option($customers, 'id', 'name', jquerySelect2Obj, 'form_omc_customer_list', selected_ids);
+        this.reset_select2_option($customers, 'id', 'name', jquerySelect2Obj, 'form_omc_customer_list', selected_ids);
     },
 
     reset_form_field_action_sources: function (form_id, selected_ids=[]){
         var jquerySelect2Obj = $("#sales-form-fields #field_action_sources");
         var fields = $forms_fields[form_id]['fields'];
-        this.reset_select_option(fields, 'id', 'field_name', jquerySelect2Obj, 'field_action_sources', selected_ids);
+        this.reset_select2_option(fields, 'id', 'field_name', jquerySelect2Obj, 'field_action_sources', selected_ids);
     },
 
     reset_form_field_action_targets: function (form_id, selected_ids=[]){
         var jquerySelect2Obj = $("#sales-form-fields #field_action_targets");
         var fields = $forms_fields[form_id]['fields'];
-        this.reset_select_option(fields, 'id', 'field_name', jquerySelect2Obj, 'field_action_targets', selected_ids);
+        this.reset_select2_option(fields, 'id', 'field_name', jquerySelect2Obj, 'field_action_targets', selected_ids);
+    },
+
+    reset_form_field_action_column: function (selected_id = null) {
+        var pf_option_link_type = $("#sales-form-primary-field-option #pf_option_link_type").val();
+        var init_arr = [{'id':'', 'name':'None'}];
+        var collection = [];
+
+        var link_type = $all_option_link_types.find(item => item.id === pf_option_link_type);
+        if(link_type && link_type.id !== '') {
+            collection = init_arr.concat(link_type['columns']);
+        } else {
+            collection = init_arr.concat([]);
+        }
+        this.reset_select_option(collection, 'id', 'name', 'field_action_source_column', selected_id);
     },
 
     reset_primary_field_total_options_list: function (form_id, selected_ids=[]){
         var jquerySelect2Obj = $("#sales-form-primary-field-option #pf_total_option_list");
         var pf_options = $forms_fields[form_id]['primary_field_options'];
-        this.reset_select_option(pf_options, 'id', 'option_name', jquerySelect2Obj, 'pf_total_option_list', selected_ids);
+        this.reset_select2_option(pf_options, 'id', 'option_name', jquerySelect2Obj, 'pf_total_option_list', selected_ids);
     },
 
     reset_primary_field_total_fields_list: function (form_id, selected_ids=[]){
         var jquerySelect2Obj = $("#sales-form-primary-field-option #pf_total_field_list");
         var fields = $forms_fields[form_id]['fields'];
-        this.reset_select_option(fields, 'id', 'field_name', jquerySelect2Obj, 'pf_total_field_list', selected_ids);
+        this.reset_select2_option(fields, 'id', 'field_name', jquerySelect2Obj, 'pf_total_field_list', selected_ids);
     },
 
     bind_form_primary_field_option:function(){
@@ -655,7 +742,8 @@ var SalesForm = {
             $("#sales-form-primary-field-option #pf_option_id").val(pf_option.id);
             $("#sales-form-primary-field-option #pf_option_name").val(pf_option.option_name);
             $("#sales-form-primary-field-option #pf_order").val(pf_option.order);
-            $("#sales-form-primary-field-option #pf_product_type_id").val(pf_option.product_type_id);
+            $("#sales-form-primary-field-option #pf_option_link_type").val(pf_option.option_link_type).change();
+           // $("#sales-form-primary-field-option #pf_option_link_id").val(pf_option.option_link_id);
             if(pf_option.is_total === 'no'){
                 $("#sales-form-primary-field-option #pf_is_total_no").prop("checked", true).click();
             }
@@ -667,7 +755,8 @@ var SalesForm = {
         $("#sales-form-primary-field-option #pf_option_reset").click(function(){
             $("#sales-form-primary-field-option #pf_option_id").val('0');
             $("#sales-form-primary-field-option #pf_option_name").val('');
-            $("#sales-form-primary-field-option #pf_product_type_id").val('');
+            $("#sales-form-primary-field-option #pf_option_link_type").val('').change();
+           // $("#sales-form-primary-field-option #pf_option_link_id").val('');
             $("#sales-form-primary-field-option #pf_order").val('');
             $("#sales-form-primary-field-option #pf_option_is_total").val('no');
             $("#sales-form-primary-field-option #pf_is_total_no").prop("checked", true).click();
@@ -746,10 +835,24 @@ var SalesForm = {
             }
         });
 
+        $("#sales-form-primary-field-option #pf_option_link_type").change(function(){
+            var val = $(this).val();
+            var text = $(this).find("option:selected").text();
+            $("#sales-form-primary-field-option #option_link_id_label").html(text);
+
+            if(self.tr_edit){
+                var form_id = self.tr_edit.attr('data-form_id');
+                var option_id = self.tr_edit.attr('data-pf_option_id');
+                var pf_option = $forms_fields[form_id]['primary_field_options'][option_id];
+                self.reset_option_link_ids(val, pf_option.option_link_id);
+            } else {
+                self.reset_option_link_ids(val);
+            }
+        });
+
         $("#sales-form-primary-field-option #pf_total_option_list").select2();
         $("#sales-form-primary-field-option #pf_total_field_list").select2();
     },
-
 
     save_form_primary_field_option:function(){
         var self = this;
@@ -784,7 +887,8 @@ var SalesForm = {
                         'option_id' :  response.id,
                         'form_id' : self.getValue('pf_omc_sales_form_id', salesFormPrimaryFieldOptionObjCollection),
                         'option_name' : self.getValue('pf_option_name', salesFormPrimaryFieldOptionObjCollection),
-                        'product_type_id' : self.getValue('pf_product_type_id', salesFormPrimaryFieldOptionObjCollection),
+                        'option_link_type' : self.getValue('pf_option_link_type', salesFormPrimaryFieldOptionObjCollection),
+                        'option_link_id' : self.getValue('pf_option_link_id', salesFormPrimaryFieldOptionObjCollection),
                         'order' : self.getValue('pf_order', salesFormPrimaryFieldOptionObjCollection),
                         'is_total' : self.getValue('pf_option_is_total', salesFormPrimaryFieldOptionObjCollection),
                         'total_option_list' : self.getValue('pf_total_option_list', salesFormPrimaryFieldOptionObjCollection),
@@ -805,7 +909,6 @@ var SalesForm = {
         });
     },
 
-
     update_primary_field_options:function(post_data){
         var self = this;
         var form_id = post_data['form_id'];
@@ -819,7 +922,8 @@ var SalesForm = {
                 'id': option_id,
                 'form_id': post_data['form_id'],
                 'option_name': post_data['option_name'],
-                'product_type_id': post_data['product_type_id'],
+                'option_link_type': post_data['option_link_type'],
+                'option_link_id': post_data['option_link_id'],
                 'order': post_data['order'],
                 'is_total': post_data['is_total'],
                 'total_option_list': post_data['total_option_list'],
