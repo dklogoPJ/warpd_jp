@@ -840,13 +840,10 @@ var SalesForm = {
             var text = $(this).find("option:selected").text();
             $("#sales-form-primary-field-option #option_link_id_label").html(text);
 
-            console.log("self.tr_edit", self.tr_edit);
-
             if(self.tr_edit){
                 var form_id = self.tr_edit.attr('data-form_id');
                 var option_id = self.tr_edit.attr('data-pf_option_id');
                 var pf_option = $forms_fields[form_id]['primary_field_options'][option_id];
-                console.log("pf_option:", pf_option);
                 self.reset_option_link_ids(val, pf_option.option_link_id);
             } else {
                 self.reset_option_link_ids(val);
