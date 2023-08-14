@@ -564,10 +564,9 @@ class OmcOrdersController extends OmcAppController
                                 $this->formatNumber($obj['Order']['order_quantity'],'number',0),
                                 $approved_quantity,
                                 $loaded_quantity,
-                                /*,$mkt_feed*/
                                 $obj['Order']['transporter'],
                                 $obj['Order']['truck_no'],
-                                /*$obj['Bdc']['name'],*/
+                                /*,$mkt_feed*/
                                 $loaded_date,
                                 $received_quantity,
                                 $git_status,
