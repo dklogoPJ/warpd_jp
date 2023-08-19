@@ -29,20 +29,19 @@ var OmcTrucks = {
             btn_actions.push({type:'buttom', name:'Export All', bclass:'export', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }*/
-     
+
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
             dataType:'json',
             colModel:[
-                {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'name', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Business Type', name:'business_type', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Station Name', name:'omc_customer_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:station_list}},
-                {display:'Territory', name:'territory', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Credit Limit', name:'credit_limit', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Credit Days', name:'credit_days', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Agreement Sign', name:'agreement_sign', width:100, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:yes_no}},
-                {display:'Risk Rating', name:'risk_rating', width:120, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:risk_rate}}
+                {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
+                {display:'Additive Name', name:'additive_setup_id', width:300, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:additives}},
+                {display:'Drum Size (Ltrs)', name:'drum_size', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Cost per drum', name:'drum_cost', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"division", "sources":["drum_cost","drum_size"], "targets":["cost_per_ltr"]}'}},
+                {display:'Cost per Ltr', name:'cost_per_ltr', width:130, sortable:true, align:'left', hide:false, editable:{form:'text',readonly:'readonly', validate:'empty', defval:''}},
+                {display:'Total no. of Drum', name:'total_no_dum', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"multiply", "sources":["total_no_dum","drum_size"], "targets":["total_no_ltr"]}'}},
+                {display:'Total no. of Ltrs', name:'total_no_ltr', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', readonly:'readonly', validate:'empty', defval:'', on_focus:'{"action":"multiply", "sources":["total_no_dum","drum_cost"], "targets":["total_stock_cost"]}'}},
+                {display:'Total Stock Cost', name:'total_stock_cost', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_focus:'{"action":"multiply", "sources":["total_no_dum","drum_cost"], "targets":["total_stock_cost"]}'}}
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -59,12 +58,12 @@ var OmcTrucks = {
             },
             columnControl:false,
             sortname:"id",
-            sortorder:"desc",
+            sortorder:"asc",
             usepager:true,
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:300,
+            height:400,
             subgrid:{
                 use:false
             },
@@ -107,7 +106,6 @@ var OmcTrucks = {
         var url = $('#grid_delete_url').val();
         jLib.do_delete(url, grid);
     }
-
 };
 
 /* when the page is loaded */

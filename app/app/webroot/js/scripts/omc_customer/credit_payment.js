@@ -32,11 +32,12 @@ var Order = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'customer_name', width:170, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
+                {display:'Customer Name', name:'customer_credit_setting_id', width:170, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
                 {display:'Receipt No.', name:'receipt_no', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Receipt Date.', name:'receipt_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
                 {display:'Payment Amount (GHs.)', name:'payment_amount', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Payment Method', name:'payment_method', width:140, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:payment_method}},
+                {display:'NCT Channel Type', name:'nct_channel', width:140, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:ncts}},
                 {display:'Payment Instrument No.', name:'payment_instrument', width:150,format_number: false, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
             formFields:btn_actions,

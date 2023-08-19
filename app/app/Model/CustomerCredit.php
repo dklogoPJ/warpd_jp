@@ -23,6 +23,14 @@ class CustomerCredit extends AppModel
             'order' => '',
             'limit' => '',
             'dependent' => false
+        ),
+        'CustomerCreditSetting' => array(
+            'className' => 'CustomerCreditSetting',
+            'foreignKey' => 'customer_credit_setting_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
         )   
     );
 

@@ -1,5 +1,5 @@
 <?php
-class CustomerCreditPayment extends AppModel
+class AdditiveStock extends AppModel
 {
     /**
      * associations
@@ -8,22 +8,22 @@ class CustomerCreditPayment extends AppModel
      */
 
     var $belongsTo = array(
-        'OmcCustomer' => array(
-            'className' => 'OmcCustomer',
-            'foreignKey' => 'omc_customer_id',
+        'AdditiveSetup' => array(
+            'className' => 'AdditiveSetup',
+            'foreignKey' => 'additive_setup_id',
             'conditions' => '',
             'order' => '',
             'limit' => '',
             'dependent' => false
-        )  ,
-        'CustomerCreditSetting' => array(
-            'className' => 'CustomerCreditSetting',
-            'foreignKey' => 'customer_credit_setting_id',
+        ),
+        'Omc' => array(
+            'className' => 'Omc',
+            'foreignKey' => 'omc_id',
             'conditions' => '',
             'order' => '',
             'limit' => '',
             'dependent' => false
-        )    
+        )   
     );
 
     

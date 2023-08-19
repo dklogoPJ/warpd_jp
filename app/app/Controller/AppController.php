@@ -945,6 +945,18 @@ class AppController extends Controller
     }
 
 
+    function get_credit_customer_list($cus_ids = null){
+        $customers = $this->CustomerCreditSetting->getCreditCustomerList($cus_ids);
+        return $customers;
+    }
+
+
+    function get_additive_list($additives_ids = null){
+        $additives_type = $this->AdditiveSetup->getAdditiveList($additives_ids);
+        return $additives_type;
+    }
+
+
     function count_time_between_dates($smaller_date, $bigger_date,$count_type='months')
     {
         $d1 = strtotime($smaller_date); //Smaller

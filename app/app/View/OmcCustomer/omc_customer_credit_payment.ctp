@@ -90,6 +90,7 @@
     var order_filter = <?php echo json_encode($order_filter);?>;
     var permissions = <?php echo json_encode($permissions); ?>;
     var volumes = <?php echo json_encode($volumes); ?>;
+    var ncts = <?php echo json_encode($ncts); ?>;
     var customer_name_lists = <?php echo json_encode($customer_name_lists); ?>;
     var payment_method = <?php echo json_encode($payment_method); ?>;
    

@@ -1,5 +1,5 @@
 <?php
-class CustomerCreditSetting extends AppModel
+class AdditiveSetup extends AppModel
 {
     /**
      * associations
@@ -8,9 +8,17 @@ class CustomerCreditSetting extends AppModel
      */
 
     var $belongsTo = array(
-        'OmcCustomer' => array(
-            'className' => 'OmcCustomer',
-            'foreignKey' => 'omc_customer_id',
+        'ProductType' => array(
+            'className' => 'ProductType',
+            'foreignKey' => 'product_type_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
+        ),
+        'Omc' => array(
+            'className' => 'Omc',
+            'foreignKey' => 'omc_id',
             'conditions' => '',
             'order' => '',
             'limit' => '',
@@ -19,9 +27,9 @@ class CustomerCreditSetting extends AppModel
     );
 
     var $hasMany = array(
-        'CustomerCredit' => array(
-            'className' => 'CustomerCredit',
-            'foreignKey' => 'customercredit_setting_id',
+        'AdditiveStock' => array(
+            'className' => 'AdditiveStock',
+            'foreignKey' => 'additive_setup_id',
             'dependent' => false,
             'conditions' => '',
             'fields' => '',
@@ -32,9 +40,9 @@ class CustomerCreditSetting extends AppModel
             'finderQuery' => '',
             'counterQuery' => ''
         ),
-        'CustomerCreditPayment' => array(
-            'className' => 'CustomerCreditPayment',
-            'foreignKey' => 'customercredit_setting_id',
+        'AdditiveDopingRatio' => array(
+            'className' => 'AdditiveDopingRatio',
+            'foreignKey' => 'additive_setup_id',
             'dependent' => false,
             'conditions' => '',
             'fields' => '',
@@ -47,22 +55,24 @@ class CustomerCreditSetting extends AppModel
         )
     );
 
-    function getCreditCustomerList($cus_ids = null){
+
+    function getAdditiveList($additives_ids = null){
         $conditions = array('deleted' => 'n');
-        if($cus_ids != null){
-            $conditions['id'] = $cus_ids;
+        if($additives_ids != null){
+            $conditions['id'] = $additives_ids;
         }
-        $customers = $this->find('all', array(
+        $additives_type = $this->find('all', array(
             'fields' => array('id', 'name'),
             'conditions' => $conditions,
             'recursive' => -1
         ));
-        $credit_customer_lists = array();
-        foreach ($customers as $value) {
-            $credit_customer_lists[] = $value['CustomerCreditSetting'];
+        $additives_lists = array();
+        foreach ($additives_type as $value) {
+            $additives_lists[] = $value['AdditiveSetup'];
         }
-        return $credit_customer_lists;
+        return $additives_lists;
     }
+
     
 
 }

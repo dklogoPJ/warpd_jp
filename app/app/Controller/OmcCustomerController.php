@@ -11,7 +11,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
     var $name = 'OmcCustomer';
     # set the model to use
-    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange','CustomerCreditSetting','CustomerCredit','CustomerCreditPayment');
+    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange','CustomerCreditSetting','CustomerCredit','CustomerCreditPayment','Nct');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -739,7 +739,8 @@ class OmcCustomerController extends OmcCustomerAppController
 
                     $contain = array(
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
-                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
                     );
 
                     $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
@@ -758,7 +759,7 @@ class OmcCustomerController extends OmcCustomerAppController
                                 'id' => $obj['CustomerCredit']['id'],
                                 'cell' => array(
                                     $obj['CustomerCredit']['id'],
-                                    $obj['CustomerCredit']['customer_name'],
+                                    $obj['CustomerCreditSetting']['name'],
                                     $obj['CustomerCredit']['invoice_no'],
                                     $invoice_date,
                                     $obj['ProductType']['name'],
@@ -829,18 +830,26 @@ class OmcCustomerController extends OmcCustomerAppController
         }
 
         $products_lists = $this->get_products();
+        //$cus_lists = $this->get_credit_customers();
+
+      
         $start_dt = date('01-m-Y');
         $end_dt = date('t-m-Y');
         $group_by = 'monthly';
         $group_by_title = date('F');
-       // $customer_name_lists = $this->get_customer_name_list();
-        $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+       
+       // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+        $customer_name_lists = $this->get_credit_customers();
+
+       // pr($customer_name_lists);
+       //pr($products_lists);
         $delivery_method = array('0'=>array('id'=>'Fleet - Cars','name'=>'Fleet - Cars'),'1'=>array('id'=>'Fleet - Trucks','name'=>'Fleet - Trucks'),'2'=>array('id'=>'Fleet - Site Vehicles','name'=>'Fleet - Site Vehicles'),'3'=>array('id'=>'Fuel Bowser','name'=>'Fuel Bowser'),'4'=>array('id'=>'Fuel - Mobile Tanks','name'=>'Fuel - Mobile Tanks'));
         $all_customers_products_prices = $this->OmcCustomerPriceChange->getAllProductsPumpPrices($company_profile['id']);
 
         $order_filter = $this->order_filter;
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
         $volumes = $this->Volume->getVolsList();
+        
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('all_customers_products_prices','omc_customer_id','volumes','permissions', 'products_lists','graph_title','g_data','order_filter','customer_name_lists','delivery_method'));
@@ -883,7 +892,8 @@ class OmcCustomerController extends OmcCustomerAppController
                     );
 
                     $contain = array(
-                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
                     );
 
                     $data_table = $this->CustomerCreditPayment->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditPayment.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
@@ -902,11 +912,12 @@ class OmcCustomerController extends OmcCustomerAppController
                                 'id' => $obj['CustomerCreditPayment']['id'],
                                 'cell' => array(
                                     $obj['CustomerCreditPayment']['id'],
-                                    $obj['CustomerCreditPayment']['customer_name'],
+                                    $obj['CustomerCreditSetting']['name'],
                                     $obj['CustomerCreditPayment']['receipt_no'],
                                     $receipt_date,
                                     $payment_amount,
                                     $obj['CustomerCreditPayment']['payment_method'],
+                                    $obj['CustomerCreditPayment']['nct_channel'],
                                     $obj['CustomerCreditPayment']['payment_instrument']
                                 )
                             );
@@ -974,7 +985,9 @@ class OmcCustomerController extends OmcCustomerAppController
         $end_dt = date('t-m-Y');
         $group_by = 'monthly';
         $group_by_title = date('F');
-        $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+         // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+         $customer_name_lists = $this->get_credit_customers();
+
         $payment_method = array('0'=>array('id'=>'Cash','name'=>'Cash'),'1'=>array('id'=>'NCT','name'=>'NCT'),'2'=>array('id'=>'Cheque','name'=>'Cheque'),'3'=>array('id'=>'Credit Note','name'=>'Credit Note'));
 
 
@@ -986,9 +999,10 @@ class OmcCustomerController extends OmcCustomerAppController
         $order_filter = $this->order_filter;
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
         $volumes = $this->Volume->getVolsList();
+        $ncts = $this->Nct->getNctList();
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method'));
+        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method','ncts'));
     }
 
 
@@ -1029,7 +1043,12 @@ class OmcCustomerController extends OmcCustomerAppController
 
                     $contain = array(
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
-                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
+                        /*'CustomerCreditPayment'=>array('fields' => array('CustomerCreditPayment.id', 'CustomerCreditPayment.receipt_no',
+                                                                          'CustomerCreditPayment.receipt_date','CustomerCreditPayment.payment_amount',
+                                                                          'CustomerCreditPayment.payment_methond','CustomerCreditPayment.nct_channel',
+                                                                          'CustomerCreditPayment.payment_instrument'))*/
                     );
 
                     $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
@@ -1083,8 +1102,10 @@ class OmcCustomerController extends OmcCustomerAppController
         $end_dt = date('t-m-Y');
         $group_by = 'monthly';
         $group_by_title = date('F');
-       // $customer_name_lists = $this->get_customer_name_list();
-        $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+
+    
+       // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+        $customer_name_lists = $this->get_credit_customers();
         $delivery_method = array('0'=>array('id'=>'Fleet - Cars','name'=>'Fleet - Cars'),'1'=>array('id'=>'Fleet - Trucks','name'=>'Fleet - Trucks'),'2'=>array('id'=>'Fleet - Site Vehicles','name'=>'Fleet - Site Vehicles'),'3'=>array('id'=>'Fuel Bowser','name'=>'Fuel Bowser'),'4'=>array('id'=>'Fuel - Mobile Tanks','name'=>'Fuel - Mobile Tanks'));
 
 
@@ -1184,7 +1205,8 @@ class OmcCustomerController extends OmcCustomerAppController
         $end_dt = date('t-m-Y');
         $group_by = 'monthly';
         $group_by_title = date('F');
-        $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+        //$customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
+        $customer_name_lists = $this->get_credit_customers();
         $payment_method = array('0'=>array('id'=>'Cash','name'=>'Cash'),'1'=>array('id'=>'NCT','name'=>'NCT'),'2'=>array('id'=>'Cheque','name'=>'Cheque'),'3'=>array('id'=>'Credit Note','name'=>'Credit Note'));
 
 

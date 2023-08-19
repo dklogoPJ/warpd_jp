@@ -48,7 +48,8 @@ var Order = {
                 {display:'Dipping Post-Discharge (ltr)', name:'dipping_post_discharge', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'',  on_key_up:'{"action":"subtract", "sources":["dipping_post_discharge","dipping_pre_discharge"], "targets":["received_quantity"]}'}},
                 {display:'Received Qty (ltr)', name:'received_quantity', width:150, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'',readonly:'readonly'}},
                 {display:'Discharge Date', name:'discharge_date', width:120, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'',defval:''}}
+                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'',defval:''}},
+                {display:'Discharged By (Name)', name:'discharged_by', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'',defval:''}}
 
             ],
             formFields:btn_actions,

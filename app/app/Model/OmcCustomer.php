@@ -252,6 +252,16 @@ class OmcCustomer extends AppModel
         );
     }
 
+
+    function getOmcCreditCustomer($id = null){
+        $fields = array('my_products');
+        $r =  $this->find('first', array('fields'=>$fields,'conditions' => array('id' => $id), 'recursive' => -1));
+        $my_products = explode(',',$r['OmcCustomer']['my_products']);
+        return array(
+            'my_products'=>$my_products
+        );
+    }
+
     function getCustomerByOmcId($omc_id = null, $recursive = -1) {
         $conditions = array(
             'OmcCustomer.omc_id' => $omc_id,

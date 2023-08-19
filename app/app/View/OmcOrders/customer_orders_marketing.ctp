@@ -15,6 +15,8 @@
     var omc_dealer_feedback =  <?php echo json_encode($omc_dealer_feedback)?>;
     var omc_dealer_marketing_feedback =  <?php echo json_encode($omc_dealer_marketing_feedback)?>;
     var permissions = <?php echo json_encode($permissions); ?>;
+    var volumes = <?php echo json_encode($volumes); ?>;
+
 </script>
 
 <div class="workplace">

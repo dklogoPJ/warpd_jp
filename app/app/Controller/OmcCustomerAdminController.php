@@ -532,7 +532,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
                             $return_arr[] = array(
                                 'id' => $obj['ActivityLog']['id'],
                                 'cell' => array(
-                                    $this->covertDate($obj['ActivityLog']['created'],'mysql_flip'),
+                                    $obj['ActivityLog']['created'],
                                     $obj['ActivityLog']['user_full_name'],
                                     $obj['ActivityLog']['activity'],
                                     $obj['ActivityLog']['description']

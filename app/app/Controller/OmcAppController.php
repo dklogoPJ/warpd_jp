@@ -547,6 +547,21 @@ class OmcAppController extends AppController
     }
 
 
+    function get_additives($filter = true){
+        $company_profile = $this->global_company;
+        if($filter){
+            $additives = $this->Omc->getOmcProduct($company_profile['id']);
+            $additive_ids = $additives['my_products'];
+
+            return $this->get_additive_list($additive_ids);
+        }
+        else{
+            return $this->get_additive_list();
+        }
+    }
+
+
+
     function getOmcPriceChangeData(){
         $company_profile = $this->global_company;
         $PriceChange = ClassRegistry::init('OmcPriceChange');

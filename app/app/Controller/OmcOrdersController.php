@@ -926,7 +926,7 @@ class OmcOrdersController extends OmcAppController
                                     'depot_id'=>$order_customer['OmcCustomerOrder']['depot_id'],
                                     'product_type_id'=>$order_customer['OmcCustomerOrder']['product_type_id'],
                                     'order_quantity'=>$order_customer['OmcCustomerOrder']['order_quantity'],
-                                    'approved_quantity'=>$order_customer['OmcCustomerOrder']['approved_quantity'],
+                                    //'approved_quantity'=>$order_customer['OmcCustomerOrder']['approved_quantity'],
                                     'omc_customer_order_id'=>$order_customer['OmcCustomerOrder']['id'],
                                     'omc_order_priority'=>$order_customer['OmcCustomerOrder']['delivery_priority'],
                                     'order_status'=>'New From Dealer',
@@ -1229,8 +1229,10 @@ class OmcOrdersController extends OmcAppController
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
 
         $graph_title = $group_by_title.", Orders-Consolidated";
+        $volumes = $this->Volume->getVolsList();
 
-        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+
+        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));
     }
 
 
