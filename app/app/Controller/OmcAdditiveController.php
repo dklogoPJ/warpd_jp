@@ -11,7 +11,7 @@ class OmcAdditiveController extends OmcAppController
 
     var $name = 'OmcAdditive';
     # set the model to use
-    var $uses = array('OmcCustomer','OmcCustomerTankMinstocklevel','OmcCustomerTank','OmcDsrpDataOption','OmcTank','OmcTankStatus','OmcTankType','AdditiveSetup','AdditiveStock','Omc','AdditiveDopingRatio');
+    var $uses = array('OmcCustomer','OmcCustomerTankMinstocklevel','OmcCustomerTank','OmcDsrpDataOption','OmcTank','OmcTankStatus','OmcTankType','AdditiveSetup','AdditiveStock','Omc','AdditiveDopingRatio','AdditiveCostGeneration','ProductType','Truck','Depot');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -306,15 +306,16 @@ class OmcAdditiveController extends OmcAppController
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
-                        'AdditiveDopingRatio.deleted' => 'n'
+                        'AdditiveCostGeneration.deleted' => 'n'
                     );
 
                     $contain = array(
-                        'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
+                        'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name')),
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
                     
-                    $data_table = $this->AdditiveDopingRatio->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveDopingRatio.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->AdditiveDopingRatio->find('count', array('recursive' => -1));
+                    $data_table = $this->AdditiveCostGeneration->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveCostGeneration.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->AdditiveCostGeneration->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
 
@@ -322,14 +323,22 @@ class OmcAdditiveController extends OmcAppController
                         $return_arr = array();
                         foreach ($data_table as $obj) {
                             $return_arr[] = array(
-                                'id' => $obj['AdditiveDopingRatio']['id'],
+                                'id' => $obj['AdditiveCostGeneration']['id'],
                                 'cell' => array(
-                                    $obj['AdditiveDopingRatio']['id'],
+                                    $obj['AdditiveCostGeneration']['id'],
+                                    $obj['AdditiveCostGeneration']['order_id'],
+                                    $this->covertDate( $obj['AdditiveCostGeneration']['order_date'], 'mysql_flip'),
+                                    $obj['AdditiveCostGeneration']['customer'],
+                                    $obj['AdditiveCostGeneration']['loading_depot'],
+                                    $obj['ProductType']['name'],
+                                    $obj['AdditiveCostGeneration']['truck_no'],
+                                    $obj['AdditiveCostGeneration']['loading_quantity'],
+                                    $this->covertDate( $obj['AdditiveCostGeneration']['loading_date'], 'mysql_flip'),
                                     $obj['AdditiveSetup']['name'],
-                                    $obj['AdditiveDopingRatio']['drum_name'],
-                                    $obj['AdditiveDopingRatio']['ltr'],
-                                    $obj['AdditiveDopingRatio']['product_qty'],
-                                    $obj['AdditiveDopingRatio']['doping_ratio']
+                                    $obj['AdditiveCostGeneration']['doping_ratio'],
+                                    $obj['AdditiveCostGeneration']['additive_quantity'],
+                                    $obj['AdditiveCostGeneration']['additive_cost_ltr'],
+                                    $obj['AdditiveCostGeneration']['invoice_additive_cost']
                                 )
                             );
                         }
@@ -353,17 +362,17 @@ class OmcAdditiveController extends OmcAppController
                         }
                     }
                     
-                    $data = array('AdditiveDopingRatio' => $_POST);
+                    $data = array('AdditiveCostGeneration' => $_POST);
         
                     if($_POST['id'] == 0){
-                        $data['AdditiveDopingRatio']['created_by'] = $authUser['id'];
+                        $data['AdditiveCostGeneration']['created_by'] = $authUser['id'];
                     }
                     else{
-                        $data['AdditiveDopingRatio']['modified_by'] = $authUser['id'];
+                        $data['AdditiveCostGeneration']['modified_by'] = $authUser['id'];
                     }
 
-                    $data['AdditiveDopingRatio']['omc_id'] = $company_profile['id'];
-                    if ($this->AdditiveDopingRatio->save($this->sanitize($data))) {
+                    $data['AdditiveCostGeneration']['omc_id'] = $company_profile['id'];
+                    if ($this->AdditiveCostGeneration->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
@@ -377,16 +386,16 @@ class OmcAdditiveController extends OmcAppController
 
                 case 'delete':
                     $ids = $_POST['ids'];
-                    $modObj = ClassRegistry::init('AdditiveDopingRatio');
+                    $modObj = ClassRegistry::init('AdditiveCostGeneration');
                     $result = $modObj->updateAll(
-                        array('AdditiveDopingRatio.deleted' => "'y'"),
-                        array('AdditiveDopingRatio.id' => $ids)
+                        array('AdditiveCostGeneration.deleted' => "'y'"),
+                        array('AdditiveCostGeneration.id' => $ids)
                     );
                     if ($result) {
-                        $modObj = ClassRegistry::init('AdditiveDopingRatio');
+                        $modObj = ClassRegistry::init('AdditiveCostGeneration');
                         $modObj->updateAll(
-                            array('AdditiveDopingRatio.deleted' => "'y'"),
-                            array('AdditiveDopingRatio.id' => $ids)
+                            array('AdditiveCostGeneration.deleted' => "'y'"),
+                            array('AdditiveCostGeneration.id' => $ids)
                         );
 
                      echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
@@ -396,10 +405,13 @@ class OmcAdditiveController extends OmcAppController
                     break;
             }
         }
-
+        $products_lists = $this->get_products();
         $additives_lists = $this->get_additives();
+        $numbers = $this->Truck->getTruckNo();
+        $depot_lists = $this->get_depot_list();
+        $omc_customers_lists = $this->get_customer_list();
         
-        $this->set(compact('additives_lists'));
+        $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists'));
 	}
 
 

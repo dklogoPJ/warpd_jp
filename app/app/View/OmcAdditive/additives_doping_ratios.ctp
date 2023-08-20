@@ -46,7 +46,6 @@
 <input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additives_doping_ratios/get')); ?>" />
 <input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additives_doping_ratios/save')); ?>" />
 <input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additives_doping_ratios/load_details')); ?>" />
-
 <input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additives_doping_ratios/load')); ?>" />
 <input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additives_doping_ratios/delete')); ?>" />
 <input type="hidden" id="export_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'export_additive')); ?>" />

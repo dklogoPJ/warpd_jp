@@ -221,6 +221,18 @@ class Omc extends AppModel
             'offset' => '',
             'exclusive' => '',
             'finderQuery' => '',
+        ),
+        'AdditiveCostGeneration' => array(
+            'className' => 'AdditiveCostGeneration',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
         )
     );
 

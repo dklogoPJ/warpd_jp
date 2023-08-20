@@ -3,7 +3,11 @@
 ?>
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
+    var products = <?php echo json_encode($products_lists);?>;
     var additives = <?php echo json_encode($additives_lists);?>;
+    var numbers = <?php echo json_encode($numbers);?>;
+    var depotLists = <?php echo json_encode($depot_lists);?>;
+    var customerLists = <?php echo json_encode($omc_customers_lists);?>;
 </script>
 
 <div class="workplace">
@@ -46,7 +50,6 @@
 <input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_cost_generation/get')); ?>" />
 <input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_cost_generation/save')); ?>" />
 <input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_cost_generation/load_details')); ?>" />
-
 <input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_cost_generation/load')); ?>" />
 <input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_cost_generation/delete')); ?>" />
 <input type="hidden" id="export_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'export_additive')); ?>" />
