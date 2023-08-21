@@ -311,13 +311,16 @@ class OmcAdditiveController extends OmcAppController
 
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name')),
-                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'Depot'=>array('fields' => array('Depot.id', 'Depot.name'))
                     );
                     
                     $data_table = $this->AdditiveCostGeneration->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveCostGeneration.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveCostGeneration->find('count', array('recursive' => -1));
-
                     $total_records = $data_table_count;
+                    
+
 
                     if ($data_table) {
                         $return_arr = array();
@@ -328,8 +331,8 @@ class OmcAdditiveController extends OmcAppController
                                     $obj['AdditiveCostGeneration']['id'],
                                     $obj['AdditiveCostGeneration']['order_id'],
                                     $this->covertDate( $obj['AdditiveCostGeneration']['order_date'], 'mysql_flip'),
-                                    $obj['AdditiveCostGeneration']['customer'],
-                                    $obj['AdditiveCostGeneration']['loading_depot'],
+                                    $obj['OmcCustomer']['name'],
+                                    $obj['Depot']['name'],
                                     $obj['ProductType']['name'],
                                     $obj['AdditiveCostGeneration']['truck_no'],
                                     $obj['AdditiveCostGeneration']['loading_quantity'],
@@ -370,6 +373,9 @@ class OmcAdditiveController extends OmcAppController
                     else{
                         $data['AdditiveCostGeneration']['modified_by'] = $authUser['id'];
                     }
+                    $data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['order_date'], 'mysql') . ' ' . date('H:i:s');
+                    $data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loading_date'], 'mysql') . ' ' . date('H:i:s');
+
 
                     $data['AdditiveCostGeneration']['omc_id'] = $company_profile['id'];
                     if ($this->AdditiveCostGeneration->save($this->sanitize($data))) {

@@ -31,7 +31,31 @@ class AdditiveCostGeneration extends AppModel
             'order' => '',
             'limit' => '',
             'dependent' => false
-        )     
+        ),
+        'OmcCustomer' => array(
+            'className' => 'OmcCustomer',
+            'foreignKey' => 'omc_customer_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
+        ),
+        'Depot' => array(
+            'className' => 'Depot',
+            'foreignKey' => 'depot_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
+        ) ,
+        'Order' => array(
+            'className' => 'Order',
+            'foreignKey' => 'order_id',
+            'conditions' => '',
+            'order' => '',
+            'limit' => '',
+            'dependent' => false
+        )   
     );
 
     

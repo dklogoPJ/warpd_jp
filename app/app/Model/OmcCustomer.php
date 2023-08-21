@@ -202,6 +202,19 @@ class OmcCustomer extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'AdditiveCostGeneration' => array(
+            'className' => 'AdditiveCostGeneration',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
         
     );

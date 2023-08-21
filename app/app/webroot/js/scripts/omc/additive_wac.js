@@ -63,7 +63,7 @@ var OmcTrucks = {
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:400,
+            height:250,
             subgrid:{
                 use:false
             },
