@@ -56,6 +56,7 @@ class OmcAdditiveController extends OmcAppController
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
+                        'AdditiveStock.omc_id' => $company_profile['id'],
                         'AdditiveStock.deleted' => 'n'
                     );
 
@@ -120,7 +121,7 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->AdditiveStock->id));
                         }
                     } else {
                         return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -182,6 +183,7 @@ class OmcAdditiveController extends OmcAppController
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
+                        'AdditiveDopingRatio.omc_id' => $company_profile['id'],
                         'AdditiveDopingRatio.deleted' => 'n'
                     );
 
@@ -244,7 +246,7 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->AdditiveDopingRatio->id));
                         }
                     } else {
                         return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -306,6 +308,7 @@ class OmcAdditiveController extends OmcAppController
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
+                        'AdditiveCostGeneration.omc_id' => $company_profile['id'],
                         'AdditiveCostGeneration.deleted' => 'n'
                     );
 
@@ -373,17 +376,18 @@ class OmcAdditiveController extends OmcAppController
                     else{
                         $data['AdditiveCostGeneration']['modified_by'] = $authUser['id'];
                     }
-                    $data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['order_date'], 'mysql') . ' ' . date('H:i:s');
-                    $data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loading_date'], 'mysql') . ' ' . date('H:i:s');
 
-
+                   //$data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['order_date'], 'mysql') . ' ' . date('H:i:s');
+                   //$data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loading_date'], 'mysql') . ' ' . date('H:i:s');
+             
                     $data['AdditiveCostGeneration']['omc_id'] = $company_profile['id'];
                     if ($this->AdditiveCostGeneration->save($this->sanitize($data))) {
+                       
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->AdditiveCostGeneration->id));
                         }
                     } else {
                         return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));

@@ -11,7 +11,7 @@ class OmcOrdersController extends OmcAppController
 
     var $name = 'OmcOrders';
     # set the model to use
-    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck', 'OmcCustomerPriceChange');
+    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck', 'OmcCustomerPriceChange','AdditiveCostGeneration');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -637,6 +637,20 @@ class OmcOrdersController extends OmcAppController
 
                     if ($this->Order->save($this->sanitize($data))) {
                         $order_id  = $this->Order->id;
+
+                        /** Save to Additve Cost Generation Table */
+                        $additive_data['AdditiveCostGeneration']['omc_id'] = $company_profile;
+                        $additive_data['AdditiveCostGeneration']['order_id'] = $order_id;
+                        $additive_data['AdditiveCostGeneration']['loading_quantity'] = $_POST['loaded_quantity'];
+                        $additive_data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        $additive_data['AdditiveCostGeneration']['truck_no'] = $_POST['truck_no'];
+                        $additive_data['AdditiveCostGeneration']['depot_id'] = $_POST['depot_id'];
+                        $additive_data['AdditiveCostGeneration']['omc_customer_id'] = $_POST['omc_customer_id'];
+                        $additive_data['AdditiveCostGeneration']['product_type_id'] = $_POST['product_type_id'];
+                        $additive_data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        
+                        $this->AdditiveCostGeneration->save($additive_data);
+                    
                         if($auto_flow){
                             $order_data = $this->Order->find('first', array(
                                 'conditions' => array('Order.id' => $order_id),
