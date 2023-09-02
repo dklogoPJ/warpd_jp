@@ -319,12 +319,11 @@
                                         <div class="row-form clearfix" style="border-top-width: 0px;">
                                             <div class="span4">Field Type:</div>
                                             <div class="span8">
-                                                <label class="checkbox inline">
-                                                    <input type="radio" name="field_type_radio" id="field_type_text" value="Text" checked="checked" /> Text
-                                                </label>
-                                                <label class="checkbox inline">
-                                                    <input type="radio" name="field_type_radio" id="field_type_dropdown" value="Drop Down" /> Drop Down
-                                                </label>
+                                                <select name="field_type" id="field_type" class="" required>
+                                                    <option value="Text">Text</option>
+                                                    <option value="Drop Down">Drop Down</option>
+                                                    <option value="File Upload">File Upload</option>
+                                                </select>
                                             </div>
                                         </div>
 
@@ -390,6 +389,50 @@
                                             </div>
                                         </div>
 
+                                        <div class="row-form clearfix field_dsrp_wrapper" style="border-top-width: 0px; display: none">
+                                            <div class="span4">DSRP Form:</div>
+                                            <div class="span8">
+                                                <select name="dsrp_form" id="dsrp_form" class="" required>
+                                                    <?php
+                                                    foreach($sale_form_options as $key => $opt){
+                                                        ?>
+                                                        <option value="<?php echo $key; ?>"><?php echo $opt; ?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="row-form clearfix field_dsrp_wrapper" style="border-top-width: 0px; display: none">
+                                            <div class="span4">DSRP Primary Field Options:</div>
+                                            <div class="span8">
+                                                <select name="dsrp_form_primary_field_options[]" id="dsrp_form_primary_field_options" multiple="multiple" style="width: 100%;"></select>
+                                            </div>
+                                        </div>-->
+
+                                        <div class="row-form clearfix field_dsrp_wrapper" style="border-top-width: 0px; display: none">
+                                            <div class="span4">DSRP Fields:</div>
+                                            <div class="span8">
+                                                <select name="dsrp_form_fields" id="dsrp_form_fields" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix field_dsrp_wrapper" style="border-top-width: 0px; display: none">
+                                            <div class="span4">DSRP Operands:</div>
+                                            <div class="span8">
+                                                <select name="operands" id="operands" class="">
+                                                    <?php
+                                                    foreach($sale_form_element_operands as $key => $opt){
+                                                        ?>
+                                                        <option value="<?php echo $key; ?>"><?php echo $opt; ?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="row-form clearfix field_event_wrapper" id="field_action_source_column_wrapper" style="border-top-width: 0px; display:none">
                                             <div class="span4">Field Action Source Column:</div>
                                             <div class="span8">
@@ -429,7 +472,7 @@
 
                                         <div class="footer tar">
                                             <input type="hidden"  name="field_id" id="field_id" value="0" >
-                                            <input type="hidden"  name="field_type" id="field_type" value="Text" >
+                                           <!-- <input type="hidden"  name="field_type" id="field_type" value="Text" >-->
                                             <input type="hidden"  name="field_action_type" id="field_action_type" value="field_save" >
 
                                             <button type="button" class="btn" id="field_delete_btn"><i class="isw-delete"></i> Delete</button>

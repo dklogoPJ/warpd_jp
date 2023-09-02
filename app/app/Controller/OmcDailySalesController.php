@@ -13,7 +13,7 @@ class OmcDailySalesController extends OmcAppController
     # set the model to use
     var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm',
         'OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction',
-        'ProductType','OmcCustomerDailySale','LpgSetting','LubeSetting'
+        'SalesFormElementOperand','ProductType','OmcCustomerDailySale','LpgSetting','LubeSetting'
     );
 
     # Set the layout to use
@@ -252,6 +252,9 @@ class OmcDailySalesController extends OmcAppController
                     'field_action'=>$post['field_action'],
                     'field_action_sources'=> $post['field_action_sources_str'],
                     'field_action_source_column'=> $post['field_action_source_column'],
+                    'dsrp_form'=>$post['dsrp_form'],
+                    'dsrp_form_fields'=>$post['dsrp_form_fields'],
+                    'operands'=>$post['operands'],
                     'field_action_targets'=> $post['field_action_targets_str'],
                     'modified_by'=>$authUser['id']
                 ) ;
@@ -365,6 +368,9 @@ class OmcDailySalesController extends OmcAppController
                         'field_action'=>$field['field_action'],
                         'field_action_sources'=>$field['field_action_sources'],
                         'field_action_source_column'=>$field['field_action_source_column'],
+                        'dsrp_form'=>$field['dsrp_form'],
+                        'dsrp_form_fields'=>$field['dsrp_form_fields'],
+                        'operands'=>$field['operands'],
                         'field_action_targets'=>$field['field_action_targets']
                     );
                 }
@@ -403,6 +409,7 @@ class OmcDailySalesController extends OmcAppController
 
         $sale_form_element_events = $this->SalesFormElementEvent->getKeyValuePair();
         $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
+        $sale_form_element_operands = $this->SalesFormElementOperand->getKeyValuePair();
         $all_option_link_types = array(
             array('id'=>'', 'name'=>'None', 'data'=>array(), 'columns'=>array(
                 array('id'=>'', 'name'=>'None')
@@ -440,7 +447,7 @@ class OmcDailySalesController extends OmcAppController
             );
         }
 
-        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions', 'customers', 'all_option_link_types'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','sale_form_element_operands', 'customers', 'all_option_link_types'));
     }
 
     function station_sales(){

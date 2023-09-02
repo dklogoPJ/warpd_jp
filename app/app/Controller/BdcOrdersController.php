@@ -1097,6 +1097,12 @@ class BdcOrdersController extends BdcAppController
         $this->attachment_fire_response($result);
     }
 
+    function delete_attachment($attachment_id = null){
+        $this->autoRender = false;
+        $result = $this->__delete_attachment($attachment_id);
+        $this->attachment_fire_response($result);
+    }
+
     function attach_files(){
         $this->autoRender = false;
         $upload_data = $this->__attach_files();

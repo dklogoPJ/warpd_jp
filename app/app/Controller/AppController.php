@@ -21,6 +21,7 @@
  */
 
 App::uses('Controller', 'Controller');
+App::uses('File', 'Utility');
 
 /**
  * Application Controller
@@ -414,6 +415,9 @@ class AppController extends Controller
             return true;
         }
         if(stristr($action, 'get_attachments') !== false){
+            return true;
+        }
+        if(stristr($action, 'delete_attachment') !== false){
             return true;
         }
         if(stristr($action, 'add_dsrp_options') !== false){
@@ -1248,7 +1252,7 @@ class AppController extends Controller
         $comp =   $company_profile['comp_type'].'/'.$company_profile['id'].'/';
         $path = $comp.$type_id;
         $type = $_POST['type'];
-        $save_to = 'Orders/'.$path;
+        $save_to = str_replace(' ', '', $type).'/'.$path;
         if($type == 'Waybill'){
             $save_to = 'Waybills/'.$path;
         }
@@ -1283,14 +1287,16 @@ class AppController extends Controller
             substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
     }
 
-    function __get_attachments($attachment_type,$attachment_type_id = null){
+    function __get_attachments($attachment_type, $attachment_type_id = null) {
         $this->autoRender = false;
         $company_profile = $this->global_company;
-        $attachment_data = $this->Attachment->get_attachments($attachment_type_id,$attachment_type,$company_profile['id']);
+        $attachments_data = $this->Attachment->get_attachments($attachment_type_id,$attachment_type,$company_profile['id']);
         $result = array('file'=>array());
         $webroot_url = $this->get_webroot_url();
         $thumbnail = "thumbnail";
-        foreach($attachment_data as $rec){
+        $delete_base_url = Router::url(array('controller' => $this->params['controller'], 'action' => 'delete_attachment'));
+        foreach($attachments_data as $rec){
+            $attachment_id = $rec['Attachment']['id'];
             $upload_by = $rec['Attachment']['upload_by'];
             $upload_from = $rec['Attachment']['upload_from'];
             $path = $rec['Attachment']['path'];
@@ -1298,9 +1304,10 @@ class AppController extends Controller
             $file_size = $rec['Attachment']['file_size'];
             $file_url = $webroot_url.'/'.$path.'/'.$file_name;
             $thumbnailUrl = $webroot_url.'/'.$path.'/'.$thumbnail.'/'.$file_name;
+            $delete_url = $delete_base_url.'/'.$attachment_id;
             $result['files'][]=array(
                 "deleteType"=> "DELETE",
-                "deleteUrl"=> $thumbnailUrl,
+                "deleteUrl"=> $delete_url,
                 "name"=> $file_name,
                 "size"=> intval($file_size),
                 "thumbnailUrl"=> $thumbnailUrl,
@@ -1313,8 +1320,32 @@ class AppController extends Controller
         return $result;
     }
 
+    function __delete_attachment($attachment_id){
+        $this->autoRender = false;
+        $rec = $this->Attachment->get_attachment($attachment_id);
+        $result = array('message'=>'Files deleted');
+        $thumbnail = "thumbnail";
+        if($rec) {
+            $path = $rec['Attachment']['path'];
+            $file_name = $rec['Attachment']['file_name'];
+            $full_path = WWW_ROOT.'/'.$path.'/'.$file_name;
+            $full_path_thumbnail = WWW_ROOT.'/'.$path.'/'.$thumbnail.'/'.$file_name;
+            $result['full_path'] = $full_path;
+            $result['full_path_thumbnail'] = $full_path_thumbnail;
+            try {
+                $file = new File($full_path,false, 0777);
+                $file_thumbnail = new File($full_path_thumbnail,false, 0777);
+                $result['file_deletion'] =  $file->delete();
+                $result['file_thumbnail_deletion'] =  $file_thumbnail->delete();
+                $this->Attachment->delete_file($attachment_id);
+            } catch (Exception $e){
+                $result['deletion_status'] = $e;
+            }
+        }
+        return $result;
+    }
 
-    function __attach_files(){
+    function __attach_files() {
         $this->autoRender = false;
         $type_id = $_POST['type_id'];
         $type = $_POST['type'];
@@ -1326,12 +1357,13 @@ class AppController extends Controller
         $print_response = false;
         $save_to = $this->attachment_get_upload_dir();
         $upload_data = $this->attachment($print_response);
-        $save_files_to_db  = array();
+        $delete_base_url = Router::url(array('controller' => $this->params['controller'], 'action' => 'delete_attachment'));
         foreach($upload_data['files'] as $key => $file){
             $upload_data['files'][$key]['upload_by'] = $upload_by;
             $upload_data['files'][$key]['upload_from'] = $upload_from;
+            $upload_data['files'][$key]['deleteType'] = "DELETE";
             if(!isset($file['error'])){
-                $save_files_to_db[]= array(
+                $save_files_to_db = array(
                     'type'=>$type,
                     'type_id'=>$type_id,
                     'file_name'=>$file['name'],
@@ -1342,16 +1374,21 @@ class AppController extends Controller
                     'upload_from'=>$upload_from,
                     'upload_from_id'=>$upload_from_id
                 );
+
+                $this->Attachment->create();
+                $saved = $this->Attachment->save($save_files_to_db);
+                $delete_url = $delete_base_url.'/'.$saved['Attachment']['id'];
+                $upload_data['files'][$key]['deleteUrl'] = $delete_url;
+
                 //Activity Log
                 $to_low = strtolower($type);
                 $log_description = $this->getLogMessage('Attachment')." (".$file['name'].") to the $to_low #".$type_id;
                 $this->logActivity($log_activity_type,$log_description);
             }
         }
-        $this->Attachment->saveAll($save_files_to_db);
+       // $this->Attachment->saveAll($save_files_to_db);
         return $upload_data;
     }
-
 
     function getDSRPoptions($index = null){
         $opt = array(

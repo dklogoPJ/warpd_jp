@@ -124,7 +124,7 @@ var DailySales = {
                     if (f.is_primary_field === false && f.is_editable === true) {
                         var field_type = f.options['field_type'];
                         var el = '';
-                        if(field_type === 'Text'){
+                        if(field_type === 'Text' || field_type === 'File Upload'){
                             el = td.find('input');
                         }
                         else if(field_type === 'Drop Down'){
@@ -212,7 +212,7 @@ var DailySales = {
                     var field_required = f.options['field_required'];
                     if(field_required === 'Yes'){
                         var el = '';
-                        if(field_type === 'Text'){
+                        if(field_type === 'Text' || field_type === 'File Upload'){
                             el = td.find('input');
                         }
                         else if(field_type === 'Drop Down'){
@@ -287,13 +287,14 @@ var DailySales = {
                 var field_type = '';
                 var el = '';
                 var f = current_day_records['fields'][row_id][field_id];
+                var form_name = current_day_records['form']['name'];
                 if(f.is_total_row === true) {
                     //Means this td belongs to a row that is flagged for totaling
                     is_total_row = true;
                 }
                 var default_val = f.value;
                 if(f.is_primary_field === false && f.is_total_row === false && f.is_editable === true) {
-                    var formField = self.getFormField(field_id, f, default_val);
+                    var formField = self.getFormField(field_id, f, default_val, form_name);
                     field_type = formField.type;
                     el = formField.field;
                     default_val = '';
@@ -378,7 +379,7 @@ var DailySales = {
         //Check if this column needs a total
         if(total_field_list.indexOf(f.element_column_id) >= 0) {
             total_option_list.forEach(option_row_id => {
-                var g = EventActions.getFieldValue(option_row_id, f.element_column_id, 'value', current_day_records['fields']);
+                var g = EventActions.getFieldValue(current_day_records['fields'], option_row_id, f.element_column_id, 'primary_field_option_row_id','element_column_id', 'value' );
                 if(g) {
                     result.push(parseFloat(g));
                 }
@@ -387,7 +388,7 @@ var DailySales = {
         return result.length > 0 ? result.reduce(EventActions.sum) : false;
     },
 
-    getFormField:function(field_id, fieldObj, default_val){
+    getFormField:function(field_id, fieldObj, default_val, form_name){
         var self = this;
         var options = fieldObj.options;
         var field_type = options['field_type'];
@@ -412,7 +413,18 @@ var DailySales = {
             }
             element.val(default_val);
         }
-        else if(field_type === "Drop Down"){
+        else if(field_type === "File Upload"){
+            element = $("<input />");
+            element.attr('type','text');
+            element.attr('class','dsrp_file_upload');
+            element.attr('id','field_id_'+field_id);
+            element.attr('data-field_id', field_id);
+            if(field_required === 'Yes'){
+                element.attr('required','required');
+            }
+            element.val(default_val);
+            element.attr('readonly','readonly');
+        } else if(field_type === "Drop Down"){
             element = $("<select />");
             element.attr('class','dsrp_select');
             element.attr('id','field_id_'+field_id);
@@ -471,6 +483,23 @@ var DailySales = {
                     options['compare_row_property'] = 'product_type_id';
                     var a = field_action_source_column.split(":");
                     options['return_property'] = a[1];
+                } else if(field_action === 'dsrp') {
+                    options['collection'] = all_external_data_sources[field_action][fieldObj.options.dsrp_form] ? all_external_data_sources[field_action][fieldObj.options.dsrp_form] : [];
+                    options['search_row'] = fieldObj.option_link_id;
+                    options['search_row2'] = fieldObj.option_link_type
+                    options['search_column'] = fieldObj.options.dsrp_form_fields;
+                    options['compare_row_property'] = 'option_link_id';
+                    options['compare_row_property2'] = 'option_link_type';
+                    options['compare_column_property'] = 'element_column_id';
+                    options['return_property'] = 'value';
+                    options['operands'] = fieldObj.options.operands;
+                } else if(field_action === 'file_upload') {
+                    options['form_name'] = form_name
+                    options['field_id'] = field_id;
+                    options['callback'] = (result)=>{
+                       // console.log("The Callback:", result)
+                        element.val(result.join('<br />'));
+                    };
                 }
 
                 self.onElementEventCallback(field_event, field_action, action_sources, field_action_targets.split(','), options);
@@ -497,7 +526,7 @@ var DailySales = {
                 var td = $(this);
                 var field_type = td.attr('data-field_type');
                 var el = '';
-                if(field_type === 'Text'){
+                if(field_type === 'Text' || field_type === 'File Upload'){
                     el = td.find('input');
                 }
                 else if(field_type === 'Drop Down'){
@@ -517,7 +546,7 @@ var DailySales = {
                 var field_type = td.attr('data-field_type');
                 var el = '';
 
-                if(field_type === 'Text'){
+                if(field_type === 'Text' || field_type === 'File Upload'){
                     el = td.find('input');
                 }
                 else if(field_type === 'Drop Down'){

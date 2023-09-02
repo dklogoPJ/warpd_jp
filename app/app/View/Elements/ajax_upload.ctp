@@ -43,7 +43,7 @@
     }
 
 </style>
-<div id="attachment_modal" class="modal hide fade" style="width: 700px; margin:-250px 0 0 -350px ; display: none">
+<div id="attachment_modal" class="modal hide fade" style="width: 800px; margin:-250px 0 0 -350px ; display: none">
     <form id="fileupload" action="" method="POST" enctype="multipart/form-data">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -151,12 +151,13 @@
         </td>
         <td>
             {% if (file.deleteUrl) { %}
-            <!--<button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
-            <i class="glyphicon glyphicon-trash"></i>-->
             <span>{%=file.upload_by%}</span>
             <span>({%=file.upload_from%})</span>
-            <!--</button>
-            <input type="checkbox" name="delete" value="1" class="toggle">-->
+            <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+            <i class="glyphicon glyphicon-trash"></i>
+            Delete
+            </button>
+            <!--<input type="checkbox" name="delete" value="1" class="toggle">-->
             {% } else { %}
            <!-- <button class="btn btn-warning cancel">
                 <i class="glyphicon glyphicon-ban-circle"></i>
