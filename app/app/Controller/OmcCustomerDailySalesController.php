@@ -48,7 +48,8 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
             $this->autoRender = false;
             $this->autoLayout = false;
             //$authUser = $this->Auth->user();
-            $post = $this->sanitize($_POST);
+           // $post = $this->sanitize($_POST);
+            $post = $_POST;
             $action_type = $post['form_action_type'];
 
             if($action_type == 'create_sales_sheet'){
@@ -69,7 +70,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                 }
             } elseif ($action_type == 'form_save_sales_record') {
                 if($this->OmcCustomerDailySaleField->saveAll($post['field_values'])) {
-                    return json_encode(array('code' => 0, 'msg' => 'Sales sheet record saved!'));
+                    return json_encode(array('code' => 0, 'msg' => 'Sales sheet record saved!', 'post'=>$post['field_values']));
                 }
                 else{
                     return json_encode(array('code' => 1, 'msg' => 'Could not save sales sheet record.'));
@@ -89,7 +90,8 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $all_external_data_sources = array(
             'products'=> $price_change_data,
             'lpg_settings'=> $this->LpgSetting->getProductList($company_profile['id']),
-            'lube_settings'=> $this->LubeSetting->getProductList($company_profile['id'])
+            'lube_settings'=> $this->LubeSetting->getProductList($company_profile['id']),
+            'dsrp'=> $this->OmcCustomerDailySale->getAllFormSalesSheet($company_profile['omc_id'], $company_profile['id'], $sales_sheet_date)
         );
 
         $menu = $this->Menu->getMenuByUrl('OmcCustomerDailySales', $form_key);
@@ -101,6 +103,24 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         }
 
         $this->set(compact('permissions','company_profile','all_external_data_sources','previous_day_records','current_day_records','menu_title', 'form_key', 'sales_sheet_id', 'sales_sheet_date', 'last7days'));
+    }
+
+    function get_attachments($id = null, $attachment_type = null){
+        $this->autoRender = false;
+        $result = $this->__get_attachments($attachment_type, $id);
+        $this->attachment_fire_response($result);
+    }
+
+    function delete_attachment($attachment_id = null){
+        $this->autoRender = false;
+        $result = $this->__delete_attachment($attachment_id);
+        $this->attachment_fire_response($result);
+    }
+
+    function attach_files(){
+        $this->autoRender = false;
+        $upload_data = $this->__attach_files();
+        $this->attachment_fire_response($upload_data);
     }
 
     function indexOriginal(){

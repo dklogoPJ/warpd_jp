@@ -131,6 +131,18 @@ class TableFormHelper extends AppHelper {
                 $row_id = $field['row_id'];
                 $element_column_id = $field['element_column_id'];
                 $cell_value = $field['value'];
+                if($field['has_attachments']) {
+                    $str = '';
+                    foreach($field['attachments'] as $file){
+                        $link_name = $file['name'];
+                        $link_url = $file['url'];
+                        $link = "<a href='{$link_url}' target='_blank'>{$link_name}</a>";
+                        $str = $str.''.$link.'<br />';
+                    }
+                    if(trim($str) != '') {
+                        $cell_value = trim($str);
+                    }
+                }
                 if(is_numeric($cell_value)){
                     $cell_value = $this->formatNumber($cell_value,'money',2);
                 }

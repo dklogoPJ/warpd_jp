@@ -179,6 +179,11 @@
 <input type="hidden" id="form-sales-sheet-id" value="<?php echo $sales_sheet_id; ?>" />
 <input type="hidden" id="form-save-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'index')); ?>" />
 
+<!-- This URL will be used by Ajax upload -->
+<input type="hidden" id="get_attachments_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'get_attachments')); ?>" />
+<input type="hidden" id="ajax_upload_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'attach_files')); ?>" />
+<?php echo $this->element('ajax_upload');?>
+
 <!-- Le Script -->
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
