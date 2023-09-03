@@ -11,28 +11,24 @@ class OmcDailySalesController extends OmcAppController
 
     var $name = 'OmcDailySales';
     # set the model to use
-    var $uses = array('OmcSalesSheet','OmcSalesRecord','OmcSalesValue','OmcSalesFormField','OmcSalesForm',
-        'OmcCustomer','Menu','OmcSalesFormPrimaryFieldOption','SalesFormElementEvent','SalesFormElementAction',
-        'SalesFormElementOperand','ProductType','OmcCustomerDailySale','LpgSetting','LubeSetting'
+    var $uses = array('OmcSalesForm','OmcSalesFormField','OmcSalesFormPrimaryFieldOption',
+        'OmcCustomer','Menu','SalesFormElementEvent','SalesFormElementAction','Option',
+        'SalesFormElementOperand','ProductType','OmcCustomerDailySale','LpgSetting','LubeSetting',
+        'OmcSalesReport','OmcSalesReportField','OmcSalesReportPrimaryFieldOption'
     );
 
     # Set the layout to use
     var $layout = 'omc_layout';
 
-    public function beforeFilter($param_array = null)
-    {
+    public function beforeFilter($param_array = null){
         parent::beforeFilter();
     }
 
 
-    function index()
-    {
+    function index(){}
 
-    }
-
-
-    function product_setup($type = 'get')
-    {   $permissions = $this->action_permission;
+    function product_setup($type = 'get') {
+        $permissions = $this->action_permission;
         $company_profile = $this->global_company;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -291,7 +287,7 @@ class OmcDailySalesController extends OmcAppController
                     'omc_sales_form_id'=>$post['pf_omc_sales_form_id'],
                     'option_name'=>$post['pf_option_name'],
                     'option_link_type'=>$post['pf_option_link_type'],
-                    'option_link_id'=>$post['pf_option_link_id'],
+                    'option_link_id'=>$post['pf_option_link_id'] ?: '',
                     'order'=>$post['pf_order'],
                     'is_total'=>$post['pf_option_is_total'],
                     'total_option_list'=>$post['pf_total_option_list'],
@@ -410,33 +406,7 @@ class OmcDailySalesController extends OmcAppController
         $sale_form_element_events = $this->SalesFormElementEvent->getKeyValuePair();
         $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
         $sale_form_element_operands = $this->SalesFormElementOperand->getKeyValuePair();
-        $all_option_link_types = array(
-            array('id'=>'', 'name'=>'None', 'data'=>array(), 'columns'=>array(
-                array('id'=>'', 'name'=>'None')
-            )),
-            array('id'=>'products', 'name'=>'Products', 'data'=>$this->ProductType->getProductList(), //TODO get AND FILTER the product list for the OMC
-                'columns'=>array(
-                    array('id'=>'products:price', 'name'=>'Products: price')
-                )
-            ),
-            array('id'=>'lpg_settings', 'name'=>'LPG Settings', 'data'=>$this->LpgSetting->getProductList($company_profile['id']),
-                'columns'=>array(
-                    array('id'=>'lpg_settings:unit_volume', 'name'=>'LPG Settings: unit_volume'),
-                    array('id'=>'lpg_settings:unit_price', 'name'=>'LPG Settings: unit_price'),
-                    array('id'=>'lpg_settings:price_per_kg', 'name'=>'LPG Settings:price_per_kg')
-                )
-            ),
-            array('id'=>'lube_settings', 'name'=>'Lube Settings', 'data'=>$this->LubeSetting->getProductList($company_profile['id']),
-                'columns'=>array(
-                    array('id'=>'lube_settings:unit_volume', 'name'=>'Lube Settings: unit_volume'),
-                    array('id'=>'lube_settings:total_qty_per_pack', 'name'=>'Lube Settings: total_qty_per_pack'),
-                    array('id'=>'lube_settings:pack_volume', 'name'=>'Lube Settings: pack_volume'),
-                    array('id'=>'lube_settings:unit_cost_price', 'name'=>'Lube Settings: unit_cost_price'),
-                    array('id'=>'lube_settings:unit_selling_price', 'name'=>'Lube Settings: unit_selling_price'),
-                    array('id'=>'lube_settings:price_per_ltr', 'name'=>'Lube Settings: price_per_ltr')
-                )
-            )
-        );
+        $all_option_link_types = $this->Option->getDSRPLinkTypes($company_profile['id']);
 
         $omc_customers_list = $this->get_customer_list();
         $customers = array(array('id'=>'all', 'name'=> 'All Customers'));
@@ -449,6 +419,257 @@ class OmcDailySalesController extends OmcAppController
 
         $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','sale_form_element_operands', 'customers', 'all_option_link_types'));
     }
+
+
+    function sales_report_templates(){
+        $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $post = $this->sanitize($_POST);
+            $action_type = '';
+            if(isset($post['report_action_type'])) {
+                $action_type = $post['report_action_type'];
+            }
+            if(isset($post['report_field_action_type'])) {
+                $action_type = $post['report_field_action_type'];
+            }
+            if(isset($post['report_pf_option_action_type'])) {
+                $action_type = $post['report_pf_option_action_type'];
+            }
+            //Form
+            if($action_type == 'report_save'){
+                $menu_action = str_replace(" ","_",strtolower(trim($post['report_name'])));
+                //Create report url so it can be accessed via menus
+                /*$post['action'] = $menu_action;
+                $menu_id = $this->_createSalesFormMenu($post);*/
+                $menu_id = null;
+
+                $data = array(
+                    'id'=>$post['report_id'],
+                    'menu_id'=> $menu_id,
+                    'report_key'=>$menu_action,
+                    'report_name'=>$post['report_name'],
+                    'report_order'=>$post['report_order'],
+                    'report_description'=>$post['report_description'],
+                    'report_primary_field'=>$post['report_primary_field'],
+                    'omc_customer_list'=>$post['report_omc_customer_list_str'],
+                    'omc_id'=>$post['omc_id'],
+                    'modified_by'=>$authUser['id']
+                ) ;
+                if($post['report_id'] == 0){//New Manual Entry
+                    $data['created_by'] = $authUser['id'];
+                }
+                if ($this->OmcSalesReport->save($data)) {
+                    if($post['report_id'] > 0){
+                        return json_encode(array('code' => 0, 'msg' => 'Report Updated!', 'id'=>$post['report_id'], 'menu_id'=>$menu_id));
+                    }
+                    else{
+                        return json_encode(array('code' => 0, 'msg' => 'Report Saved', 'id'=>$this->OmcSalesReport->id, 'menu_id'=>$menu_id));
+                    }
+                }
+                else {
+                    //$this->Menu->deleteMenu($menu_id, $authUser['id']);
+                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                }
+            }
+            elseif($action_type == 'report_delete'){
+                $report_id= $post['report_id'];
+                $menu_id= $post['menu_id'];
+                $res = $this->OmcSalesReport->deleteReport($report_id, $authUser['id']);
+                if ($res) {
+                   // $this->Menu->deleteMenu($menu_id, $authUser['id']);
+                    return json_encode(array('code' => 0, 'msg' => 'Report Deleted!', 'id'=>$post['report_id']));
+                }
+                else {
+                    return json_encode(array('code' => 1, 'msg' => 'Report Deletion Failed.'));
+                }
+            }
+            //Field
+            elseif($action_type == 'report_field_save'){
+                $data = array(
+                    'id'=>$post['report_field_id'],
+                    'omc_sales_report_id'=>$post['omc_sales_report_id'],
+                    'report_field_name'=>$post['report_field_name'],
+                    'report_field_order'=>$post['report_field_order'],
+                    'report_dsrp_form'=>$post['report_dsrp_form'],
+                    'report_dsrp_fields'=>$post['report_dsrp_fields'],
+                    'report_field_action_targets'=> $post['report_field_action_targets_str'],
+                    'modified_by'=>$authUser['id']
+                ) ;
+
+                if($post['report_field_id'] == 0){//New Manual Entry
+                    $data['created_by'] = $authUser['id'];
+                }
+                if ($this->OmcSalesReportField->save($data)) {
+                    if($post['report_field_id'] > 0){
+                        return json_encode(array('code' => 0, 'msg' => 'Report Field Updated!', 'id'=>$post['report_field_id']));
+                    }
+                    else{
+                        return json_encode(array('code' => 0, 'msg' => 'Report Field Saved', 'id'=>$this->OmcSalesReportField->id));
+                    }
+                }
+                else {
+                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                }
+            }
+            elseif($action_type == 'report_field_delete'){
+                $field_id= $post['report_field_id'];
+                $res = $this->OmcSalesReportField->deleteField($field_id, $authUser['id']);
+                if ($res) {
+                    return json_encode(array('code' => 0, 'msg' => 'Report Field Deleted!', 'id'=>$field_id));
+                }
+                else {
+                    return json_encode(array('code' => 1, 'msg' => 'Report Field Deletion Failed.'));
+                }
+            }
+            //Primary Field
+            elseif($action_type == 'report_option_save'){
+                $data = array(
+                    'id'=>$post['report_pf_option_id'],
+                    'omc_sales_report_id'=>$post['pf_omc_sales_report_id'],
+                    'report_option_name'=>$post['report_pf_option_name'],
+                    'report_option_link_type'=>$post['report_pf_option_link_type'],
+                    'report_option_link_id'=>$post['report_pf_option_link_id'] ?: '',
+                    'report_option_order'=>$post['report_pf_option_order'],
+                    'report_is_total'=>$post['report_pf_option_is_total'],
+                    'report_total_option_list'=>$post['report_pf_total_option_list'],
+                    'report_total_field_list'=>$post['report_pf_total_field_list'],
+                    'modified_by'=>$authUser['id']
+                ) ;
+
+                if($post['report_pf_option_id'] == 0){//New Manual Entry
+                    $data['created_by'] = $authUser['id'];
+                }
+                if ($this->OmcSalesReportPrimaryFieldOption->save($data)) {
+                    if($post['report_pf_option_id'] > 0){
+                        return json_encode(array('code' => 0, 'msg' => 'Report Option Updated!', 'id'=>$post['report_pf_option_id']));
+                    }
+                    else{
+                        return json_encode(array('code' => 0, 'msg' => 'Report Option Saved', 'id'=>$this->OmcSalesReportPrimaryFieldOption->id));
+                    }
+                }
+                else {
+                    echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                }
+            }
+            elseif($action_type == 'report_option_delete'){
+                $option_id= $post['report_pf_option_id'];
+                $res = $this->OmcSalesReportPrimaryFieldOption->deleteOption($option_id, $authUser['id']);
+                if ($res) {
+                    return json_encode(array('code' => 0, 'msg' => 'Report Option Deleted!', 'id'=>$option_id));
+                }
+                else {
+                    return json_encode(array('code' => 1, 'msg' => 'Report Option Deletion Failed.'));
+                }
+            }
+
+        }
+
+
+        $sale_reports = $this->OmcSalesReport->getAllSalesReports($company_profile['id']);
+
+        $sale_report_options = $reports_fields = array();
+        foreach($sale_reports as $report_arr){
+            $rpt = $report_arr['OmcSalesReport'];
+            //Forms for Options
+            $sale_report_options[$rpt['id']] = $rpt['report_name'];
+            //group forms and fields
+            $fields_arr = array();
+            foreach($report_arr['OmcSalesReportField'] as $field){
+                if($field['deleted'] == 'n'){
+                    $fields_arr[$field['id']]=array(
+                        'id'=>$field['id'],
+                        'report_id'=>$field['omc_sales_report_id'],
+                        'report_field_name'=>$field['report_field_name'],
+                        'report_field_order'=>$field['report_field_order'],
+                        'report_dsrp_form'=>$field['report_dsrp_form'],
+                        'report_dsrp_fields'=>$field['report_dsrp_fields'],
+                        'report_field_action_targets'=>$field['report_field_action_targets']
+                    );
+                }
+            }
+            //group form primary field options
+            $primary_field_options_arr = array();
+            foreach($report_arr['OmcSalesReportPrimaryFieldOption'] as $option){
+                if($option['deleted'] == 'n'){
+                    $primary_field_options_arr[$option['id']]=array(
+                        'id'=>$option['id'],
+                        'report_id'=>$option['omc_sales_report_id'],
+                        'report_option_name'=>$option['report_option_name'],
+                        'report_option_link_type'=>$option['report_option_link_type'],
+                        'report_option_link_id'=>$option['report_option_link_id'],
+                        'report_option_order'=>$option['report_option_order'],
+                        'report_is_total'=>$option['report_is_total'],
+                        'report_total_option_list'=>$option['report_total_option_list'],
+                        'report_total_field_list'=>$option['report_total_field_list']
+                    );
+                }
+            }
+
+            $reports_fields[$rpt['id']] = array(
+                'id' => $rpt['id'],
+                'menu_id' => $rpt['menu_id'],
+                'name' => $rpt['report_name'],
+                'description' => $rpt['report_description'],
+                'order' => $rpt['report_order'],
+                'omc_customer_list' => $rpt['omc_customer_list'],
+                'primary_field_name' => $rpt['report_primary_field'],
+                'primary_field_options'=>$primary_field_options_arr,
+                'fields'=>$fields_arr
+            );
+
+        }
+
+        $sale_forms = $this->OmcSalesForm->getAllSalesForms($company_profile['id']);
+
+        $sale_form_options = $forms_fields = array();
+        foreach($sale_forms as $form_arr){
+            $frm = $form_arr['OmcSalesForm'];
+            $sale_form_options[$frm['id']] = $frm['form_name'];
+            $fields_arr = array();
+            foreach($form_arr['OmcSalesFormField'] as $field){
+                if($field['deleted'] == 'n'){
+                    $fields_arr[$field['id']]=array(
+                        'id'=>$field['id'],
+                        'field_name'=>$field['field_name']
+                    );
+                }
+            }
+            //group form primary field options
+            /*$primary_field_options_arr = array();
+            foreach($form_arr['OmcSalesFormPrimaryFieldOption'] as $option){
+                if($option['deleted'] == 'n'){
+                    $primary_field_options_arr[$option['id']]=array(
+                        'id'=>$option['id'],
+                        'option_name'=>$option['option_name'],
+                    );
+                }
+            }*/
+            $forms_fields[$frm['id']] = array(
+                'id' => $frm['id'],
+                'name' => $frm['form_name'],
+                //'primary_field_options'=>$primary_field_options_arr,
+                'fields'=>$fields_arr
+            );
+        }
+
+        $all_option_link_types = $this->Option->getDSRPLinkTypes($company_profile['id']);
+        $omc_customers_list = $this->get_customer_list();
+        $customers = array(array('id'=>'all', 'name'=> 'All Customers'));
+        foreach($omc_customers_list as $data){
+            $customers[] = array(
+                'id' => $data['id'],
+                'name' => $data['name']
+            );
+        }
+
+        $this->set(compact('permissions','sale_reports','forms_fields','company_profile','sale_report_options','sale_form_options','reports_fields', 'customers', 'all_option_link_types'));
+    }
+
 
     function station_sales(){
         $permissions = $this->action_permission;
