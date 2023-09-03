@@ -427,7 +427,8 @@ class OmcAdditiveController extends OmcAppController
 
     function additive_stock_inventory1($type = 'get') {
         
-        $this->layout = NULL;
+        $this->setPermission('additive_stock_inventory1');
+        $this->autoLayout = false;
         $this->autoRender = false;
 
         $permissions = $this->action_permission;
@@ -557,7 +558,8 @@ class OmcAdditiveController extends OmcAppController
 
     function additive_stock_received2($type = 'get') {
 
-        $this->layout = NULL;
+        $this->setPermission('additive_stock_received2');
+        $this->autoLayout = false;
         $this->autoRender = false;
         
         $permissions = $this->action_permission;
@@ -688,7 +690,8 @@ class OmcAdditiveController extends OmcAppController
 
     function additive_stock_stock2($type = 'get') {
 
-        $this->layout = NULL;
+        $this->setPermission('additive_stock_stock2');
+        $this->autoLayout = false;
         $this->autoRender = false;
         
         $permissions = $this->action_permission;
@@ -819,7 +822,8 @@ class OmcAdditiveController extends OmcAppController
 
     function additive_cost_wac($type = 'get') {
 
-        $this->layout = NULL;
+        $this->setPermission('additive_cost_wac');
+        $this->autoLayout = false;
         $this->autoRender = false;
         
         $permissions = $this->action_permission;
