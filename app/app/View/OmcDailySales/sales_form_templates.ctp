@@ -92,6 +92,21 @@
                                             </div>
                                         </div>
 
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">Report Link:</div>
+                                            <div class="span8">
+                                                <select name="form_omc_sales_report_id" id="form_omc_sales_report_id" style="width: 100%;">
+                                                    <?php
+                                                    foreach($all_reports as $opt){
+                                                        ?>
+                                                        <option value="<?php echo $opt['id']; ?>"><?php echo $opt['name']; ?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="footer tar">
                                             <input type="hidden"  name="form_action_type" id="form_action_type" value="form_save" >
                                             <input type="hidden"  name="form_id" id="form_id" value="0" >

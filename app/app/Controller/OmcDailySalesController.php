@@ -14,7 +14,7 @@ class OmcDailySalesController extends OmcAppController
     var $uses = array('OmcSalesForm','OmcSalesFormField','OmcSalesFormPrimaryFieldOption',
         'OmcCustomer','Menu','SalesFormElementEvent','SalesFormElementAction','Option',
         'SalesFormElementOperand','ProductType','OmcCustomerDailySale','LpgSetting','LubeSetting',
-        'OmcSalesReport','OmcSalesReportField','OmcSalesReportPrimaryFieldOption'
+        'OmcSalesReport','OmcSalesReportField','OmcSalesReportPrimaryFieldOption','OmcSalesReport','OmcSalesReportCell'
     );
 
     # Set the layout to use
@@ -202,6 +202,7 @@ class OmcDailySalesController extends OmcAppController
                     'description'=>$post['form_description'],
                     'primary_field'=>$post['form_primary_field'],
                     'omc_customer_list'=>$post['form_omc_customer_list_str'],
+                    'omc_sales_report_id'=> $post['form_omc_sales_report_id'],
                     'omc_id'=>$post['omc_id'],
                     'modified_by'=>$authUser['id']
                 )) ;
@@ -287,7 +288,7 @@ class OmcDailySalesController extends OmcAppController
                     'omc_sales_form_id'=>$post['pf_omc_sales_form_id'],
                     'option_name'=>$post['pf_option_name'],
                     'option_link_type'=>$post['pf_option_link_type'],
-                    'option_link_id'=>$post['pf_option_link_id'] ?: '',
+                    'option_link_id'=> isset($post['pf_option_link_id']) ?: '',
                     'order'=>$post['pf_order'],
                     'is_total'=>$post['pf_option_is_total'],
                     'total_option_list'=>$post['pf_total_option_list'],
@@ -396,6 +397,7 @@ class OmcDailySalesController extends OmcAppController
                 'description' => $form['description'],
                 'order' => $form['order'],
                 'omc_customer_list' => $form['omc_customer_list'],
+                'omc_sales_report_id' => $form['omc_sales_report_id'],
                 'primary_field_name' => $form['primary_field'],
                 'primary_field_options'=>$primary_field_options_arr,
                 'fields'=>$fields_arr
@@ -408,6 +410,15 @@ class OmcDailySalesController extends OmcAppController
         $sale_form_element_operands = $this->SalesFormElementOperand->getKeyValuePair();
         $all_option_link_types = $this->Option->getDSRPLinkTypes($company_profile['id']);
 
+        $all_reports_query = $this->OmcSalesReport->getSalesReportOnly($company_profile['id']);
+        $all_reports = array(array('id'=>'', 'name'=> 'None'));
+        foreach($all_reports_query as $data){
+            $all_reports[] = array(
+                'id' => $data['OmcSalesReport']['id'],
+                'name' => $data['OmcSalesReport']['report_name']
+            );
+        }
+
         $omc_customers_list = $this->get_customer_list();
         $customers = array(array('id'=>'all', 'name'=> 'All Customers'));
         foreach($omc_customers_list as $data){
@@ -417,7 +428,7 @@ class OmcDailySalesController extends OmcAppController
             );
         }
 
-        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','sale_form_element_operands', 'customers', 'all_option_link_types'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','sale_form_element_operands', 'customers', 'all_option_link_types','all_reports'));
     }
 
 
@@ -439,6 +450,9 @@ class OmcDailySalesController extends OmcAppController
             }
             if(isset($post['report_pf_option_action_type'])) {
                 $action_type = $post['report_pf_option_action_type'];
+            }
+            if(isset($post['report_cell_action_type'])) {
+                $action_type = $post['report_cell_action_type'];
             }
             //Form
             if($action_type == 'report_save'){
@@ -495,9 +509,6 @@ class OmcDailySalesController extends OmcAppController
                     'omc_sales_report_id'=>$post['omc_sales_report_id'],
                     'report_field_name'=>$post['report_field_name'],
                     'report_field_order'=>$post['report_field_order'],
-                    'report_dsrp_form'=>$post['report_dsrp_form'],
-                    'report_dsrp_fields'=>$post['report_dsrp_fields'],
-                    'report_field_action_targets'=> $post['report_field_action_targets_str'],
                     'modified_by'=>$authUser['id']
                 ) ;
 
@@ -533,7 +544,7 @@ class OmcDailySalesController extends OmcAppController
                     'omc_sales_report_id'=>$post['pf_omc_sales_report_id'],
                     'report_option_name'=>$post['report_pf_option_name'],
                     'report_option_link_type'=>$post['report_pf_option_link_type'],
-                    'report_option_link_id'=>$post['report_pf_option_link_id'] ?: '',
+                    'report_option_link_id'=> isset($post['report_pf_option_link_id']) ?: '',
                     'report_option_order'=>$post['report_pf_option_order'],
                     'report_is_total'=>$post['report_pf_option_is_total'],
                     'report_total_option_list'=>$post['report_pf_total_option_list'],
@@ -565,6 +576,41 @@ class OmcDailySalesController extends OmcAppController
                 else {
                     return json_encode(array('code' => 1, 'msg' => 'Report Option Deletion Failed.'));
                 }
+            }//Report Cell
+            elseif($action_type == 'report_cell_create'){
+                foreach($post['cell_data'] as $row) {
+                    //check to see if cell record exist, then skip if not create it
+                    $report_cell = $this->OmcSalesReportCell->getAllReportCellByParams($row['omc_sales_report_id'], $row['omc_sales_report_primary_field_option_id'], $row['omc_sales_report_field_id']);
+                    if(!$report_cell) {
+                        $this->OmcSalesReportCell->create();
+                        $this->OmcSalesReportCell->save($row);
+                    }
+                }
+                $data = $this->OmcSalesReportCell->getAllReportCells();
+                return json_encode(array('code' => 0, 'msg' => 'Report Cell Created!', 'data'=>$data ));
+            }
+            //Report Cell
+            elseif($action_type == 'report_cell_save') {
+                $data = array(
+                    'id'=>$post['report_cell_id'],
+                    'dsrp_form'=>$post['dsrp_form'],
+                    'dsrp_primary_fields'=>$post['dsrp_primary_fields_str'],
+                    'dsrp_fields'=>$post['dsrp_fields_str']
+                );
+                if ($this->OmcSalesReportCell->save($data)) {
+                    $data = $this->OmcSalesReportCell->getAllReportCells();
+                    return json_encode(array('code' => 0, 'msg' => 'Report Option Updated!', 'data'=>$data));
+                } else {
+                    return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                }
+            }
+            elseif($action_type == 'report_cell_delete') {
+                if ($this->OmcSalesReportCell->deleteCells ($post['report_id'], $post['id'], $post['delete_type'])) {
+                    $data = $this->OmcSalesReportCell->getAllReportCells();
+                    return json_encode(array('code' => 0, 'msg' => 'Report Cells Deleted!', 'data'=> $data));
+                } else {
+                    return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                }
             }
 
         }
@@ -585,10 +631,7 @@ class OmcDailySalesController extends OmcAppController
                         'id'=>$field['id'],
                         'report_id'=>$field['omc_sales_report_id'],
                         'report_field_name'=>$field['report_field_name'],
-                        'report_field_order'=>$field['report_field_order'],
-                        'report_dsrp_form'=>$field['report_dsrp_form'],
-                        'report_dsrp_fields'=>$field['report_dsrp_fields'],
-                        'report_field_action_targets'=>$field['report_field_action_targets']
+                        'report_field_order'=>$field['report_field_order']
                     );
                 }
             }
@@ -640,7 +683,7 @@ class OmcDailySalesController extends OmcAppController
                 }
             }
             //group form primary field options
-            /*$primary_field_options_arr = array();
+            $primary_field_options_arr = array();
             foreach($form_arr['OmcSalesFormPrimaryFieldOption'] as $option){
                 if($option['deleted'] == 'n'){
                     $primary_field_options_arr[$option['id']]=array(
@@ -648,15 +691,16 @@ class OmcDailySalesController extends OmcAppController
                         'option_name'=>$option['option_name'],
                     );
                 }
-            }*/
+            }
             $forms_fields[$frm['id']] = array(
                 'id' => $frm['id'],
                 'name' => $frm['form_name'],
-                //'primary_field_options'=>$primary_field_options_arr,
+                'primary_field_options'=>$primary_field_options_arr,
                 'fields'=>$fields_arr
             );
         }
 
+        $all_reports_cells = $this->OmcSalesReportCell->getAllReportCells();
         $all_option_link_types = $this->Option->getDSRPLinkTypes($company_profile['id']);
         $omc_customers_list = $this->get_customer_list();
         $customers = array(array('id'=>'all', 'name'=> 'All Customers'));
@@ -667,7 +711,7 @@ class OmcDailySalesController extends OmcAppController
             );
         }
 
-        $this->set(compact('permissions','sale_reports','forms_fields','company_profile','sale_report_options','sale_form_options','reports_fields', 'customers', 'all_option_link_types'));
+        $this->set(compact('permissions','sale_reports','forms_fields','company_profile','sale_report_options','sale_form_options','reports_fields', 'all_reports_cells', 'customers', 'all_option_link_types'));
     }
 
 

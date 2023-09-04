@@ -423,6 +423,9 @@ class AppController extends Controller
         if(stristr($action, 'add_dsrp_options') !== false){
             return true;
         }
+        if(stristr($action, 'get_dsrp_report') !== false){
+            return true;
+        }
         if(stristr($action, 'view') !== false){
             return true;
         }

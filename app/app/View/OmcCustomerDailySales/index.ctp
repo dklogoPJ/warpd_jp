@@ -72,6 +72,15 @@
     ul.buttons li.spacer  {
         width: 50px;
     }
+    .linked_report_content {
+        display: flex;
+        justify-content: center;
+    }
+    #linked_report_loader {
+        color: #131313;
+        font-style: italic;
+        font-size: 16px;
+    }
 
 </style>
 
@@ -172,12 +181,59 @@
 
     <div class="dr"><span></span></div>
 
+    <?php
+        if($report_title) {
+     ?>
+         <div class="row-fluid" id="linked_report_container">
+                <div class="span12">
+                    <div class="head clearfix">
+                        <div class="isw-list"></div>
+                        <h1><span id="linked_report_title"><?php echo $report_title ?></span></h1>
+                        <ul class="buttons">
+                            <li>
+                                <label for="sales-sheet-dates" class="label-override">Report Dates:</label>
+                                <select class="sales-sheet-dates-class" name="linked_report_date" id="linked_report_date">
+                                    <?php
+                                    foreach($last7days as $key => $opt){
+                                        ?>
+                                        <option value="<?php echo $key; ?>" <?php echo $key == $sales_sheet_date ? 'selected':''  ?>><?php echo $opt; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                            </li>
+
+                            <li class="spacer">
+                                &nbsp;
+                            </li>
+
+                            <li><a href="javascript:void(0);" id="linked_report_refresh" class="grid_menu"><i class="isw-refresh"></i>Refresh</a></li>
+
+                        </ul>
+                    </div>
+                    <div class="block-fluid" >
+                        <div style="padding: 10px 10px 0px;">
+                            <div class="row-fluid">
+                                <div class="span12 linked_report_content">
+                                    <div id="linked_report_loader"></div>
+                                    <div id="linked_report_html"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+    <?php
+        }
+    ?>
+
 </div>
 
 
 <!-- URLs -->
 <input type="hidden" id="form-sales-sheet-id" value="<?php echo $sales_sheet_id; ?>" />
 <input type="hidden" id="form-save-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'index')); ?>" />
+<input type="hidden" id="linked_report_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'get_dsrp_report')); ?>" />
 
 <!-- This URL will be used by Ajax upload -->
 <input type="hidden" id="get_attachments_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'get_attachments')); ?>" />

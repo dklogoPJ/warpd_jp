@@ -67,7 +67,8 @@ class OmcCustomerDailySale extends AppModel
                     'fields' => array(
                         'OmcSalesForm.id',
                         'OmcSalesForm.form_name',
-                        'OmcSalesForm.primary_field'
+                        'OmcSalesForm.primary_field',
+                        'OmcSalesForm.omc_sales_report_id'
                     )
                 )
             ),
@@ -96,7 +97,7 @@ class OmcCustomerDailySale extends AppModel
                 $arr['has_attachments'] = false;
                 $arr['attachments'] = array();
                 if($arr['OmcSalesFormField']['field_type'] == 'File Upload') {
-                    $attchs = $this->__get_attachments($DailySaleQuery['OmcSalesForm']['form_name'], $arr['id'], $condition['OmcCustomerDailySale.omc_customer_id']);
+                    $attchs = $this->__get_attachments($DailySaleQuery['OmcSalesForm']['form_name'], $arr['id'], $DailySaleQuery['OmcCustomerDailySale']['omc_customer_id']);
                     if($attchs) {
                         $arr['has_attachments'] = true;
                         foreach ($attchs as $file) {
@@ -205,6 +206,21 @@ class OmcCustomerDailySale extends AppModel
         return $results;
     }
 
+    function calcFormData($omc_customer_id, $form_id, $primary_fields, $fields, $record_date) {
+        $result = $this->query("CALL dsrp_get_query({$form_id}, {$omc_customer_id}, '{$record_date}', '{$fields}', '{$primary_fields}');");
+        $query_str = $result[0][0]['result_string'];
+        $executed_query_data = $this->query($query_str);
+        $total = 0;
+        foreach ($executed_query_data as $row) {
+            $row_total = 0;
+            foreach ($row[0] as $field_value) {
+                $row_total = $row_total + intval($field_value);
+            }
+            $total = $total + $row_total;
+        }
+        return $total;
+    }
+
     function setupFormSaleSheet($omc_id, $omc_customer_id, $form_key, $record_date) {
         $OmcSalesForm = ClassRegistry::init('OmcSalesForm');
         $form = $OmcSalesForm->getSalesFormForSetUp($omc_id, $form_key);
@@ -268,6 +284,7 @@ class OmcCustomerDailySale extends AppModel
                 'id'=> $params['OmcSalesForm']['id'],
                 'name'=> $params['OmcSalesForm']['form_name'],
                 'omc_customer_daily_sales_id'=> $params['OmcCustomerDailySale']['id'],
+                'omc_sales_report_id'=> $params['OmcSalesForm']['omc_sales_report_id'],
                 'record_dt'=> $params['OmcCustomerDailySale']['record_dt']
             )
         );

@@ -2,6 +2,7 @@ var SalesReport = {
     datasource_category:[],
     datasource_sub_category:[],
     tr_edit:null,
+    td_edit:null,
 
     init:function () {
         var self = this;
@@ -14,10 +15,13 @@ var SalesReport = {
             debug: false,
             submitHandler: function() { self.save_report_fields(); }
         });
-
         $("#sales-report-primary-field-option").validate({
             debug: false,
             submitHandler: function() { self.save_report_primary_field_option(); }
+        });
+        $("#sales-report-cells").validate({
+            debug: false,
+            submitHandler: function() { self.save_report_cells(); }
         });
 
         self.bind_sales_reports();
@@ -28,6 +32,10 @@ var SalesReport = {
         self.render_report_fields();
         $("#sales-report-primary-field-option #pf_option_reset").click();
         self.render_report_primary_field_option();
+
+        self.bind_sales_report_cells();
+        $("#sales-report-cells #report_cell_reset").click();
+
     },
 
     findAttributeInCollection: function (attribute, collection = []) {
@@ -213,22 +221,29 @@ var SalesReport = {
         var d_options = $sale_report_options;
         var select_ome_sales_report = document.getElementById('omc_sales_report_id');
         var select_pf_omc_sales_report = document.getElementById('pf_omc_sales_report_id');
+        var select_rp_cell_sales_report = document.getElementById('rp_cell_omc_sales_report_id');
         select_ome_sales_report.options.length = 0;
         select_pf_omc_sales_report.options.length = 0;
+        select_rp_cell_sales_report.options.length = 0;
         for(var nx in d_options){
             var opt_report_field = document.createElement('option');
             var opt_pf_opt = document.createElement('option');
+            var opt_rp_opt = document.createElement('option');
             opt_report_field.value = nx;
             opt_report_field.text = d_options[nx];
             opt_pf_opt.value = nx;
             opt_pf_opt.text = d_options[nx];
+            opt_rp_opt.value = nx;
+            opt_rp_opt.text = d_options[nx];
             try{ //Standard
                 select_ome_sales_report.add(opt_report_field, null) ;
                 select_pf_omc_sales_report.add(opt_pf_opt,null) ;
+                select_rp_cell_sales_report.add(opt_rp_opt,null) ;
             }
             catch(error){ //IE Only
                 select_ome_sales_report.add(opt_report_field) ;
-                select_pf_omc_sales_report.add(opt_pf_opt) ;
+                select_pf_omc_sales_report.add(opt_pf_opt);
+                select_rp_cell_sales_report.add(opt_rp_opt);
             }
         }
 
@@ -275,9 +290,8 @@ var SalesReport = {
         });
 
         $("#report_fields_tab").click(function(){
-            var report_id = $("#sales-report-fields #omc_sales_report_id").val();
+           // var report_id = $("#sales-report-fields #omc_sales_report_id").val();
             $("#sales-report-fields #report_dsrp_form").change();
-            self.reset_report_field_action_targets(report_id);
         });
 
         $("table#report_field_list tbody tr").live('click',function(){
@@ -299,8 +313,6 @@ var SalesReport = {
             $("#sales-report-fields #report_field_order").val('');
             $("#sales-report-fields #report_dsrp_form").val('').change();
             $("#sales-report-fields #report_field_action_type").val('report_field_save');
-            var report_id = $("#sales-report-fields #omc_sales_report_id").val();
-            self.reset_report_field_action_targets(report_id);
             $("table#report_field_list tbody tr").removeClass('selected');
             self.tr_edit = null;
         });
@@ -319,7 +331,7 @@ var SalesReport = {
                 var ques = "Are You Sure You Want To Delete This Field ?";
                 alertify.confirm( ques, function (e) {
                     if (e) {
-                        $("#sales-report-fields #field_action_type").val('field_delete');
+                        $("#sales-report-fields #report_field_action_type").val('report_field_delete');
                         $("#sales-report-fields").submit();
                     }
                 });
@@ -332,44 +344,14 @@ var SalesReport = {
             self.render_report_fields();
         });
 
-        $("#sales-report-fields #report_dsrp_form").change(function(){
-            var dsrp_form_id = $(this).val();
-            var report_id = $("#sales-report-fields #omc_sales_report_id").val();
-            if(self.tr_edit){
-                report_id = self.tr_edit.attr('data-report_id');
-                var report_field_id = self.tr_edit.attr('data-report_field_id');
-                var report_field = $reports_fields[report_id]['fields'][report_field_id];
-                if(report_field) {
-                    if(report_field.report_dsrp_fields) {
-                        self.reset_report_dsrp_fields(dsrp_form_id, report_field.report_dsrp_fields.split(','));
-                    } else {
-                        self.reset_report_dsrp_fields(dsrp_form_id);
-                    }
-                } else {
-                    self.reset_report_dsrp_fields(dsrp_form_id);
-                }
-            } else {
-                self.reset_report_dsrp_fields(dsrp_form_id);
-            }
-        });
-
-        $("#sales-report-fields #report_dsrp_fields").select2();
-        $("#sales-report-fields #report_field_action_targets").select2();
     },
 
     save_report_fields:function(){
         var self = this;
         var $salesReportFields = $("#sales-report-fields");
         var url = $salesReportFields.attr('action');
-        var report_dsrp_fields_arr_obj = $("#sales-report-fields #report_dsrp_fields").select2("data");
-        var report_dsrp_fields_arr = report_dsrp_fields_arr_obj.map((x) => {return x.id});
-        var report_dsrp_fields_str = report_dsrp_fields_arr ? report_dsrp_fields_arr.toString() : '';
-        var report_field_action_targets_arr = $("#sales-report-fields #report_field_action_targets").val();
-        var report_field_action_targets_str = report_field_action_targets_arr ? report_field_action_targets_arr.toString() : '';
-        var query = $salesReportFields.serialize()+"&report_dsrp_fields_str="+report_dsrp_fields_str+"&report_field_action_targets_str="+report_field_action_targets_str;
+        var query = $salesReportFields.serialize();
         var salesReportFieldsObjCollection = $salesReportFields.serializeArray();
-        salesReportFieldsObjCollection.push({name: 'report_dsrp_fields', value: report_dsrp_fields_str});
-        salesReportFieldsObjCollection.push({name: 'report_field_action_targets', value: report_field_action_targets_str});
 
         $.ajax({
             url:url,
@@ -392,9 +374,6 @@ var SalesReport = {
                         'report_id' : self.getValue('omc_sales_report_id', salesReportFieldsObjCollection),
                         'report_field_name' : self.getValue('report_field_name', salesReportFieldsObjCollection),
                         'report_field_order' : self.getValue('report_field_order', salesReportFieldsObjCollection),
-                        'report_dsrp_form' : self.getValue('report_dsrp_form', salesReportFieldsObjCollection),
-                        'report_dsrp_fields' : self.getValue('report_dsrp_fields', salesReportFieldsObjCollection),
-                        'report_field_action_targets' : self.getValue('report_field_action_targets', salesReportFieldsObjCollection),
                         'report_field_action_type' : self.getValue('report_field_action_type', salesReportFieldsObjCollection)
                     };
                     alertify.success(txt);
@@ -426,15 +405,14 @@ var SalesReport = {
                     'report_id': post_data['report_id'],
                     'report_field_name': post_data['report_field_name'],
                     'report_field_order': post_data['report_field_order'],
-                    'report_dsrp_form': post_data['report_dsrp_form'],
-                    'report_dsrp_fields': post_data['report_dsrp_fields'],
-                    'report_field_action_targets': post_data['report_field_action_targets']
                 };
             }
-        }
-        if(report_field_action_type === 'report_field_delete'){
+            self.create_report_cells();
+        } else if(report_field_action_type === 'report_field_delete'){
             delete $reports_fields[report_id]['fields'][report_field_id];
+            self.delete_report_cells(report_id, report_field_id, 'field');
         }
+
         $("#sales-report-fields #report_field_reset").click();
         self.render_report_fields();
     },
@@ -453,21 +431,16 @@ var SalesReport = {
         for (var item in collection) {
             sortable.push(collection[item]);
         }
-        sortable.sort((a, b)=> a.field_order - b.field_order);
+        sortable.sort((a, b)=> a.report_field_order - b.report_field_order);
         for(var x in sortable){
             var field = sortable[x];
             var tr = $("<tr />");
             tr.attr('data-report_field_id',field['id']);
             tr.attr('data-report_id',field['report_id']);
-
             var td = $("<td />").html(field['report_field_name']);
             tr.append(td);
-            /*var td = $("<td />").html(field['field_type']);
-            tr.append(td);*/
             var td = $("<td />").html(field['report_field_order']);
             tr.append(td);
-           /* var td = $("<td />").html(field['field_required']);
-            tr.append(td);*/
 
             $reportFieldListTbody.append(tr);
         }
@@ -559,16 +532,16 @@ var SalesReport = {
         this.reset_select2_option($customers, 'id', 'name', jquerySelect2Obj, 'report_omc_customer_list', selected_ids);
     },
 
-    reset_report_dsrp_fields: function (dsrp_form_id, selected_ids=[]){
-        var jquerySelect2Obj = $("#sales-report-fields #report_dsrp_fields");
+    reset_report_cell_dsrp_fields: function (dsrp_form_id, selected_ids=[]){
+        var jquerySelect2Obj = $("#sales-report-cells #dsrp_fields");
         var fields = $forms_fields[dsrp_form_id]['fields'];
-        this.reset_select2_option(fields, 'id', 'field_name', jquerySelect2Obj, 'report_dsrp_fields', selected_ids);
+        this.reset_select2_option(fields, 'id', 'field_name', jquerySelect2Obj, 'dsrp_fields', selected_ids);
     },
 
-    reset_report_field_action_targets: function (report_id, selected_ids=[]){
-        var jquerySelect2Obj = $("#sales-report-fields #report_field_action_targets");
-        var fields = $reports_fields[report_id]['fields'];
-        this.reset_select2_option(fields, 'id', 'report_field_name', jquerySelect2Obj, 'report_field_action_targets', selected_ids);
+    reset_report_cell_dsrp_primary_fields: function (dsrp_form_id, selected_ids=[]){
+        var jquerySelect2Obj = $("#sales-report-cells #dsrp_primary_fields");
+        var options = $forms_fields[dsrp_form_id]['primary_field_options'];
+        this.reset_select2_option(options, 'id', 'option_name', jquerySelect2Obj, 'dsrp_primary_fields', selected_ids);
     },
 
     reset_primary_field_total_options_list: function (report_id, selected_ids=[]){
@@ -764,7 +737,7 @@ var SalesReport = {
                         'report_option_action_type' : self.getValue('report_pf_option_action_type', salesReportPrimaryFieldOptionObjCollection)
                     };
                     alertify.success(txt);
-                    self.update_primary_field_options(post_data)
+                    self.update_primary_field_options(post_data, response)
                 }
                 //* When there are Errors *//*
                 else if (response.code === 1) {
@@ -777,7 +750,7 @@ var SalesReport = {
         });
     },
 
-    update_primary_field_options:function(post_data){
+    update_primary_field_options:function(post_data, response){
         var self = this;
         var report_id = post_data['report_id'];
         var report_option_id = post_data['report_option_id'];
@@ -798,10 +771,13 @@ var SalesReport = {
                 'report_total_option_list': post_data['report_total_option_list'],
                 'report_total_field_list': post_data['report_total_field_list']
             };
+            self.create_report_cells();
         }
-        if(report_action_type === 'report_option_delete'){
+        else if(report_action_type === 'report_option_delete'){
             delete $reports_fields[report_id]['primary_field_options'][report_option_id];
+            self.delete_report_cells(report_id, report_option_id, 'primary_field');
         }
+
         $("#sales-report-primary-field-option #report_pf_option_reset").click();
         self.render_report_primary_field_option();
     },
@@ -819,7 +795,7 @@ var SalesReport = {
         for (var item in collection) {
             sortable.push(collection[item]);
         }
-        sortable.sort((a, b)=> a.order - b.order);
+        sortable.sort((a, b)=> a.report_option_order - b.report_option_order);
         for(var x in sortable){
             var pf_option = sortable[x];
             if(pf_option) {
@@ -839,11 +815,211 @@ var SalesReport = {
         }
     },
 
-
-    preview_report:function(report_id){
+    bind_sales_report_cells: function(){
         var self = this;
-        var url = $("#sales-report-fields").attr('action');
-        var query = "report_id="+report_id+"&report_action_type=report_preview";
+
+        $("#report_cells_tab").click(function(){
+            self.render_report_table_cell();
+            $("#sales-report-cells #report_cell_reset").click();
+        });
+
+        $("table#report_table_cells tbody tr td").live('click',function(){
+            var report_id = $(this).attr('data-report_id');
+            var report_cell_id = $(this).attr('data-report_cell_id');
+            var report_cell = $all_reports_cells[report_id][report_cell_id];
+            if(!self.td_edit) {
+                $("#sales-report-cells #report_cell_save").hide();
+            }
+            if(report_cell) {
+                self.td_edit = $(this);
+                $("table#report_table_cells tbody tr td").removeClass('selected');
+                $(this).addClass('selected');
+                $("#sales-report-cells #dsrp_form").val(report_cell.dsrp_form).change();
+                $("#sales-report-cells #report_cell_id").val(report_cell.id);
+                $("#sales-report-cells #report_cell_omc_sales_report_field_id").val(report_cell.omc_sales_report_field_id);
+                $("#sales-report-cells #report_cell_omc_sales_report_primary_field_option_id").val(report_cell.omc_sales_report_primary_field_option_id);
+                $("#sales-report-cells #report_cell_save").show();
+            }
+        });
+
+        $("#sales-report-cells #report_cell_reset").click(function(){
+            $("#sales-report-cells #dsrp_form").val('').change();
+            $("#sales-report-cells #report_cell_id").val(0);
+            $("#sales-report-cells #report_cell_omc_sales_report_field_id").val('');
+            $("#sales-report-cells #report_cell_omc_sales_report_primary_field_option_id").val('');
+            $("#sales-report-cells #report_cell_save").hide();
+            //We must hide the save button, since we don't create new cells. Cells are created by report field and report primary filed after save.
+            $("table#report_table_cells tbody tr td").removeClass('selected');
+            self.td_edit = null;
+        });
+
+
+        $("#sales-report-cells #dsrp_form").change(function(){
+            var dsrp_form_id = $(this).val();
+            var report_id = $("#sales-report-cells #rp_cell_omc_sales_report_id").val();
+            if(self.td_edit){
+                report_id = self.td_edit.attr('data-report_id');
+                var report_cell_id = self.td_edit.attr('data-report_cell_id');
+                var report_cell = $all_reports_cells[report_id][report_cell_id];
+                if(report_cell) {
+                    if(report_cell.dsrp_fields) {
+                        self.reset_report_cell_dsrp_fields(dsrp_form_id, report_cell.dsrp_fields.split(','));
+                    } else {
+                        self.reset_report_cell_dsrp_fields(dsrp_form_id);
+                    }
+
+                    if(report_cell.dsrp_primary_fields) {
+                        self.reset_report_cell_dsrp_primary_fields(dsrp_form_id, report_cell.dsrp_primary_fields.split(','));
+                    } else {
+                        self.reset_report_cell_dsrp_primary_fields(dsrp_form_id);
+                    }
+                } else {
+                    self.reset_report_cell_dsrp_fields(dsrp_form_id);
+                    self.reset_report_cell_dsrp_primary_fields(dsrp_form_id);
+                }
+            } else {
+                self.reset_report_cell_dsrp_fields(dsrp_form_id);
+                self.reset_report_cell_dsrp_primary_fields(dsrp_form_id);
+            }
+        });
+
+        $("#sales-report-cells #dsrp_primary_fields").select2();
+        $("#sales-report-cells #dsrp_fields").select2();
+    },
+
+    create_report_cells: function(){
+        var self = this;
+
+        var report_id = $("#sales-report-cells #rp_cell_omc_sales_report_id").val();
+        if (typeof $reports_fields[report_id] == "undefined") {
+            return false;
+        }
+
+        var collection_primary_fields = $reports_fields[report_id]['primary_field_options'];
+        var sortable_primary_fields = [];
+        for (var item_primary in collection_primary_fields) {
+            sortable_primary_fields.push(collection_primary_fields[item_primary]);
+        }
+        sortable_primary_fields.sort((a, b) => a.report_option_order - b.report_option_order);
+
+        var collection_fields = $reports_fields[report_id]['fields'];
+        var sortable_fields = [];
+        for (var item in collection_fields) {
+            sortable_fields.push(collection_fields[item]);
+        }
+        sortable_fields.sort((a, b) => a.report_field_order - b.report_field_order);
+        var data_to_save = []
+        if(sortable_fields.length > 0 && sortable_primary_fields.length > 0) {
+            sortable_primary_fields.forEach( primary_field => {
+                //don't include totals
+                if(primary_field.report_is_total === 'no') {
+                    sortable_fields.forEach( field =>{
+                        data_to_save.push({
+                            'omc_sales_report_id': report_id,
+                            'omc_sales_report_primary_field_option_id': primary_field.id,
+                            'omc_sales_report_field_id': field.id,
+                            'dsrp_form': '',
+                            'dsrp_primary_fields': '',
+                            'dsrp_fields': ''
+                        });
+                    })
+                }
+            });
+        }
+
+        var form_save = {
+            'report_cell_action_type': 'report_cell_create',
+            'cell_data': data_to_save
+        }
+
+        if(data_to_save.length > 0) {
+            var $salesReportCell = $("#sales-report-cells");
+            var url = $salesReportCell.attr('action');
+            $.ajax({
+                url: url,
+                data: form_save,
+                dataType:'json',
+                type:'POST',
+                success:function (response) {
+                    var txt = '';
+                    if (typeof response.msg == 'object') {
+                        for (megTxt in response.msg) {
+                            txt += response.msg[megTxt] + '<br />';
+                        }
+                    }
+                    else {
+                        txt = response.msg
+                    }
+                    if (response.code === 0) {
+                        $all_reports_cells = response.data;
+                        console.log(txt);
+                       // self.render_report_table_cell();
+                    }
+                    //* When there are Errors *//*
+                    else if (response.code === 1) {
+                        console.log(txt);
+                    }
+                },
+                error:function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        }
+    },
+
+    delete_report_cells: function(report_id, id, delete_type = ''){
+        var form_delete = {
+            'report_cell_action_type': 'report_cell_delete',
+            'report_id': report_id,
+            'id': id,
+            'delete_type': delete_type
+        }
+
+        $.ajax({
+            url: $("#sales-report-cells").attr('action'),
+            data: form_delete,
+            dataType:'json',
+            type:'POST',
+            success:function (response) {
+                var txt = '';
+                if (typeof response.msg == 'object') {
+                    for (megTxt in response.msg) {
+                        txt += response.msg[megTxt] + '<br />';
+                    }
+                }
+                else {
+                    txt = response.msg
+                }
+                if (response.code === 0) {
+                    $all_reports_cells = response.data;
+                    console.log(txt);
+                    // self.render_report_table_cell();
+                }
+                //* When there are Errors *//*
+                else if (response.code === 1) {
+                    console.log(txt);
+                }
+            },
+            error:function (xhr) {
+                console.log(xhr);
+            }
+        });
+    },
+
+    save_report_cells: function(){
+        var self = this;
+        var $salesReportCell = $("#sales-report-cells");
+        var url = $salesReportCell.attr('action');
+        var dsrp_primary_fields_arr_obj = $("#sales-report-cells #dsrp_primary_fields").select2("data");
+        var dsrp_primary_fields_arr = dsrp_primary_fields_arr_obj.map((x) => {return x.id});
+        var dsrp_primary_fields_str = dsrp_primary_fields_arr ? dsrp_primary_fields_arr.toString() : '';
+        var dsrp_fields_arr_obj = $("#sales-report-cells #dsrp_fields").select2("data");
+        var dsrp_fields_arr = dsrp_fields_arr_obj.map((x) => {return x.id});
+        var dsrp_fields_str = dsrp_fields_arr ? dsrp_fields_arr.toString() : '';
+        var query = $salesReportCell.serialize()+"&dsrp_primary_fields_str="+dsrp_primary_fields_str+"&dsrp_fields_str="+dsrp_fields_str;
+        var reportObjCollection = $salesReportCell.serializeArray();
+        reportObjCollection.push({name: 'dsrp_primary_fields', value: dsrp_primary_fields_str});
+        reportObjCollection.push({name: 'dsrp_fields', value: dsrp_fields_str});
 
         $.ajax({
             url:url,
@@ -861,18 +1037,11 @@ var SalesReport = {
                     txt = response.msg
                 }
                 if (response.code === 0) {
-                    var report_name = response.report_name;
-                    $("#preview-report-window .preview-content").html(response.html);
-                    $.colorbox({
-                        inline:true,
-                        scrolling:false,
-                        overlayClose:false,
-                        escKey:false,
-                        top:'5%',
-                        title:'Preview: '+report_name,
-                        href:"#preview-report-window"
-                    });
-                    $('#preview-report-window').colorbox.resize();
+                    $all_reports_cells = response.data;
+                    self.td_edit = null;
+                    alertify.success(txt);
+                    $("#sales-report-cells #report_cell_reset").click();
+                    self.render_report_table_cell();
                 }
                 //* When there are Errors *//*
                 else if (response.code === 1) {
@@ -880,10 +1049,86 @@ var SalesReport = {
                 }
             },
             error:function (xhr) {
-                // console.log(xhr.responseText);
                 jLib.serverError();
             }
         });
+    },
+
+    render_report_table_cell: function () {
+        var self = this;
+        var $reportTableCellsTbody = $("#report_table_cells tbody");
+        var $reportTableCellsThead = $("#report_table_cells thead");
+        $reportTableCellsThead.html('');
+        $reportTableCellsTbody.html('');
+        var report_id = $("#sales-report-cells #rp_cell_omc_sales_report_id").val();
+        if (typeof $reports_fields[report_id] == "undefined") {
+            return false;
+        }
+
+        var collection_primary_fields = $reports_fields[report_id]['primary_field_options'];
+        var sortable_primary_fields = [];
+        for (var item_primary in collection_primary_fields) {
+            sortable_primary_fields.push(collection_primary_fields[item_primary]);
+        }
+        sortable_primary_fields.sort((a, b) => a.report_option_order - b.report_option_order);
+
+        var collection_fields = $reports_fields[report_id]['fields'];
+        var sortable_fields = [];
+        for (var item in collection_fields) {
+            sortable_fields.push(collection_fields[item]);
+        }
+        sortable_fields.sort((a, b) => a.report_field_order - b.report_field_order);
+        //Add the primary field name at the front of sortable_fields
+        sortable_fields.unshift({
+            id: 0,
+            omc_sales_report_id : report_id,
+            report_field_name : $reports_fields[report_id].primary_field_name,
+            report_field_order : 0
+        });
+        var count = Array.isArray($all_reports_cells) ? $all_reports_cells.length : Object.keys($all_reports_cells).length;
+
+        if(sortable_fields.length > 0 && sortable_primary_fields.length > 0 && count > 0) {
+            //render headers
+            var tr = $("<tr />");
+            sortable_fields.forEach( field_header =>{
+                var th = $("<th />").html(field_header.report_field_name);
+                tr.append(th);
+            });
+            $reportTableCellsThead.append(tr);
+
+            //render body
+            sortable_primary_fields.forEach( primary_field =>{
+                var tr = $("<tr />");
+                if(primary_field.report_is_total === 'no') {
+                    sortable_fields.forEach( field =>{
+                        var cell = self.getReportCell(report_id, primary_field.id, field.id)
+                        var name = '';
+                        if(field.id === 0) {
+                            name = primary_field.report_option_name;
+                        } else if (field.id > 0 && cell && cell.dsrp_form && cell.dsrp_primary_fields && cell.dsrp_fields) {
+                            name = 'Cell Defined';
+                        }
+                        var td = $("<td />").html(name);
+                        td.attr('data-report_id', report_id);
+                        td.attr('data-report_cell_id', cell ? cell.id : '');
+                        tr.append(td);
+                    });
+                    $reportTableCellsTbody.append(tr);
+                }
+            });
+        }
+    },
+
+    getReportCell :function (report_id, primary_field_id, filed_id) {
+        var cell = false;
+        var collection = $all_reports_cells[report_id];
+        for (x in collection) {
+            var cell_row = collection[x];
+            if(cell_row.omc_sales_report_id === report_id && cell_row.omc_sales_report_primary_field_option_id === primary_field_id && cell_row.omc_sales_report_field_id === filed_id) {
+                cell = cell_row;
+            }
+        }
+        return cell;
     }
 
 };

@@ -29,8 +29,6 @@
  * @link http://book.cakephp.org/view/1358/AJAX
  */
 class TableFormHelper extends AppHelper {
-
-
     function render_preview($name, $columns = array(), $data=array(), $class='table table-bordered'){
         $columns_count = count($columns);
         $table = "<table id='{$name}' width='100%' class='{$class}'>";
@@ -157,6 +155,41 @@ class TableFormHelper extends AppHelper {
         $table .= "</table>";
 
        return $table;
+    }
+
+
+    function renderDailySalesReport ($param , $class='table table-bordered') {
+        $table = "<table width='100%' class='form-tables {$class}'>";
+        $table .= "<thead>";
+        $table .= "<tr>";
+
+        foreach($param['headers'] as $column){
+            $table .= "<th>";
+            $table .= $column;
+            $table .= "</th>";
+        }
+        $table .= "</tr>";
+        $table .= "</thead>";
+        $table .= "<tbody>";
+        //Render Data here
+        foreach($param['fields'] as $row_columns){
+            $table .= "<tr>";
+            foreach($row_columns as $field){
+                $cell_value = $field;
+                if(is_numeric($cell_value)){
+                    $cell_value = $this->formatNumber($cell_value,'money',2);
+                }
+                $table .= "<td>";
+                $table .= $cell_value;
+                $table .= "</td>";
+            }
+            $table .= "</tr>";
+        }
+        $table .= "</tbody>";
+
+        $table .= "</table>";
+
+        return $table;
     }
 
 }

@@ -23,6 +23,11 @@
         font-weight: bolder;
         background-color: #D1E0F0 !important;
     }
+    td.selected{
+        color: #486B91;
+        font-weight: bolder;
+        background-color: #D1E0F0 !important;
+    }
     tr:hover{
         cursor: pointer;
     }
@@ -51,6 +56,7 @@
                     <li><a href="#tabs-1"><strong>Sales Report</strong></a></li>
                     <li><a href="#tabs-2" id="report_primary_field_tab"><strong>Sales Report Primary Field's Options</strong></a></li>
                     <li><a href="#tabs-3" id="report_fields_tab"><strong>Sales Report Fields</strong></a></li>
+                    <li><a href="#tabs-4" id="report_cells_tab"><strong>Sales Report Cells</strong></a></li>
                 </ul>
 
                 <div id="tabs-1">
@@ -111,9 +117,9 @@
                                 <div class="head clearfix">
                                     <!--<div class="isw-grid"></div>-->
                                     <h1>All Sales Reports</h1>
-                                    <ul class="buttons">
+                                    <!--<ul class="buttons">
                                         <li><a href="javascript:void(0);" id="report_preview_btn" class="isw-picture"> &nbsp;  &nbsp; Preview Report</a></li>
-                                    </ul>
+                                    </ul>-->
                                 </div>
                                 <div class="block-fluid">
                                     <div style="height: 415px; overflow-x: auto; overflow-y: auto;">
@@ -148,7 +154,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div id="tabs-2">
@@ -319,35 +324,6 @@
                                             <div class="span8"><input type="text" name="report_field_order" id="report_field_order" value="" required class=""></div>
                                         </div>
 
-                                        <div class="row-form clearfix field_dsrp_wrapper" style="border-top-width: 0px;">
-                                            <div class="span4">DSRP Form:</div>
-                                            <div class="span8">
-                                                <select name="report_dsrp_form" id="report_dsrp_form" class="" required>
-                                                    <?php
-                                                    foreach($sale_form_options as $key => $opt){
-                                                        ?>
-                                                        <option value="<?php echo $key; ?>"><?php echo $opt; ?></option>
-                                                        <?php
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row-form clearfix" style="border-top-width: 0px;">
-                                            <div class="span4">DSRP Fields:</div>
-                                            <div class="span8">
-                                                <select name="report_dsrp_fields[]" id="report_dsrp_fields" multiple="multiple" style="width: 100%;"></select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row-form clearfix" style="border-top-width: 0px;">
-                                            <div class="span4">Field Action Targets:</div>
-                                            <div class="span8">
-                                                <select name="report_field_action_targets[]" id="report_field_action_targets" multiple="multiple" style="width: 100%;"></select>
-                                            </div>
-                                        </div>
-
                                         <div class="footer tar">
                                             <input type="hidden"  name="report_field_id" id="report_field_id" value="0" >
                                             <input type="hidden"  name="report_field_action_type" id="report_field_action_type" value="report_field_save" >
@@ -364,9 +340,9 @@
                                 <div class="head clearfix">
                                     <!--<div class="isw-grid"></div>-->
                                     <h1>Report Fields</h1>
-                                    <ul class="buttons">
+                                    <!--<ul class="buttons">
                                         <li><a href="javascript:void(0);" id="report_field_preview_btn" class="isw-picture"> &nbsp;  &nbsp; Preview Report</a></li>
-                                    </ul>
+                                    </ul>-->
                                 </div>
                                 <div class="block-fluid">
                                     <div style="height: 415px; overflow-x: auto; overflow-y: auto;">
@@ -375,7 +351,6 @@
                                             <tr>
                                                 <!--<th>Report Name</th>-->
                                                 <th>Field Name</th>
-                                                <th>Field Type</th>
                                                 <th>Field Order</th>
                                             </tr>
                                             </thead>
@@ -389,6 +364,94 @@
                 </div>
 
             </div>
+
+                <div id="tabs-4">
+                    <div style="padding: 40px 10px 0px;">
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <div class="head clearfix">
+                                    <!--<div class="isw-ok"></div>-->
+                                    <h1>Sales Reports Cell Definition</h1>
+                                </div>
+                                <div class="block-fluid">
+                                    <form id="sales-report-cells" method="" action="<?php echo $this->Html->url(array('controller' => 'OmcDailySales', 'action' => 'sales_report_templates')); ?>">
+
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">Report Type:</div>
+                                            <div class="span8">
+                                                <select name="rp_cell_omc_sales_report_id" id="rp_cell_omc_sales_report_id" class="" required>
+                                                    <?php
+                                                    foreach($sale_report_options as $key => $opt){
+                                                        ?>
+                                                        <option value="<?php echo $key; ?>"><?php echo $opt; ?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix field_dsrp_wrapper" style="border-top-width: 0px;">
+                                            <div class="span4">DSRP Form:</div>
+                                            <div class="span8">
+                                                <select name="dsrp_form" id="dsrp_form" class="" required>
+                                                    <?php
+                                                    foreach($sale_form_options as $key => $opt){
+                                                        ?>
+                                                        <option value="<?php echo $key; ?>"><?php echo $opt; ?></option>
+                                                        <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">DSRP Primary Fields:</div>
+                                            <div class="span8">
+                                                <select name="dsrp_primary_fields[]" id="dsrp_primary_fields" multiple="multiple" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row-form clearfix" style="border-top-width: 0px;">
+                                            <div class="span4">DSRP Fields:</div>
+                                            <div class="span8">
+                                                <select name="dsrp_fields[]" id="dsrp_fields" multiple="multiple" style="width: 100%;"></select>
+                                            </div>
+                                        </div>
+
+                                        <div class="footer tar">
+                                            <input type="hidden"  name="report_cell_id" id="report_cell_id" value="0" >
+                                            <input type="hidden"  name="report_cell_omc_sales_report_field_id" id="report_cell_omc_sales_report_field_id" value="" >
+                                            <input type="hidden"  name="report_cell_omc_sales_report_primary_field_option_id" id="report_cell_omc_sales_report_primary_field_option_id" value="" >
+                                            <input type="hidden"  name="report_cell_action_type" id="report_cell_action_type" value="report_cell_save" >
+                                            <button type="button" class="btn" id="report_cell_reset"><i class="isw-refresh"></i> Reset</button>
+                                            <button type="submit" class="btn" id="report_cell_save"><i class="isw-ok"></i>Save</button>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="span8">
+                                <div class="head clearfix">
+                                    <!--<div class="isw-grid"></div>-->
+                                    <h1>Report Cells</h1>
+                                </div>
+                                <div class="block-fluid">
+                                    <div style="height: 415px; overflow-x: auto; overflow-y: auto;">
+                                        <table id="report_table_cells" cellpadding="0" cellspacing="0" width="100%" class="table">
+                                            <thead></thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
         </div>
     </div>
@@ -412,6 +475,7 @@
     var permissions = <?php echo json_encode($permissions); ?>;
     var $reports_fields = <?php echo json_encode($reports_fields); ?>;
     var $forms_fields = <?php echo json_encode($forms_fields); ?>;
+    var $all_reports_cells = <?php echo json_encode($all_reports_cells); ?>;
     var $sale_report_options = <?php echo json_encode($sale_report_options); ?>;
     var $customers = <?php echo json_encode($customers); ?>;
     var $all_option_link_types = <?php echo json_encode($all_option_link_types); ?>;

@@ -31,6 +31,19 @@ class OmcSalesForm extends AppModel
         )
     );
 
+    var $hasOne = array(
+        'OmcSalesReport' => array(
+            'className' => 'OmcSalesReport',
+            'foreignKey' => 'omc_sales_report_id',
+            'dependent' => false,
+            'fields' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        )
+    );
 
     /**
      * associations
