@@ -16,6 +16,63 @@ var DailySales = {
         self.initNewSalesSheet();
         self.initRowSelect();
         self.initRowMenus();
+        self.initReport();
+    },
+
+    initReport: function () {
+        var self = this;
+        $("#linked_report_date").bind('change',function(){
+            self.getReportData($(this).val());
+        });
+
+        $("#linked_report_refresh").bind('click',function(){
+            self.getReportData($("#linked_report_date").val());
+        });
+        $("#linked_report_refresh").click();
+    },
+
+    getReportData: function (report_date) {
+        $("#linked_report_loader").html("Loading Report...");
+        $("#linked_report_html").html('');
+
+        var report_id = current_day_records['form']['omc_sales_report_id']
+
+        var form_report = {
+            'report_id': report_id,
+            'report_date': report_date,
+        }
+
+        $.ajax({
+            url: $("#linked_report_url").val(),
+            data: form_report,
+            dataType:'json',
+            type:'POST',
+            success:function (response) {
+                var txt = '';
+                if (typeof response.msg == 'object') {
+                    for (megTxt in response.msg) {
+                        txt += response.msg[megTxt] + '<br />';
+                    }
+                }
+                else {
+                    txt = response.msg
+                }
+                if (response.code === 0) {
+                    alertify.success(txt);
+                    $("#linked_report_loader").html("");
+                    $("#linked_report_html").html(response.html)
+                }
+                //* When there are Errors *//*
+                else if (response.code === 1) {
+                   // alertify.error(txt);
+                    $("#linked_report_html").html(txt);
+                }
+            },
+            error:function (xhr) {
+                // console.log(xhr.responseText);
+                jLib.serverError();
+            }
+        });
     },
 
     initNewSalesSheet:function(){

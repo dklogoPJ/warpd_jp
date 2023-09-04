@@ -111,15 +111,21 @@ DROP PROCEDURE IF EXISTS example_execute_query;
 
 DELIMITER //
 
-CREATE PROCEDURE example_execute_query ()
+CREATE PROCEDURE example_execute_query (
+    param_form_id VARCHAR(100), -- The Form id to filter on
+    param_omc_customer_id VARCHAR(100), -- The omc customer id to filter on
+    param_record_dt VARCHAR(10), -- The sales sheet record date to filter on
+    param_filter_columns VARCHAR(255), -- The selected column (omc_sales_form_fields, coma separated string ids)
+    param_filter_primary_option VARCHAR(255) -- The selected rows (omc_sales_form_primary_field_options, coma separated string ids)
+)
 BEGIN
 
     CALL generate_omc_customer_daily_sales_query(
-            8,
-            1,
-            '',
-            '',
-            '',
+            param_form_id,
+            param_omc_customer_id,
+            param_record_dt,
+            param_filter_columns,
+            param_filter_primary_option,
             'T',
             'T',
             @query_string
@@ -133,14 +139,38 @@ BEGIN
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
 
-
 END //
 DELIMITER ;
 
-CALL example_execute_query();
+CALL example_execute_query(8, 1, '','','');
 
 DROP PROCEDURE IF EXISTS example_execute_query;
 
 
 
+DROP PROCEDURE IF EXISTS dsrp_get_query;
 
+DELIMITER //
+
+CREATE PROCEDURE dsrp_get_query (
+    param_form_id VARCHAR(100), -- The Form id to filter on
+    param_omc_customer_id VARCHAR(100), -- The omc customer id to filter on
+    param_record_dt VARCHAR(10), -- The sales sheet record date to filter on
+    param_filter_columns VARCHAR(255), -- The selected column (omc_sales_form_fields, coma separated string ids)
+    param_filter_primary_option VARCHAR(255) -- The selected rows (omc_sales_form_primary_field_options, coma separated string ids)
+)
+BEGIN
+
+    CALL generate_omc_customer_daily_sales_query(
+            param_form_id,
+            param_omc_customer_id,
+            param_record_dt,
+            param_filter_columns,
+            param_filter_primary_option,
+            'F',
+            'F',
+            @query_string
+        );
+
+END //
+DELIMITER ;

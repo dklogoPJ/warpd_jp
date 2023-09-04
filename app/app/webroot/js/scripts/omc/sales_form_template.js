@@ -74,6 +74,7 @@ var SalesForm = {
             $("#sales-forms #form_order").val(form.order);
             $("#sales-forms #form_description").val(form.description);
             $("#sales-forms #form_primary_field").val(form.primary_field_name);
+            $("#sales-forms #form_omc_sales_report_id").val(form.omc_sales_report_id);
             if(form.omc_customer_list) {
                 self.reset_form_customer_list(form.omc_customer_list.split(','));
             } else {
@@ -88,6 +89,7 @@ var SalesForm = {
             $("#sales-forms #form_order").val('');
             $("#sales-forms #form_description").val('');
             $("#sales-forms #form_primary_field").val('');
+            $("#sales-forms #form_omc_sales_report_id").val('');
             $("#sales-forms #form_action_type").val('form_save');
             self.reset_form_customer_list(['all']);
 
@@ -155,6 +157,7 @@ var SalesForm = {
                         'description' : self.getValue('form_description', formObjCollection),
                         'primary_field_name' :  self.getValue('form_primary_field', formObjCollection),
                         'omc_customer_list' : self.getValue('omc_customer_list', formObjCollection),
+                        'omc_sales_report_id' : self.getValue('form_omc_sales_report_id', formObjCollection),
                         'action_type' : self.getValue('form_action_type', formObjCollection),
                         'omc_id' : self.getValue('omc_id', formObjCollection)
                     };
@@ -191,6 +194,7 @@ var SalesForm = {
                 $forms_fields[form_id]['order'] = post_data['order'];
                 $forms_fields[form_id]['primary_field_name'] = post_data['primary_field_name'];
                 $forms_fields[form_id]['omc_customer_list'] = post_data['omc_customer_list'];
+                $forms_fields[form_id]['omc_sales_report_id'] = post_data['omc_sales_report_id'];
             }
         }
         if(action_type === 'form_delete'){
