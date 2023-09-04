@@ -263,7 +263,18 @@ class OmcSalesReport extends AppModel
             $report_collection[$primary_field['id']]['fields'] = $row_of_fields;
         }
 
-        //TODO Perform Totals
+        foreach ($report_collection as $row_id => $row_fields) {
+            if($row_fields['report_is_total'] == 'yes') {
+                $option_list_arr = explode(',', $row_fields['report_total_option_list']);
+                foreach ($row_fields['fields'] as $filed_id => $field) {
+                    $total = 0;
+                    foreach ($option_list_arr as $option_id) {
+                        $total = $total + intval($report_collection[$option_id]['fields'][$filed_id]['value']);
+                    }
+                    $report_collection[$row_id]['fields'][$filed_id]['value'] = $total;
+                }
+            }
+        }
 
         //Time to render, add the Primary field name and build the render grid data.
         array_unshift($field_collection , array(
