@@ -159,7 +159,7 @@ class TableFormHelper extends AppHelper {
 
 
     function renderDailySalesReport ($param , $class='table table-bordered') {
-        $table = "<table width='100%' class='form-tables {$class}'>";
+        $table = "<table width='100%' class='{$class}'>";
         $table .= "<thead>";
         $table .= "<tr>";
 

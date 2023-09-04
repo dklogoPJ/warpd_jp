@@ -301,7 +301,7 @@ class OmcCustomerDailySale extends AppModel
                 'id'=> $custom_id,
                 'row_id'=> $row['id'],
                 'primary_field_option_row_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
-                'element_column_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
+                'element_column_id'=> 'pf_'.$row['OmcSalesFormPrimaryFieldOption']['id'],
                 'name' => $pf_name,
                 'value' => $row['OmcSalesFormPrimaryFieldOption']['option_name'],
                 'option_link_type' => $row['OmcSalesFormPrimaryFieldOption']['option_link_type'],
