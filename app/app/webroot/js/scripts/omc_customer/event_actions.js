@@ -74,7 +74,12 @@ var EventActions = {
                 }
             }
         }
-        var return_value = total_collection_columns.reduce(this.sum);
+
+        if(total_collection_columns.length === 0) {
+            console.log("The form options are not linked to any option_link_type, So external DSRP value will not work")
+        }
+
+        var return_value = total_collection_columns.length ? total_collection_columns.reduce(this.sum) : 0;
         //console.log("typeof return_value:", typeof return_value);
        // console.log("return_value:", return_value);
         var operands_list  = operands.split(',');

@@ -172,7 +172,7 @@ var DailySales = {
         if(res.status) {//validation pass get the values
             var tr_id = self.active_row.attr('data-id');
             var field_values = [];
-            if(self.active_row.length > 0 && self.row_editing_in_progress){
+            if(self.active_row && self.active_row.length > 0 && self.row_editing_in_progress){
                 self.active_row.find("td").each(function() {
                     var td = $(this);
                     var field_id = td.attr('data-id');
@@ -257,7 +257,7 @@ var DailySales = {
         self.active_row.find("td input").removeClass('error_field');
         self.active_row.find("td select").removeClass('error_field');
 
-        if(self.active_row.length > 0 && self.row_editing_in_progress){
+        if(self.active_row && self.active_row.length > 0 && self.row_editing_in_progress){
             self.active_row.find("td").each(function(){
                 var td = $(this);
                 var field_id = td.attr('data-id');
@@ -314,7 +314,7 @@ var DailySales = {
 
     clearEditing:function(){
         var self = this;
-        if(self.active_row.length > 0) {
+        if(self.active_row && self.active_row.length > 0) {
             self.active_row.find("td").each(function(){
                 var td = $(this);
                 var row_id = td.attr('data-row-id');
@@ -335,7 +335,7 @@ var DailySales = {
     renderRowFormElements: function(){
         var self = this;
         var is_total_row = false;
-        if(self.active_row.length > 0){
+        if(self.active_row && self.active_row.length > 0){
             self.active_row.addClass('editing');
             self.active_row.find("td").each(function(){
                 var td = $(this);
@@ -447,16 +447,16 @@ var DailySales = {
 
     getFormField:function(field_id, fieldObj, default_val, form_name){
         var self = this;
-        var options = fieldObj.options;
-        var field_type = options['field_type'];
-        var field_required = options['field_required'];
-        var field_disabled = options['field_disabled'];
-        var field_type_values = options['field_type_values'];
-        var field_event = options['field_event'];
-        var field_action = options['field_action'];
-        var field_action_sources = options['field_action_sources'];
-        var field_action_source_column = options['field_action_source_column'];
-        var field_action_targets = options['field_action_targets'];
+        var field_options = fieldObj.options;
+        var field_type = field_options['field_type'];
+        var field_required = field_options['field_required'];
+        var field_disabled = field_options['field_disabled'];
+        var field_type_values = field_options['field_type_values'];
+        var field_event = field_options['field_event'];
+        var field_action = field_options['field_action'];
+        var field_action_sources = field_options['field_action_sources'];
+        var field_action_source_column = field_options['field_action_source_column'];
+        var field_action_targets = field_options['field_action_targets'];
         var element = '';
 
         if(field_type === "Text"){
