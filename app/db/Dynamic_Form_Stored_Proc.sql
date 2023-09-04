@@ -174,7 +174,3 @@ BEGIN
 
 END //
 DELIMITER ;
-
-CALL dsrp_get_query(8, 1, '','','');
-
-DROP PROCEDURE IF EXISTS dsrp_get_query;
