@@ -23,10 +23,17 @@
         font-weight: bolder;
         background-color: #D1E0F0 !important;
     }
+    td.cell-definition-class{
+        font-size: 7px;
+    }
     td.selected{
         color: #486B91;
         font-weight: bolder;
         background-color: #D1E0F0 !important;
+    }
+    td.suggest{
+        color: black;
+        background-color: #cbae7d !important;
     }
     tr:hover{
         cursor: pointer;

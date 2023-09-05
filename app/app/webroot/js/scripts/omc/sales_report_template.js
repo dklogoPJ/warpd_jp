@@ -832,7 +832,8 @@ var SalesReport = {
             }
             if(report_cell) {
                 self.td_edit = $(this);
-                $("table#report_table_cells tbody tr td").removeClass('selected');
+                $("table#report_table_cells tbody tr td").removeClass('selected').removeClass('suggest');
+                $("table#report_table_cells tbody tr td.non_defined").html('');
                 $(this).addClass('selected');
                 $("#sales-report-cells #dsrp_form").val(report_cell.dsrp_form).change();
                 $("#sales-report-cells #report_cell_id").val(report_cell.id);
@@ -840,6 +841,78 @@ var SalesReport = {
                 $("#sales-report-cells #report_cell_omc_sales_report_primary_field_option_id").val(report_cell.omc_sales_report_primary_field_option_id);
                 $("#sales-report-cells #report_cell_save").show();
             }
+
+            //Suggest dsrp form properties
+            var can_suggest = false;
+            if(report_cell && !report_cell.dsrp_form ) {
+                can_suggest = true;
+            }
+
+            //Get Suggestion
+            var found_row_dsrp_form = null;
+            var found_row_primary_fields = null;
+
+            for (var o in $all_reports_cells[report_cell.omc_sales_report_id]) {
+                var cell = $all_reports_cells[report_cell.omc_sales_report_id][o];
+                if(cell.omc_sales_report_primary_field_option_id === report_cell.omc_sales_report_primary_field_option_id && cell.dsrp_form && cell.dsrp_primary_fields) {
+                    found_row_dsrp_form = cell.dsrp_form;
+                    found_row_primary_fields = cell.dsrp_primary_fields;
+                    break;
+                }
+            }
+
+            var found_row_fields = null;
+            if(found_row_dsrp_form) {
+                for (var x in $all_reports_cells[report_cell.omc_sales_report_id]) {
+                    var cell2 = $all_reports_cells[report_cell.omc_sales_report_id][x];
+                    if(cell2.omc_sales_report_field_id === report_cell.omc_sales_report_field_id && cell2.dsrp_form === found_row_dsrp_form && cell2.dsrp_fields) {
+                        found_row_fields = cell2.dsrp_fields;
+                        break;
+                    }
+                }
+            }
+
+            if(can_suggest && found_row_dsrp_form && found_row_primary_fields) {
+                var form_name = $forms_fields[found_row_dsrp_form]['name'];
+                var primary_fields_arr = found_row_primary_fields.split(',');
+                var primary_fields_names_arr = [];
+                primary_fields_arr.forEach(pf_id => {
+                    primary_fields_names_arr.push($forms_fields[found_row_dsrp_form]['primary_field_options'][pf_id]['option_name']);
+                });
+
+                var fields_names_arr = [];
+                if(found_row_fields) {
+                    var fields_arr = found_row_fields.split(',');
+                    fields_arr.forEach(f_id => {
+                        fields_names_arr.push($forms_fields[found_row_dsrp_form]['fields'][f_id]['field_name']);
+                    });
+                }
+
+                var html = `
+                    <b>*Form:</b> '${form_name}' <br />
+                    <b>*Primary Fields:</b> '${primary_fields_names_arr.join('||')}' <br />
+                     <b>*Fields:</b> <br /> ${fields_names_arr.join('<br />')}
+                `;
+
+                $(this).addClass('suggest').html(html);
+
+                //Set the Form
+                $("#sales-report-cells #dsrp_form").val(found_row_dsrp_form);
+                if(found_row_fields) {
+                    self.reset_report_cell_dsrp_fields(found_row_dsrp_form, found_row_fields.split(','));
+                } else {
+                    self.reset_report_cell_dsrp_fields(found_row_dsrp_form);
+                }
+
+                if(found_row_primary_fields) {
+                    self.reset_report_cell_dsrp_primary_fields(found_row_dsrp_form, found_row_primary_fields.split(','));
+                } else {
+                    self.reset_report_cell_dsrp_primary_fields(found_row_dsrp_form);
+                }
+
+            }
+
+
         });
 
         $("#sales-report-cells #report_cell_reset").click(function(){
@@ -1106,11 +1179,39 @@ var SalesReport = {
                         if(field.id === 0) {
                             name = primary_field.report_option_name;
                         } else if (field.id > 0 && cell && cell.dsrp_form && cell.dsrp_primary_fields && cell.dsrp_fields) {
-                            name = 'Cell Defined';
+                            var form_name = $forms_fields[cell.dsrp_form]['name'];
+                            var primary_fields_arr = cell.dsrp_primary_fields.split(',');
+                            var primary_fields_names_arr = [];
+                            primary_fields_arr.forEach(pf_id => {
+                                primary_fields_names_arr.push($forms_fields[cell.dsrp_form]['primary_field_options'][pf_id]['option_name']);
+                            });
+                            var fields_arr = cell.dsrp_fields.split(',');
+                            var fields_names_arr = [];
+                            fields_arr.forEach(f_id => {
+                                fields_names_arr.push($forms_fields[cell.dsrp_form]['fields'][f_id]['field_name']);
+                            });
+
+                           /* name = `
+                            <b>Form:</b> '${form_name}' <br />
+                            <b>Primary Fields:</b> <br /> ${primary_fields_names_arr.join('<br />')} <br />
+                            <b>Fields:</b> <br /> ${fields_names_arr.join('<br />')}
+                            `;*/
+
+                            name = `
+                            <b>Form:</b> '${form_name}' <br />
+                            <b>Primary Fields:</b> '${primary_fields_names_arr.join('||')}' <br />
+                             <b>Fields:</b> <br /> ${fields_names_arr.join('<br />')}
+                            `;
                         }
                         var td = $("<td />").html(name);
                         td.attr('data-report_id', report_id);
                         td.attr('data-report_cell_id', cell ? cell.id : '');
+                        if(cell) {
+                            td.addClass('cell-definition-class');
+                            if(!cell.dsrp_form) {
+                                td.addClass('non_defined');
+                            }
+                        }
                         tr.append(td);
                     });
                     $reportTableCellsTbody.append(tr);
@@ -1122,7 +1223,7 @@ var SalesReport = {
     getReportCell :function (report_id, primary_field_id, filed_id) {
         var cell = false;
         var collection = $all_reports_cells[report_id];
-        for (x in collection) {
+        for (var x in collection) {
             var cell_row = collection[x];
             if(cell_row.omc_sales_report_id === report_id && cell_row.omc_sales_report_primary_field_option_id === primary_field_id && cell_row.omc_sales_report_field_id === filed_id) {
                 cell = cell_row;
