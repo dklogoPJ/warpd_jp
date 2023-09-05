@@ -40,6 +40,9 @@ class OmcCustomerDailySaleField extends AppModel
                 'OmcSalesFormField.field_action',
                 'OmcSalesFormField.field_action_source_column',
                 'OmcSalesFormField.field_action_sources',
+                'OmcSalesFormField.dsrp_form',
+                'OmcSalesFormField.dsrp_form_fields',
+                'OmcSalesFormField.operands',
                 'OmcSalesFormField.field_action_targets'
             ),
             'conditions'=> array('OmcCustomerDailySaleField.omc_customer_daily_sale_primary_field_id'=> $omc_customer_daily_sale_primary_field_id),

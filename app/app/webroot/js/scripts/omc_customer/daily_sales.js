@@ -16,6 +16,63 @@ var DailySales = {
         self.initNewSalesSheet();
         self.initRowSelect();
         self.initRowMenus();
+        self.initReport();
+    },
+
+    initReport: function () {
+        var self = this;
+        $("#linked_report_date").bind('change',function(){
+            self.getReportData($(this).val());
+        });
+
+        $("#linked_report_refresh").bind('click',function(){
+            self.getReportData($("#linked_report_date").val());
+        });
+        $("#linked_report_refresh").click();
+    },
+
+    getReportData: function (report_date) {
+        $("#linked_report_loader").html("Loading Report...");
+        $("#linked_report_html").html('');
+
+        var report_id = current_day_records['form']['omc_sales_report_id']
+
+        var form_report = {
+            'report_id': report_id,
+            'report_date': report_date,
+        }
+
+        $.ajax({
+            url: $("#linked_report_url").val(),
+            data: form_report,
+            dataType:'json',
+            type:'POST',
+            success:function (response) {
+                var txt = '';
+                if (typeof response.msg == 'object') {
+                    for (megTxt in response.msg) {
+                        txt += response.msg[megTxt] + '<br />';
+                    }
+                }
+                else {
+                    txt = response.msg
+                }
+                if (response.code === 0) {
+                    alertify.success(txt);
+                    $("#linked_report_loader").html("");
+                    $("#linked_report_html").html(response.html)
+                }
+                //* When there are Errors *//*
+                else if (response.code === 1) {
+                   // alertify.error(txt);
+                    $("#linked_report_html").html(txt);
+                }
+            },
+            error:function (xhr) {
+                // console.log(xhr.responseText);
+                jLib.serverError();
+            }
+        });
     },
 
     initNewSalesSheet:function(){
@@ -115,7 +172,7 @@ var DailySales = {
         if(res.status) {//validation pass get the values
             var tr_id = self.active_row.attr('data-id');
             var field_values = [];
-            if(self.active_row.length > 0 && self.row_editing_in_progress){
+            if(self.active_row && self.active_row.length > 0 && self.row_editing_in_progress){
                 self.active_row.find("td").each(function() {
                     var td = $(this);
                     var field_id = td.attr('data-id');
@@ -124,7 +181,7 @@ var DailySales = {
                     if (f.is_primary_field === false && f.is_editable === true) {
                         var field_type = f.options['field_type'];
                         var el = '';
-                        if(field_type === 'Text'){
+                        if(field_type === 'Text' || field_type === 'File Upload'){
                             el = td.find('input');
                         }
                         else if(field_type === 'Drop Down'){
@@ -200,7 +257,7 @@ var DailySales = {
         self.active_row.find("td input").removeClass('error_field');
         self.active_row.find("td select").removeClass('error_field');
 
-        if(self.active_row.length > 0 && self.row_editing_in_progress){
+        if(self.active_row && self.active_row.length > 0 && self.row_editing_in_progress){
             self.active_row.find("td").each(function(){
                 var td = $(this);
                 var field_id = td.attr('data-id');
@@ -212,7 +269,7 @@ var DailySales = {
                     var field_required = f.options['field_required'];
                     if(field_required === 'Yes'){
                         var el = '';
-                        if(field_type === 'Text'){
+                        if(field_type === 'Text' || field_type === 'File Upload'){
                             el = td.find('input');
                         }
                         else if(field_type === 'Drop Down'){
@@ -257,7 +314,7 @@ var DailySales = {
 
     clearEditing:function(){
         var self = this;
-        if(self.active_row.length > 0) {
+        if(self.active_row && self.active_row.length > 0) {
             self.active_row.find("td").each(function(){
                 var td = $(this);
                 var row_id = td.attr('data-row-id');
@@ -278,7 +335,7 @@ var DailySales = {
     renderRowFormElements: function(){
         var self = this;
         var is_total_row = false;
-        if(self.active_row.length > 0){
+        if(self.active_row && self.active_row.length > 0){
             self.active_row.addClass('editing');
             self.active_row.find("td").each(function(){
                 var td = $(this);
@@ -287,13 +344,14 @@ var DailySales = {
                 var field_type = '';
                 var el = '';
                 var f = current_day_records['fields'][row_id][field_id];
+                var form_name = current_day_records['form']['name'];
                 if(f.is_total_row === true) {
                     //Means this td belongs to a row that is flagged for totaling
                     is_total_row = true;
                 }
                 var default_val = f.value;
                 if(f.is_primary_field === false && f.is_total_row === false && f.is_editable === true) {
-                    var formField = self.getFormField(field_id, f, default_val);
+                    var formField = self.getFormField(field_id, f, default_val, form_name);
                     field_type = formField.type;
                     el = formField.field;
                     default_val = '';
@@ -378,7 +436,7 @@ var DailySales = {
         //Check if this column needs a total
         if(total_field_list.indexOf(f.element_column_id) >= 0) {
             total_option_list.forEach(option_row_id => {
-                var g = EventActions.getFieldValue(option_row_id, f.element_column_id, 'value', current_day_records['fields']);
+                var g = EventActions.getFieldValue(current_day_records['fields'], option_row_id, f.element_column_id, 'primary_field_option_row_id','element_column_id', 'value' );
                 if(g) {
                     result.push(parseFloat(g));
                 }
@@ -387,18 +445,18 @@ var DailySales = {
         return result.length > 0 ? result.reduce(EventActions.sum) : false;
     },
 
-    getFormField:function(field_id, fieldObj, default_val){
+    getFormField:function(field_id, fieldObj, default_val, form_name){
         var self = this;
-        var options = fieldObj.options;
-        var field_type = options['field_type'];
-        var field_required = options['field_required'];
-        var field_disabled = options['field_disabled'];
-        var field_type_values = options['field_type_values'];
-        var field_event = options['field_event'];
-        var field_action = options['field_action'];
-        var field_action_sources = options['field_action_sources'];
-        var field_action_source_column = options['field_action_source_column'];
-        var field_action_targets = options['field_action_targets'];
+        var field_options = fieldObj.options;
+        var field_type = field_options['field_type'];
+        var field_required = field_options['field_required'];
+        var field_disabled = field_options['field_disabled'];
+        var field_type_values = field_options['field_type_values'];
+        var field_event = field_options['field_event'];
+        var field_action = field_options['field_action'];
+        var field_action_sources = field_options['field_action_sources'];
+        var field_action_source_column = field_options['field_action_source_column'];
+        var field_action_targets = field_options['field_action_targets'];
         var element = '';
 
         if(field_type === "Text"){
@@ -412,7 +470,18 @@ var DailySales = {
             }
             element.val(default_val);
         }
-        else if(field_type === "Drop Down"){
+        else if(field_type === "File Upload"){
+            element = $("<input />");
+            element.attr('type','text');
+            element.attr('class','dsrp_file_upload');
+            element.attr('id','field_id_'+field_id);
+            element.attr('data-field_id', field_id);
+            if(field_required === 'Yes'){
+                element.attr('required','required');
+            }
+            element.val(default_val);
+            element.attr('readonly','readonly');
+        } else if(field_type === "Drop Down"){
             element = $("<select />");
             element.attr('class','dsrp_select');
             element.attr('id','field_id_'+field_id);
@@ -471,6 +540,23 @@ var DailySales = {
                     options['compare_row_property'] = 'product_type_id';
                     var a = field_action_source_column.split(":");
                     options['return_property'] = a[1];
+                } else if(field_action === 'dsrp') {
+                    options['collection'] = all_external_data_sources[field_action][fieldObj.options.dsrp_form] ? all_external_data_sources[field_action][fieldObj.options.dsrp_form] : [];
+                    options['search_row'] = fieldObj.option_link_id;
+                    options['search_row2'] = fieldObj.option_link_type
+                    options['search_column'] = fieldObj.options.dsrp_form_fields;
+                    options['compare_row_property'] = 'option_link_id';
+                    options['compare_row_property2'] = 'option_link_type';
+                    options['compare_column_property'] = 'element_column_id';
+                    options['return_property'] = 'value';
+                    options['operands'] = fieldObj.options.operands;
+                } else if(field_action === 'file_upload') {
+                    options['form_name'] = form_name
+                    options['field_id'] = field_id;
+                    options['callback'] = (result)=>{
+                       // console.log("The Callback:", result)
+                        element.val(result.join('<br />'));
+                    };
                 }
 
                 self.onElementEventCallback(field_event, field_action, action_sources, field_action_targets.split(','), options);
@@ -497,7 +583,7 @@ var DailySales = {
                 var td = $(this);
                 var field_type = td.attr('data-field_type');
                 var el = '';
-                if(field_type === 'Text'){
+                if(field_type === 'Text' || field_type === 'File Upload'){
                     el = td.find('input');
                 }
                 else if(field_type === 'Drop Down'){
@@ -517,7 +603,7 @@ var DailySales = {
                 var field_type = td.attr('data-field_type');
                 var el = '';
 
-                if(field_type === 'Text'){
+                if(field_type === 'Text' || field_type === 'File Upload'){
                     el = td.find('input');
                 }
                 else if(field_type === 'Drop Down'){

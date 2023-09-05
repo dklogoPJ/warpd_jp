@@ -41,6 +41,23 @@ class OmcCustomerDailySale extends AppModel
         )
     );
 
+    function __get_attachments($attachment_type, $attachment_type_id, $company_profile_id) {
+        $Attachment = ClassRegistry::init('Attachment');
+        $attachments_data = $Attachment->get_attachments($attachment_type_id, $attachment_type, $company_profile_id);
+        $result = array();
+        $webroot_url = $this->get_webroot_url();
+        foreach($attachments_data as $rec){
+            $path = $rec['Attachment']['path'];
+            $file_name = $rec['Attachment']['file_name'];
+            $file_url = $webroot_url.'/'.$path.'/'.$file_name;
+            $result[]=array(
+                "name"=> $file_name,
+                "url"=> $file_url
+            );
+        }
+        return $result;
+    }
+
     function getRecord ($condition) {
         //First get the OmcCustomerDailySale
         $DailySaleQuery = $this->find('first', array(
@@ -50,7 +67,8 @@ class OmcCustomerDailySale extends AppModel
                     'fields' => array(
                         'OmcSalesForm.id',
                         'OmcSalesForm.form_name',
-                        'OmcSalesForm.primary_field'
+                        'OmcSalesForm.primary_field',
+                        'OmcSalesForm.omc_sales_report_id'
                     )
                 )
             ),
@@ -75,6 +93,18 @@ class OmcCustomerDailySale extends AppModel
             foreach ($DailySaleFieldsQuery as $inner_row) {
                 $arr =  $inner_row['OmcCustomerDailySaleField'];
                 $arr['OmcSalesFormField'] = $inner_row['OmcSalesFormField'];
+                //if the field type is a file upload then you may want to include links to the files
+                $arr['has_attachments'] = false;
+                $arr['attachments'] = array();
+                if($arr['OmcSalesFormField']['field_type'] == 'File Upload') {
+                    $attchs = $this->__get_attachments($DailySaleQuery['OmcSalesForm']['form_name'], $arr['id'], $DailySaleQuery['OmcCustomerDailySale']['omc_customer_id']);
+                    if($attchs) {
+                        $arr['has_attachments'] = true;
+                        foreach ($attchs as $file) {
+                            $arr['attachments'][] = $file;
+                        }
+                    }
+                }
                 $daily_sale_field_collection[] = $arr;
             }
 
@@ -156,6 +186,41 @@ class OmcCustomerDailySale extends AppModel
         return false;
     }
 
+    function getAllFormSalesSheet($omc_id, $omc_customer_id, $record_date) {
+        $OmcSalesForm = ClassRegistry::init('OmcSalesForm');
+        $forms = $OmcSalesForm->getSalesFormOnly($omc_id);
+        $results = array();
+        foreach($forms as $form) {
+            $condition = array(
+                'OmcCustomerDailySale.omc_customer_id'=>$omc_customer_id,
+                'OmcCustomerDailySale.omc_sale_form_id'=> $form['OmcSalesForm']['id'],
+                'OmcCustomerDailySale.record_dt LIKE'=> "".$record_date."%",
+                'OmcCustomerDailySale.deleted' => "n"
+            );
+            $query = $this->getRecord($condition);
+            if($query) {
+                $p = $this->processSaleSheet($query);
+                $results[$form['OmcSalesForm']['id']] = $p['fields'];
+            }
+        }
+        return $results;
+    }
+
+    function calcFormData($omc_customer_id, $form_id, $primary_fields, $fields, $record_date) {
+        $result = $this->query("CALL dsrp_get_query({$form_id}, {$omc_customer_id}, '{$record_date}', '{$fields}', '{$primary_fields}');");
+        $query_str = $result[0][0]['result_string'];
+        $executed_query_data = $this->query($query_str);
+        $total = 0;
+        foreach ($executed_query_data as $row) {
+            $row_total = 0;
+            foreach ($row[0] as $field_value) {
+                $row_total = $row_total + intval($field_value);
+            }
+            $total = $total + $row_total;
+        }
+        return $total;
+    }
+
     function setupFormSaleSheet($omc_id, $omc_customer_id, $form_key, $record_date) {
         $OmcSalesForm = ClassRegistry::init('OmcSalesForm');
         $form = $OmcSalesForm->getSalesFormForSetUp($omc_id, $form_key);
@@ -219,6 +284,7 @@ class OmcCustomerDailySale extends AppModel
                 'id'=> $params['OmcSalesForm']['id'],
                 'name'=> $params['OmcSalesForm']['form_name'],
                 'omc_customer_daily_sales_id'=> $params['OmcCustomerDailySale']['id'],
+                'omc_sales_report_id'=> $params['OmcSalesForm']['omc_sales_report_id'],
                 'record_dt'=> $params['OmcCustomerDailySale']['record_dt']
             )
         );
@@ -235,7 +301,7 @@ class OmcCustomerDailySale extends AppModel
                 'id'=> $custom_id,
                 'row_id'=> $row['id'],
                 'primary_field_option_row_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
-                'element_column_id'=> $row['OmcSalesFormPrimaryFieldOption']['id'],
+                'element_column_id'=> 'pf_'.$row['OmcSalesFormPrimaryFieldOption']['id'],
                 'name' => $pf_name,
                 'value' => $row['OmcSalesFormPrimaryFieldOption']['option_name'],
                 'option_link_type' => $row['OmcSalesFormPrimaryFieldOption']['option_link_type'],
@@ -247,7 +313,9 @@ class OmcCustomerDailySale extends AppModel
                 'is_total_options' => array(
                     'total_option_list' => $row['OmcSalesFormPrimaryFieldOption']['total_option_list'],
                     'total_field_list' => $row['OmcSalesFormPrimaryFieldOption']['total_field_list']
-                )
+                ),
+                'has_attachments' => false,
+                'attachments' => array()
             );
 
             foreach ($row['OmcCustomerDailySaleField'] as $inner_row) {
@@ -268,7 +336,9 @@ class OmcCustomerDailySale extends AppModel
                     'is_total_options' => array(
                         'total_option_list' => $row['OmcSalesFormPrimaryFieldOption']['total_option_list'],
                         'total_field_list' => $row['OmcSalesFormPrimaryFieldOption']['total_field_list']
-                    )
+                    ),
+                    'has_attachments' => $inner_row['has_attachments'],
+                    'attachments' => $inner_row['attachments']
                 );
                 $cached_header_ids[] = $inner_row['OmcSalesFormField']['id'];
             }

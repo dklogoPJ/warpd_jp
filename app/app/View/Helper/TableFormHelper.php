@@ -29,8 +29,6 @@
  * @link http://book.cakephp.org/view/1358/AJAX
  */
 class TableFormHelper extends AppHelper {
-
-
     function render_preview($name, $columns = array(), $data=array(), $class='table table-bordered'){
         $columns_count = count($columns);
         $table = "<table id='{$name}' width='100%' class='{$class}'>";
@@ -131,6 +129,18 @@ class TableFormHelper extends AppHelper {
                 $row_id = $field['row_id'];
                 $element_column_id = $field['element_column_id'];
                 $cell_value = $field['value'];
+                if($field['has_attachments']) {
+                    $str = '';
+                    foreach($field['attachments'] as $file){
+                        $link_name = $file['name'];
+                        $link_url = $file['url'];
+                        $link = "<a href='{$link_url}' target='_blank'>{$link_name}</a>";
+                        $str = $str.''.$link.'<br />';
+                    }
+                    if(trim($str) != '') {
+                        $cell_value = trim($str);
+                    }
+                }
                 if(is_numeric($cell_value)){
                     $cell_value = $this->formatNumber($cell_value,'money',2);
                 }
@@ -145,6 +155,41 @@ class TableFormHelper extends AppHelper {
         $table .= "</table>";
 
        return $table;
+    }
+
+
+    function renderDailySalesReport ($param , $class='table table-bordered') {
+        $table = "<table width='100%' class='{$class}'>";
+        $table .= "<thead>";
+        $table .= "<tr>";
+
+        foreach($param['headers'] as $column){
+            $table .= "<th>";
+            $table .= $column;
+            $table .= "</th>";
+        }
+        $table .= "</tr>";
+        $table .= "</thead>";
+        $table .= "<tbody>";
+        //Render Data here
+        foreach($param['fields'] as $row_columns){
+            $table .= "<tr>";
+            foreach($row_columns as $field){
+                $cell_value = $field;
+                if(is_numeric($cell_value)){
+                    $cell_value = $this->formatNumber($cell_value,'money',2);
+                }
+                $table .= "<td>";
+                $table .= $cell_value;
+                $table .= "</td>";
+            }
+            $table .= "</tr>";
+        }
+        $table .= "</tbody>";
+
+        $table .= "</table>";
+
+        return $table;
     }
 
 }
