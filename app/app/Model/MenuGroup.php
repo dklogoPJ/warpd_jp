@@ -139,7 +139,8 @@ class MenuGroup extends AppModel
                     'controller'=>$d['Menu']['controller'],
                     'action'=>$d['Menu']['action'],
                     'icon'=>$d['Menu']['icon'],
-                    'permission'=>$d['MenuGroup']['permission']
+                    'permission'=>$d['MenuGroup']['permission'],
+                    'url_type'=>$d['Menu']['url_type']
                 );
             }
             else{
@@ -148,7 +149,8 @@ class MenuGroup extends AppModel
                     'controller'=>$d['Menu']['controller'],
                     'action'=>$d['Menu']['action'],
                     'icon'=>$d['Menu']['icon'],
-                    'permission'=>$d['MenuGroup']['permission']
+                    'permission'=>$d['MenuGroup']['permission'],
+                    'url_type'=>$d['Menu']['url_type']
                 );
             }
 

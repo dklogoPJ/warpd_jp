@@ -432,6 +432,26 @@ class OmcDailySalesController extends OmcAppController
     }
 
 
+    function _createSalesReportMenu($data){
+        $menu_action = str_replace(" ","_",strtolower(trim($data['report_name'])));
+        return $this->Menu->createMenu( array (
+            'id'=>$data['menu_id'],
+            'type'=>'omc_customer',
+            'title'=>$data['report_name'],
+            'description'=>$data['report_name'],
+            'permission_controls'=>'A,E,D,PX',
+            'parent'=>124,
+            'required'=>'',
+            'menu_group'=>'Reporting',
+            'controller'=>'OmcCustomerDailySalesReport',
+            'action'=>$menu_action,
+            'url_type'=>'omc_customer_report_url_proxy',
+            'icon'=>'icon-file',
+            'menu_name'=>$data['report_name'],
+            'order'=>$data['report_order']
+        ));
+    }
+
     function sales_report_templates(){
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
@@ -458,9 +478,8 @@ class OmcDailySalesController extends OmcAppController
             if($action_type == 'report_save'){
                 $menu_action = str_replace(" ","_",strtolower(trim($post['report_name'])));
                 //Create report url so it can be accessed via menus
-                /*$post['action'] = $menu_action;
-                $menu_id = $this->_createSalesFormMenu($post);*/
-                $menu_id = null;
+                $post['action'] = $menu_action;
+                $menu_id = $this->_createSalesReportMenu($post);
 
                 $data = array(
                     'id'=>$post['report_id'],
@@ -486,7 +505,7 @@ class OmcDailySalesController extends OmcAppController
                     }
                 }
                 else {
-                    //$this->Menu->deleteMenu($menu_id, $authUser['id']);
+                    $this->Menu->deleteMenu($menu_id, $authUser['id']);
                     echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
                 }
             }

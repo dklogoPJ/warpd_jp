@@ -19,8 +19,12 @@
                     <ul>
                         <?php
                         foreach($um['sub'] as $inner_um){
+                            $check_sub_active = $this->params['action'] == $inner_um['action'] && $this->params['controller'] == $inner_um['controller'];
+                            if($inner_um['url_type'] != 'normal') {
+                                $check_sub_active = strpos($this->params->url, $inner_um['action']) !== false && $this->params['controller'] == $inner_um['controller'];
+                            }
                             ?>
-                            <li class="<?php echo ($this->params['action'] == $inner_um['action'] && $this->params['controller'] == $inner_um['controller'])? 'active': '' ;?>">
+                            <li class="<?php echo $check_sub_active ? 'active': '' ;?>">
                                 <a href="<?php echo $this->Html->url(array('controller' =>  $inner_um['controller'], 'action' =>  $inner_um['action'])); ?>">
                                     <span class="<?php echo $inner_um['icon'] ;?>"></span><span class="text"><?php echo $inner_um['name'] ;?></span>
                                 </a>
@@ -33,8 +37,12 @@
             <?php
             }
             else{
+                $check_active = $this->params['action'] == $um['action'] && $this->params['controller'] == $um['controller'];
+                if($um['url_type'] != 'normal') {
+                    $check_active = strpos($this->params->url, $um['action']) !== false && $this->params['controller'] == $um['controller'];
+                }
                 ?>
-                <li class="<?php echo ($this->params['action'] == $um['action'] && $this->params['controller'] == $um['controller'])? 'active': '' ;?>">
+                <li class="<?php echo $check_active ? 'active': '' ;?>">
                     <a href="<?php echo $this->Html->url(array('controller' =>  $um['controller'], 'action' =>  $um['action'])); ?>">
                         <span class="<?php echo $um['icon'] ;?>"></span><span class="text"><?php echo $um['name'] ;?></span>
                     </a>
