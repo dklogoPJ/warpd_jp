@@ -526,6 +526,7 @@ var DailySales = {
                     options['compare_column_property'] = 'element_column_id';
                     options['return_property'] = 'value';
                 } else if (field_action === 'month_to_date') {
+                    //Get the previous's day month-to-date value and add it to the action_sources column. Suggest use focus in as element event
                     var search_column =  action_sources && action_sources[1] ? action_sources[1] : '';
                     action_sources = [action_sources && action_sources[0] ? action_sources[0] : '']
                     options['collection'] = previous_day_records['fields'];
