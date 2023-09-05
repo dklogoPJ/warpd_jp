@@ -1,6 +1,4 @@
-<?php
-
-?>
+<?php ?>
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
     var additives = <?php echo json_encode($additives_lists);?>;
@@ -26,16 +24,14 @@
 <div class="block-fluid tabs">
 
 <ul>
-    <li><a href="#tabs-1"><strong> Stock 1 - Received </strong></a></li>
-    <li><a href="#tabs-2" id="finventory1"><strong> Stock 1 - Inventory </strong></a></li>
-    <li><a href="#tabs-3" id="freceive2"><strong>Stock 2 - Received </strong></a></li>
-    <li><a href="#tabs-4" id="inventory2"><strong>Stock 2 - Inventory </strong></a></li>
-    <li><a href="#tabs-5" id="wac"><strong>Stock 2 - Weighted Average Cost (WAC) </strong></a></li>
-
+    <li><a href="#tabs-1"><strong>Stock 1 - Received</strong></a></li>
+    <li><a href="#tabs-2" id="finventory1"><strong>Stock 1 - Inventory</strong></a></li>
+    <li><a href="#tabs-3" id="freceive2"><strong>Stock 2 - Received</strong></a></li>
+    <li><a href="#tabs-4" id="inventory2"><strong>Stock 2 - Inventory</strong></a></li>
+    <li><a href="#tabs-5" id="wac"><strong>Stock 2 - Weighted Average Cost (WAC)</strong></a></li>
 </ul>
 
 <div id="tabs-1">
-    
     <div class="row-fluid">
         <div class="span12">
             <div class="head clearfix">
@@ -44,59 +40,50 @@
             <table id="flex" style="display:none;"></table>
         </div>
     </div>
-
 </div>
 
 <div id="tabs-2">
-
     <div class="row-fluid">
         <div class="span12">
             <div class="head clearfix">
-                <h1> <div class="isw-text_document"></div> Stock 1 - Received Table</h1>
+                <h1> <div class="isw-text_document"></div> Stock 1 - Inventory Table</h1>
             </div>
             <table id="flex2" style="display:none;"></table>
         </div>
     </div>
-    
 </div>
 
 <div id="tabs-3">
-
     <div class="row-fluid">
         <div class="span12">
             <div class="head clearfix">
-                <h1> <div class="isw-text_document"></div> Stock 1 - Received Table</h1>
+                <h1> <div class="isw-text_document"></div> Stock 2 - Received Table</h1>
             </div>
             <table id="flex3" style="display:none;"></table>
         </div>
     </div>
-
 </div>
 
 <div id="tabs-4">
-    
     <div class="row-fluid">
         <div class="span12">
             <div class="head clearfix">
-                <h1> <div class="isw-text_document"></div> Stock 1 - Received Table</h1>
+                <h1> <div class="isw-text_document"></div> Stock 2 - Inventory Table</h1>
             </div>
             <table id="flex4" style="display:none;"></table>
         </div>
     </div>
-
 </div>
 
 <div id="tabs-5">
-
     <div class="row-fluid">
         <div class="span12">
             <div class="head clearfix">
-                <h1> <div class="isw-text_document"></div> Stock 1 - Received Table</h1>
+                <h1> <div class="isw-text_document"></div>  Stock 2 - Weighted Average Cost (WAC) Table</h1>
             </div>
             <table id="flex5" style="display:none;"></table>
         </div>
     </div>
-
 </div>
 
 </div>

@@ -240,6 +240,7 @@ class OmcAdditiveController extends OmcAppController
                         $data['AdditiveDopingRatio']['modified_by'] = $authUser['id'];
                     }
 
+                    $data['AdditiveDopingRatio']['doping_ratio'] = round($_POST['doping_ratio'], 5);
                     $data['AdditiveDopingRatio']['omc_id'] = $company_profile['id'];
                     if ($this->AdditiveDopingRatio->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
@@ -378,7 +379,9 @@ class OmcAdditiveController extends OmcAppController
                     }
 
                    //$data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['order_date'], 'mysql') . ' ' . date('H:i:s');
-                   //$data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loading_date'], 'mysql') . ' ' . date('H:i:s');
+                   //$data['AdditiveCostGeneration']['doping_ratio'] = $this->covertDate($_POST['loading_date'], 'mysql') . ' ' . date('H:i:s');
+                     $data['AdditiveCostGeneration']['doping_ratio'] =  round($_POST['doping_ratio'], 5);
+                     $data['AdditiveCostGeneration']['additive_quantity'] =  number_format(round($_POST['additive_quantity'], 0, PHP_ROUND_HALF_UP),2);
              
                     $data['AdditiveCostGeneration']['omc_id'] = $company_profile['id'];
                     if ($this->AdditiveCostGeneration->save($this->sanitize($data))) {
