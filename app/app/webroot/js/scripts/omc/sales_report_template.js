@@ -889,6 +889,7 @@ var SalesReport = {
                 }
 
                 var html = `
+                     -------- Suggesting -------- <br />
                     <b>*Form:</b> '${form_name}' <br />
                     <b>*Primary Fields:</b> '${primary_fields_names_arr.join('||')}' <br />
                      <b>*Fields:</b> <br /> ${fields_names_arr.join('<br />')}

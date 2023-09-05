@@ -33,7 +33,7 @@
     }
     td.suggest{
         color: black;
-        background-color: #cbae7d !important;
+        background-color: #fff1d9 !important;
     }
     tr:hover{
         cursor: pointer;

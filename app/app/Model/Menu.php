@@ -49,6 +49,12 @@ class Menu extends AppModel
                     continue;
                 }
             }
+            //Validate if omc customer has access to report url
+            if($type == 'omc_customer' && $url_type == 'omc_customer_report_url_proxy') {
+                if(!$this->omcCustomerHasReportPermission($org['omc_id'], $form_key, $org['id'])) {
+                    continue;
+                }
+            }
             if(!empty($menu_action) || $menu_action != null){
                 if(isset($arr[$menu_group][$parent])){
                     $arr[$menu_group][$parent]['sub'][]=$d['Menu'];
@@ -59,6 +65,7 @@ class Menu extends AppModel
             }
 
         }
+
         return $arr;
     }
 
@@ -72,6 +79,23 @@ class Menu extends AppModel
                 return true;
             } else {
                 if(in_array($org_id, $form_url_access_customer_ids)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function omcCustomerHasReportPermission ($omc_id, $report_key, $org_id) {
+        $OmcSalesReport = ClassRegistry::init('OmcSalesReport');
+        $report = $OmcSalesReport->getSalesReportByKey($omc_id, $report_key);
+        if($report) {
+            $omc_customer_list = $report['OmcSalesReport']['omc_customer_list'];
+            $report_url_access_customer_ids = explode(',', $omc_customer_list);
+            if($omc_customer_list == null || $omc_customer_list == '' || in_array('all', $report_url_access_customer_ids)) {
+                return true;
+            } else {
+                if(in_array($org_id, $report_url_access_customer_ids)) {
                     return true;
                 }
             }
@@ -99,7 +123,8 @@ class Menu extends AppModel
         return $this->find('first',array(
             'conditions'=>array(
                 'Menu.controller'=> $controller,
-                'Menu.action'=> $action
+                'Menu.action'=> $action,
+                'Menu.deleted'=> 'n'
             ),
             'recursive'=>-1
         ));
