@@ -20,7 +20,7 @@
                         <?php
                         foreach($um['sub'] as $inner_um){
                             $check_sub_active = $this->params['action'] == $inner_um['action'] && $this->params['controller'] == $inner_um['controller'];
-                            if($inner_um['url_type'] != 'normal') {
+                            if($inner_um['url_type'] == 'proxy') {
                                 $check_sub_active = strpos($this->params->url, $inner_um['action']) !== false && $this->params['controller'] == $inner_um['controller'];
                             }
                             ?>
@@ -38,7 +38,7 @@
             }
             else{
                 $check_active = $this->params['action'] == $um['action'] && $this->params['controller'] == $um['controller'];
-                if($um['url_type'] != 'normal') {
+                if($um['url_type'] == 'proxy') {
                     $check_active = strpos($this->params->url, $um['action']) !== false && $this->params['controller'] == $um['controller'];
                 }
                 ?>

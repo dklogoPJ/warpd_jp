@@ -146,25 +146,8 @@ class OmcDailySalesController extends OmcAppController
         $this->set(compact('permissions'));
     }
 
-
-    function _createSalesFormMenu($data){
-        $menu_action = str_replace(" ","_",strtolower(trim($data['form_name'])));
-        return $this->Menu->createMenu(array(
-            'id'=>$data['menu_id'],
-            'type'=>'omc_customer',
-            'title'=>$data['form_name'],
-            'description'=>$data['form_name'],
-            'permission_controls'=>'A,E,D,PX',
-            'parent'=>114,
-            'required'=>'',
-            'menu_group'=>'Operations',
-            'controller'=>'OmcCustomerDailySales',
-            'action'=>$menu_action,
-            'url_type'=>'omc_customer_form_url_proxy',
-            'icon'=>'icon-file',
-            'menu_name'=>$data['form_name'],
-            'order'=>$data['form_order']
-        ));
+    function _createOrUpdateMenu($data){
+        return $this->Menu->createMenu($data);
     }
 
     function sales_form_templates(){
@@ -190,8 +173,23 @@ class OmcDailySalesController extends OmcAppController
             if($action_type == 'form_save'){
                 $menu_action = str_replace(" ","_",strtolower(trim($post['form_name'])));
                 //Create form url so it can be accessed via menus
-                $post['action'] = $menu_action;
-                $menu_id = $this->_createSalesFormMenu($post);
+                $menu_data = array(
+                    'id'=>$post['menu_id'],
+                    'type'=>'omc_customer',
+                    'title'=>$post['form_name'],
+                    'description'=>$post['form_name'],
+                    'permission_controls'=>'A,E,D,PX',
+                    'parent'=>114,
+                    'required'=>'',
+                    'menu_group'=>'Operations',
+                    'controller'=>'OmcCustomerDailySales',
+                    'action'=>$menu_action,
+                    'url_type'=>'proxy',
+                    'icon'=>'icon-file',
+                    'menu_name'=>$post['form_name'],
+                    'order'=>$post['form_order']
+                );
+                $menu_id = $this->_createOrUpdateMenu($menu_data);
 
                 $data = array('OmcSalesForm'=>array(
                     'id'=>$post['form_id'],
@@ -432,26 +430,6 @@ class OmcDailySalesController extends OmcAppController
     }
 
 
-    function _createSalesReportMenu($data){
-        $menu_action = str_replace(" ","_",strtolower(trim($data['report_name'])));
-        return $this->Menu->createMenu( array (
-            'id'=>$data['menu_id'],
-            'type'=>'omc_customer',
-            'title'=>$data['report_name'],
-            'description'=>$data['report_name'],
-            'permission_controls'=>'A,E,D,PX',
-            'parent'=>124,
-            'required'=>'',
-            'menu_group'=>'Reporting',
-            'controller'=>'OmcCustomerDailySalesReport',
-            'action'=>$menu_action,
-            'url_type'=>'omc_customer_report_url_proxy',
-            'icon'=>'icon-file',
-            'menu_name'=>$data['report_name'],
-            'order'=>$data['report_order']
-        ));
-    }
-
     function sales_report_templates(){
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
@@ -478,8 +456,23 @@ class OmcDailySalesController extends OmcAppController
             if($action_type == 'report_save'){
                 $menu_action = str_replace(" ","_",strtolower(trim($post['report_name'])));
                 //Create report url so it can be accessed via menus
-                $post['action'] = $menu_action;
-                $menu_id = $this->_createSalesReportMenu($post);
+                $menu_data = array(
+                    'id'=>$post['menu_id'],
+                    'type'=>'omc_customer',
+                    'title'=>$post['report_name'],
+                    'description'=>$post['report_name'],
+                    'permission_controls'=>'A,E,D,PX',
+                    'parent'=>124,
+                    'required'=>'',
+                    'menu_group'=>'Reporting',
+                    'controller'=>'OmcCustomerDailySalesReport',
+                    'action'=>$menu_action,
+                    'url_type'=>'proxy',
+                    'icon'=>'icon-file',
+                    'menu_name'=>$post['report_name'],
+                    'order'=>$post['report_order']
+                );
+                $menu_id = $this->_createOrUpdateMenu($menu_data);
 
                 $data = array(
                     'id'=>$post['report_id'],
