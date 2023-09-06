@@ -36,25 +36,19 @@ class Menu extends AppModel
             $id = $d['Menu']['id'];
             $required = $d['Menu']['required'];
             $parent = $d['Menu']['parent'];
-            $form_key = $d['Menu']['action'];
             $url_type = $d['Menu']['url_type'];
             if(!empty($required)){//Validate for module access if its required
                 if(!in_array($required,$modules)){
                     continue;
                 }
             }
-            //Validate if omc customer has access to form url
-            if($type == 'omc_customer' && $url_type == 'omc_customer_form_url_proxy') {
-                if(!$this->omcCustomerHasFormPermission($org['omc_id'], $form_key, $org['id'])) {
+            //Validate if omc customer has access to proxy url type
+            if($type == 'omc_customer' && $url_type == 'proxy') {
+                if(!$this->omcCustomerHasProxyPermission($org['omc_id'], $menu_action, $org['id'])) {
                     continue;
                 }
             }
-            //Validate if omc customer has access to report url
-            if($type == 'omc_customer' && $url_type == 'omc_customer_report_url_proxy') {
-                if(!$this->omcCustomerHasReportPermission($org['omc_id'], $form_key, $org['id'])) {
-                    continue;
-                }
-            }
+
             if(!empty($menu_action) || $menu_action != null){
                 if(isset($arr[$menu_group][$parent])){
                     $arr[$menu_group][$parent]['sub'][]=$d['Menu'];
@@ -69,7 +63,24 @@ class Menu extends AppModel
         return $arr;
     }
 
-    function omcCustomerHasFormPermission ($omc_id, $form_key, $org_id) {
+    function omcCustomerHasProxyPermission ($omc_id, $menu_action, $org_id) {
+        $has_perm = $this->hasSalesFormPermission($omc_id, $menu_action, $org_id); //Check for sales form first
+        if(!$has_perm) {
+            $has_perm = $this->hasSalesReportPermission($omc_id, $menu_action, $org_id); //Then check on sales report
+        }
+        //For the next proxy check
+        /*if(!$has_perm) {
+            $has_perm = $this->hasSomeProxyPermission($omc_id, $menu_action, $org_id); //Then check on newly added proxy permission module
+        }*/
+        return $has_perm;
+    }
+
+    /*function hasSomeProxyPermission ($omc_id, $some_key, $org_id) {
+        //TODO implement codes like hasSalesFormPermission or hasSalesReportPermission
+        return false;
+    }*/
+
+    function hasSalesFormPermission ($omc_id, $form_key, $org_id) {
         $OmcSalesForm = ClassRegistry::init('OmcSalesForm');
         $form = $OmcSalesForm->getSalesFormByKey($omc_id, $form_key);
         if($form) {
@@ -86,7 +97,7 @@ class Menu extends AppModel
         return false;
     }
 
-    function omcCustomerHasReportPermission ($omc_id, $report_key, $org_id) {
+    function hasSalesReportPermission ($omc_id, $report_key, $org_id) {
         $OmcSalesReport = ClassRegistry::init('OmcSalesReport');
         $report = $OmcSalesReport->getSalesReportByKey($omc_id, $report_key);
         if($report) {
