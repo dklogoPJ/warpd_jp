@@ -538,10 +538,20 @@ var DailySales = {
                 } else if(field_action === 'price_change') {
                     options['collection'] = all_external_data_sources[fieldObj.option_link_type];
                     options['search_row'] = fieldObj.option_link_id;
-                    options['compare_row_property'] = 'product_type_id';
+                    options['compare_row_property'] = 'id';
                     var a = field_action_source_column.split(":");
                     options['return_property'] = a[1];
-                } else if(field_action === 'dsrp') {
+                } else if(field_action === 'other_modules') {
+                    options['collection'] = [];
+                    options['return_property'] = '';
+                    if(field_action_source_column) {
+                        var a = field_action_source_column.split(":");
+                        options['collection'] = all_external_data_sources[a[0]];
+                        options['return_property'] = a[1];
+                    }
+                    options['search_row'] = fieldObj.option_link_id;
+                    options['compare_row_property'] = 'id';
+                }else if(field_action === 'dsrp') {
                     options['collection'] = all_external_data_sources[field_action][fieldObj.options.dsrp_form] ? all_external_data_sources[field_action][fieldObj.options.dsrp_form] : [];
                     options['search_row'] = fieldObj.option_link_id;
                     options['search_row2'] = fieldObj.option_link_type

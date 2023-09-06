@@ -101,7 +101,7 @@
                         <label for="sales-sheet-dates" class="label-override">Sales Sheets Dates:</label>
                         <select class="sales-sheet-dates-class" name="sales-sheet-dates" id="sales-sheet-dates">
                             <?php
-                            foreach($last7days as $key => $opt){
+                            foreach($sales_sheet_date_range as $key => $opt){
                                 ?>
                                 <option value="<?php echo $key; ?>" <?php echo $key == $sales_sheet_date ? 'selected':''  ?>><?php echo $opt; ?></option>
                                 <?php
@@ -194,7 +194,7 @@
                                 <label for="sales-sheet-dates" class="label-override">Report Dates:</label>
                                 <select class="sales-sheet-dates-class" name="linked_report_date" id="linked_report_date">
                                     <?php
-                                    foreach($last7days as $key => $opt){
+                                    foreach($sales_sheet_date_range as $key => $opt){
                                         ?>
                                         <option value="<?php echo $key; ?>" <?php echo $key == $sales_sheet_date ? 'selected':''  ?>><?php echo $opt; ?></option>
                                         <?php

@@ -19,6 +19,8 @@ var EventActions = {
             result = this.month_to_date(properties.collection, source_data, properties.search_row, properties.search_column, properties.compare_row_property, properties.compare_column_property, properties.return_property);
         }else if(action === 'price_change') {
             result = this.price_change(properties.collection, properties.search_row, properties.compare_row_property, properties.return_property);
+        }else if(action === 'other_modules') {
+            result = this.other_modules(properties.collection, properties.search_row, properties.compare_row_property, properties.return_property);
         }else if(action === 'dsrp') {
             result = this.calcDSRPValue(properties.collection, properties.search_row, properties.search_row2, properties.search_column ,properties.compare_row_property, properties.compare_row_property2, properties.compare_column_property, properties.return_property, source_data, properties.operands);
         }else if(action === 'file_upload') {
@@ -124,6 +126,15 @@ var EventActions = {
         }
         return ''
     },
+
+    other_modules: function (collection, search_row, compare_row_property, return_property) {
+        var found_item = collection.find(x => x[compare_row_property] === search_row);
+        if(found_item) {
+            return found_item[return_property];
+        }
+        return ''
+    },
+
 
     file_upload: function(form_name, field_id, callback){
         var item_id = field_id;
