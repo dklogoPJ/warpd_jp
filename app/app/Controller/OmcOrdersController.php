@@ -11,7 +11,7 @@ class OmcOrdersController extends OmcAppController
 
     var $name = 'OmcOrders';
     # set the model to use
-    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck', 'OmcCustomerPriceChange');
+    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck', 'OmcCustomerPriceChange','AdditiveCostGeneration');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -564,10 +564,9 @@ class OmcOrdersController extends OmcAppController
                                 $this->formatNumber($obj['Order']['order_quantity'],'number',0),
                                 $approved_quantity,
                                 $loaded_quantity,
-                                /*,$mkt_feed*/
                                 $obj['Order']['transporter'],
                                 $obj['Order']['truck_no'],
-                                /*$obj['Bdc']['name'],*/
+                                /*,$mkt_feed*/
                                 $loaded_date,
                                 $received_quantity,
                                 $git_status,
@@ -638,6 +637,20 @@ class OmcOrdersController extends OmcAppController
 
                     if ($this->Order->save($this->sanitize($data))) {
                         $order_id  = $this->Order->id;
+
+                        /** Save to Additve Cost Generation Table */
+                        $additive_data['AdditiveCostGeneration']['omc_id'] = $company_profile;
+                        $additive_data['AdditiveCostGeneration']['order_id'] = $order_id;
+                        $additive_data['AdditiveCostGeneration']['loading_quantity'] = $_POST['loaded_quantity'];
+                        $additive_data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        $additive_data['AdditiveCostGeneration']['truck_no'] = $_POST['truck_no'];
+                        $additive_data['AdditiveCostGeneration']['depot_id'] = $_POST['depot_id'];
+                        $additive_data['AdditiveCostGeneration']['omc_customer_id'] = $_POST['omc_customer_id'];
+                        $additive_data['AdditiveCostGeneration']['product_type_id'] = $_POST['product_type_id'];
+                        $additive_data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        
+                        $this->AdditiveCostGeneration->save($additive_data);
+                    
                         if($auto_flow){
                             $order_data = $this->Order->find('first', array(
                                 'conditions' => array('Order.id' => $order_id),
@@ -927,7 +940,7 @@ class OmcOrdersController extends OmcAppController
                                     'depot_id'=>$order_customer['OmcCustomerOrder']['depot_id'],
                                     'product_type_id'=>$order_customer['OmcCustomerOrder']['product_type_id'],
                                     'order_quantity'=>$order_customer['OmcCustomerOrder']['order_quantity'],
-                                    'approved_quantity'=>$order_customer['OmcCustomerOrder']['approved_quantity'],
+                                    //'approved_quantity'=>$order_customer['OmcCustomerOrder']['approved_quantity'],
                                     'omc_customer_order_id'=>$order_customer['OmcCustomerOrder']['id'],
                                     'omc_order_priority'=>$order_customer['OmcCustomerOrder']['delivery_priority'],
                                     'order_status'=>'New From Dealer',
@@ -1230,8 +1243,10 @@ class OmcOrdersController extends OmcAppController
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
 
         $graph_title = $group_by_title.", Orders-Consolidated";
+        $volumes = $this->Volume->getVolsList();
 
-        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+
+        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));
     }
 
 

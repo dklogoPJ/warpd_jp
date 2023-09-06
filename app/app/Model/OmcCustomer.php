@@ -202,6 +202,19 @@ class OmcCustomer extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'AdditiveCostGeneration' => array(
+            'className' => 'AdditiveCostGeneration',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
         
     );
@@ -244,6 +257,16 @@ class OmcCustomer extends AppModel
     }
 
     function getOmcCustomerProduct($id = null){
+        $fields = array('my_products');
+        $r =  $this->find('first', array('fields'=>$fields,'conditions' => array('id' => $id), 'recursive' => -1));
+        $my_products = explode(',',$r['OmcCustomer']['my_products']);
+        return array(
+            'my_products'=>$my_products
+        );
+    }
+
+
+    function getOmcCreditCustomer($id = null){
         $fields = array('my_products');
         $r =  $this->find('first', array('fields'=>$fields,'conditions' => array('id' => $id), 'recursive' => -1));
         $my_products = explode(',',$r['OmcCustomer']['my_products']);

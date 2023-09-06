@@ -603,9 +603,10 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
         $company_profile = $this->global_company;
         if ($this->request->is('post')) {
             $export_params = $this->request->data;
-            $start_dt = $this->covertDate($export_params['exp_startdt'], 'mysql') . ' 00:00:00';
-            $end_dt = $this->covertDate($export_params['exp_enddt'], 'mysql') . ' 23:59:59';
-
+            //pr($this->request->data);
+            $start_dt = $this->covertDate($export_params['Export']['export_startdt'], 'mysql') . ' 00:00:00';
+            $end_dt = $this->covertDate($export_params['Export']['export_enddt'], 'mysql') . ' 23:59:59';
+//pr($end_dt);
             $conditions = array(
                 'OmcCustomerOrder.omc_customer_id' => $company_profile['id'],
                 'OmcCustomerOrder.deleted' => 'n',
@@ -696,13 +697,14 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                             $obj['Depot']['name'],
                             $obj['ProductType']['name'],
                             preg_replace('/,/', '', $obj['Order']['order_quantity']),
-                            $this->mkt_feedback[$obj['Order']['delivery_priority']],
-                            $this->ops_feedback[$obj['Order']['bdc_feedback']],
-                            $this->fna_feedback[$obj['Order']['finance_approval']],
+                           // $this->mkt_feedback[$obj['Order']['delivery_priority']],
+                           // $this->ops_feedback[$obj['Order']['bdc_feedback']],
+                           // $this->fna_feedback[$obj['Order']['finance_approval']],
                             preg_replace('/,/', '', $obj['Order']['approved_quantity']),
                         );
                     }
-                    $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Delivery Priority', 'BDC Feedback', 'BDC Finance Approval', 'Approved Quantity');
+                    $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Approved Quantity');
+                   // $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Delivery Priority', 'BDC Feedback', 'BDC Finance Approval', 'Approved Quantity');
                     //$list_headers = array('Date','Waybill No.','From','Depot','Product Type','Actual Quantity','Vehicle No.','Customer Name','Quantity Delivered','Delivery Location','Region','District');
                     $filename = $company_profile['name'] . " Orders " . date('Ymdhis');
                     $res = $this->convertToExcel($list_headers, $list_data, $filename);
@@ -1211,7 +1213,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'], 'number', 0),
                                     $this->covertDate($obj['OmcCustomerOrder']['discharge_date'], 'mysql_flip'),
                                     //$obj['OmcCustomerOrder']['discharge_date'],
-                                    $obj['OmcCustomerOrder']['comments']
+                                    $obj['OmcCustomerOrder']['comments'],
+                                    $obj['OmcCustomerOrder']['discharged_by']
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
                                     'order_status' => $obj['OmcCustomerOrder']['order_status'],
@@ -1461,6 +1464,124 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
         $this->set(compact('grid_data', 'omc_customers_lists', 'volumes', 'permissions', 'depot_lists', 'products_lists', 'bdc_list', 'graph_title', 'g_data', 'bdclists', 'order_filter', 'list_tm'));
     }
+
+
+    function export_pre_discharge()
+    {
+        $download = false;
+        $company_profile = $this->global_company;;
+        if ($this->request->is('post')) {
+            if ($this->request->data['Export']['action'] == 'export_me') {
+                $start_dt = $this->covertDate($this->request->data['Export']['export_startdt'], 'mysql') . ' 00:00:00';
+                $end_dt = $this->covertDate($this->request->data['Export']['export_enddt'], 'mysql') . ' 23:59:59';
+                $type = $this->request->data['Export']['export_type'];
+                $contain = array(
+                    'Bdc' => array('fields' => array('Bdc.id', 'Bdc.name')),
+                    'Depot' => array('fields' => array('Depot.id', 'Depot.name')),
+                    'ProductType' => array('fields' => array('ProductType.id', 'ProductType.name')),
+                    'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                );
+                $export_data = $this->Order->find('all', array(
+                    //'fields'=>array('Order.id','Order.loading_date','Order.waybill_date','Order.quantity','BdcDistribution.waybill_id','BdcDistribution.vehicle_no'),
+                    'conditions' => array('Order.omc_id' => $company_profile['id'], 'Order.deleted' => 'n', 'Order.order_date >=' => $start_dt, 'Order.order_date <=' => $end_dt),
+                    'contain' => $contain,
+                    'order' => array("Order.id" => 'desc'),
+                    'recursive' => 1
+                ));
+
+                if ($export_data) {
+                    $download = true;
+                    $list_data = array();
+                    foreach ($export_data as $obj) {
+                        $list_data[] = array(
+                            $obj['Order']['id'],
+                            $this->covertDate($obj['Order']['order_date'], 'mysql_flip'),
+                            $obj['OmcCustomer']['name'],
+                            $obj['Bdc']['name'],
+                            $obj['Depot']['name'],
+                            $obj['ProductType']['name'],
+                            preg_replace('/,/', '', $obj['Order']['order_quantity']),
+                           // $this->mkt_feedback[$obj['Order']['delivery_priority']],
+                           // $this->ops_feedback[$obj['Order']['bdc_feedback']],
+                           // $this->fna_feedback[$obj['Order']['finance_approval']],
+                            preg_replace('/,/', '', $obj['Order']['approved_quantity']),
+                        );
+                    }
+                    $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Approved Quantity');
+                   // $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Delivery Priority', 'BDC Feedback', 'BDC Finance Approval', 'Approved Quantity');
+                    //$list_headers = array('Date','Waybill No.','From','Depot','Product Type','Actual Quantity','Vehicle No.','Customer Name','Quantity Delivered','Delivery Location','Region','District');
+                    $filename = $company_profile['name'] . " Orders " . date('Ymdhis');
+                    $res = $this->convertToExcel($list_headers, $list_data, $filename);
+                    $objPHPExcel = $res['excel_obj'];
+                    $filename = $res['filename'];
+                }
+            }
+        }
+
+        $this->autoLayout = false;
+
+        $this->set(compact('objPHPExcel', 'download', 'filename'));
+    }
+
+
+    function export_post_discharge()
+    {
+        $download = false;
+        $company_profile = $this->global_company;;
+        if ($this->request->is('post')) {
+            if ($this->request->data['Export']['action'] == 'export_me') {
+                $start_dt = $this->covertDate($this->request->data['Export']['export_startdt'], 'mysql') . ' 00:00:00';
+                $end_dt = $this->covertDate($this->request->data['Export']['export_enddt'], 'mysql') . ' 23:59:59';
+                $type = $this->request->data['Export']['export_type'];
+                $contain = array(
+                    'Bdc' => array('fields' => array('Bdc.id', 'Bdc.name')),
+                    'Depot' => array('fields' => array('Depot.id', 'Depot.name')),
+                    'ProductType' => array('fields' => array('ProductType.id', 'ProductType.name')),
+                    'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                );
+                $export_data = $this->Order->find('all', array(
+                    //'fields'=>array('Order.id','Order.loading_date','Order.waybill_date','Order.quantity','BdcDistribution.waybill_id','BdcDistribution.vehicle_no'),
+                    'conditions' => array('Order.omc_id' => $company_profile['id'], 'Order.deleted' => 'n', 'Order.order_date >=' => $start_dt, 'Order.order_date <=' => $end_dt),
+                    'contain' => $contain,
+                    'order' => array("Order.id" => 'desc'),
+                    'recursive' => 1
+                ));
+
+                if ($export_data) {
+                    $download = true;
+                    $list_data = array();
+                    foreach ($export_data as $obj) {
+                        $list_data[] = array(
+                            $obj['Order']['id'],
+                            $this->covertDate($obj['Order']['order_date'], 'mysql_flip'),
+                            $obj['OmcCustomer']['name'],
+                            $obj['Bdc']['name'],
+                            $obj['Depot']['name'],
+                            $obj['ProductType']['name'],
+                            preg_replace('/,/', '', $obj['Order']['order_quantity']),
+                           // $this->mkt_feedback[$obj['Order']['delivery_priority']],
+                           // $this->ops_feedback[$obj['Order']['bdc_feedback']],
+                           // $this->fna_feedback[$obj['Order']['finance_approval']],
+                            preg_replace('/,/', '', $obj['Order']['approved_quantity']),
+                        );
+                    }
+                    $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Approved Quantity');
+                   // $list_headers = array('Order Id', 'Order Date', 'Customer', 'BDC', 'Loading Depot', 'Product Type', 'Order Quantity', 'Delivery Priority', 'BDC Feedback', 'BDC Finance Approval', 'Approved Quantity');
+                    //$list_headers = array('Date','Waybill No.','From','Depot','Product Type','Actual Quantity','Vehicle No.','Customer Name','Quantity Delivered','Delivery Location','Region','District');
+                    $filename = $company_profile['name'] . " Orders " . date('Ymdhis');
+                    $res = $this->convertToExcel($list_headers, $list_data, $filename);
+                    $objPHPExcel = $res['excel_obj'];
+                    $filename = $res['filename'];
+                }
+            }
+        }
+
+        $this->autoLayout = false;
+
+        $this->set(compact('objPHPExcel', 'download', 'filename'));
+    }
+
+
 
 
 

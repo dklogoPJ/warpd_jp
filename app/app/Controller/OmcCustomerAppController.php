@@ -125,6 +125,20 @@ class OmcCustomerAppController extends AppController
         }
     }
 
+    function get_credit_customers($filter = true){
+        $company_profile = $this->global_company;
+        if($filter){
+            $customers = $this->OmcCustomer->getOmcCreditCustomer($company_profile['id']);
+            $cus_ids = $customers['my_products'];
+
+            return $this->get_credit_customer_list($cus_ids);
+        }
+        else{
+            return $this->get_credit_customer_list();
+        }
+    }
+    
+
 
     function getStockBoard()
     {

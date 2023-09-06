@@ -14,7 +14,7 @@ var Order = {
         columns.push({display:'Product Type', name:'product_type_id', width:100, sortable:true, align:'left', hide:false});
         columns.push({display:'Order Quantity', name:'order_quantity', width:100, sortable:true, align:'left', hide:false});
         columns.push({display:'Intended Delivery Location', name:'intended_delivery_location', width:170, sortable:true, align:'left', hide:false});
-        columns.push({display:'Approved Quantity', name:'approved_quantity', width:140, sortable:true, align:'left', hide:false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'approved_quantity-class', options: volumes}});
+        columns.push({display:'Approved Quantity', name:'approved_quantity', width:140, sortable:true, align:'left', hide:false});
         columns.push({display:'Approval', name:'finance_approval', width:120, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', bclass:'approval-class', options:omc_dealer_feedback}});
         columns.push({display:'Loading Depot', name:'depot_id', width:180, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'',bclass:'depot-class', options:depot}});
         columns.push({display:'Delivery Priority', name:'delivery_priority', width:100, sortable:true, align:'center', hide:false});

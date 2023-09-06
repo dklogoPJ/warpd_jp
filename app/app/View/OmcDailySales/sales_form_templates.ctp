@@ -451,23 +451,7 @@
                                         <div class="row-form clearfix field_event_wrapper" id="field_action_source_column_wrapper" style="border-top-width: 0px; display:none">
                                             <div class="span4">Field Action Source Column:</div>
                                             <div class="span8">
-                                                <select name="field_action_source_column" id="field_action_source_column">
-                                                    <?php
-                                                    foreach($all_option_link_types as $opt){
-                                                        ?>
-                                                        <optgroup label="<?php echo $opt['name']; ?>">
-                                                            <?php
-                                                            foreach($opt['columns'] as $col){
-                                                                ?>
-                                                                <option value="<?php echo $col['id']; ?>"><?php echo $col['name']; ?></option>
-                                                                <?php
-                                                            }
-                                                            ?>
-                                                        </optgroup>
-                                                        <?php
-                                                    }
-                                                    ?>
-                                                </select>
+                                                <select name="field_action_source_column" id="field_action_source_column"></select>
                                             </div>
                                         </div>
 
@@ -556,6 +540,7 @@
     var $sale_form_element_actions = <?php echo json_encode($sale_form_element_actions); ?>;
     var $customers = <?php echo json_encode($customers); ?>;
     var $all_option_link_types = <?php echo json_encode($all_option_link_types); ?>;
+    var $all_modules_link_types = <?php echo json_encode($all_modules_link_types); ?>;
 </script>
 <!-- Le Script -->
 <?php

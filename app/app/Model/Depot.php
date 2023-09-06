@@ -121,6 +121,19 @@ class Depot extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'AdditiveCostGeneration' => array(
+            'className' => 'AdditiveCostGeneration',
+            'foreignKey' => 'depot_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 

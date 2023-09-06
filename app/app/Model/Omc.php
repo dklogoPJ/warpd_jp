@@ -185,6 +185,54 @@ class Omc extends AppModel
             'offset' => '',
             'exclusive' => '',
             'finderQuery' => '',
+        ),
+        'AdditiveSetup' => array(
+            'className' => 'AdditiveSetup',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+        ),
+        'AdditiveStock' => array(
+            'className' => 'AdditiveStock',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+        ),
+        'AdditiveDopingRatio' => array(
+            'className' => 'AdditiveDopingRatio',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+        ),
+        'AdditiveCostGeneration' => array(
+            'className' => 'AdditiveCostGeneration',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
         )
     );
 
@@ -213,6 +261,17 @@ class Omc extends AppModel
             'my_products'=>$my_products
         );
     }
+
+
+    function getOmcAdditive($id = null){
+        $fields = array('my_products');
+        $r =  $this->find('first', array('fields'=>$fields,'conditions' => array('id' => $id), 'recursive' => -1));
+        $my_products = explode(',',$r['Omc']['my_products']);
+        return array(
+            'my_products'=>$my_products
+        );
+    }
+
 
     function getOmcDepot($id = null){
         $fields = array('my_depots');

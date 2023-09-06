@@ -407,6 +407,7 @@ class OmcDailySalesController extends OmcAppController
         $sale_form_element_actions = $this->SalesFormElementAction->getKeyValuePair();
         $sale_form_element_operands = $this->SalesFormElementOperand->getKeyValuePair();
         $all_option_link_types = $this->Option->getDSRPLinkTypes($company_profile['id']);
+        $all_modules_link_types = $this->Option->getOtherModulesTypes();
 
         $all_reports_query = $this->OmcSalesReport->getSalesReportOnly($company_profile['id']);
         $all_reports = array(array('id'=>'', 'name'=> 'None'));
@@ -426,7 +427,7 @@ class OmcDailySalesController extends OmcAppController
             );
         }
 
-        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','sale_form_element_operands', 'customers', 'all_option_link_types','all_reports'));
+        $this->set(compact('permissions','sale_forms','company_profile','sale_form_options','forms_fields','sale_form_element_events','sale_form_element_actions','sale_form_element_operands', 'customers', 'all_option_link_types','all_modules_link_types','all_reports'));
     }
 
 

@@ -35,7 +35,7 @@ var OmcTrucks = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'customer_name', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Customer Name', name:'name', width:150, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
                 {display:'Business Type', name:'business_type', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
                 {display:'Station Name', name:'omc_customer_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:station_list}},
                 {display:'Territory', name:'territory', width:110, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},

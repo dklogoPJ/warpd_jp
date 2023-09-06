@@ -18,36 +18,51 @@ class CustomerCreditSetting extends AppModel
         )   
     );
 
-    
+    var $hasMany = array(
+        'CustomerCredit' => array(
+            'className' => 'CustomerCredit',
+            'foreignKey' => 'customercredit_setting_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'CustomerCreditPayment' => array(
+            'className' => 'CustomerCreditPayment',
+            'foreignKey' => 'customercredit_setting_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        )
+    );
 
-    function _getCustomerName($col){
-        $nt = array();
-        $r = $this->find('all',array(
-            'fields'=>array($col),
-            'conditions'=>array('NOT'=>array($col=>NULL),'deleted'=>'n'),
-            'order'=>array($col=>'Asc'),
-            'recursive'=>-1
+    function getCreditCustomerList($cus_ids = null){
+        $conditions = array('deleted' => 'n');
+        if($cus_ids != null){
+            $conditions['id'] = $cus_ids;
+        }
+        $customers = $this->find('all', array(
+            'fields' => array('id', 'name'),
+            'conditions' => $conditions,
+            'recursive' => -1
         ));
-        /*debug($r);
-        exit;*/
-        foreach($r as $k=>$data){
-            $nt[$data['CustomerCreditSetting'][$col]] = $data['CustomerCreditSetting'][$col];
+        $credit_customer_lists = array();
+        foreach ($customers as $value) {
+            $credit_customer_lists[] = $value['CustomerCreditSetting'];
         }
-        asort($nt);
-        return $nt;
+        return $credit_customer_lists;
     }
-
-    function getCustomerNameList(){
-        $nts =  $this->_getCustomerName('customer_name');
-        $ncts  = array();
-        foreach($nts as $nt){
-            $ncts[] = array(
-                'id'=>$nt,
-                'name'=>$nt
-            );
-        }
-        return $ncts;
-    }
-
+    
 
 }

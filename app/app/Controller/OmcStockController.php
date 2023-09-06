@@ -435,4 +435,20 @@ class OmcStockController extends OmcAppController
         $this->set(compact('tanks_types_opt','tank_status','tank_names'));
     }
 
+
+    function additive_stock_wac() {
+
+	}
+
+
+    function additives_doping_ratios() {
+
+	}
+
+
+    function additive_cost_generation() {
+
+	}
+
+
 }
