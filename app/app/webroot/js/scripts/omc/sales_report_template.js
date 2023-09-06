@@ -888,10 +888,15 @@ var SalesReport = {
                     });
                 }
 
+                var pfna = primary_fields_names_arr.join('||');
+                if(primary_fields_names_arr.length > 3) {
+                    pfna = primary_fields_names_arr.join('<br />');
+                }
+
                 var html = `
                      -------- Suggesting -------- <br />
                     <b>*Form:</b> '${form_name}' <br />
-                    <b>*Primary Fields:</b> '${primary_fields_names_arr.join('||')}' <br />
+                    <b>*Primary Fields:</b> '${pfna}' <br />
                      <b>*Fields:</b> <br /> ${fields_names_arr.join('<br />')}
                 `;
 
