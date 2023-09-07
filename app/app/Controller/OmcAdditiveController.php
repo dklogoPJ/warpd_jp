@@ -483,7 +483,7 @@ class OmcAdditiveController extends OmcAppController
                                     $obj['AdditiveStock']['drum_size'],
                                     $obj['AdditiveStock']['drum_cost'],
                                     $obj['AdditiveStock']['cost_per_ltr'],
-                                    $obj['AdditiveStock']['total_no_dum'],
+                                    $obj['AdditiveStock']['total_no_dum_inv'],
                                     $obj['AdditiveStock']['total_no_ltr'],
                                     $obj['AdditiveStock']['total_stock_cost']
                                 )
@@ -498,7 +498,7 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                    if ($_POST['id'] == 0) {//Mew
+                   /** *if ($_POST['id'] == 0) {//Mew
                         if(!in_array('A',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
@@ -507,7 +507,7 @@ class OmcAdditiveController extends OmcAppController
                         if(!in_array('E',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
-                    }
+                    }*/
                     
                     $data = array('AdditiveStock' => $_POST);
         
@@ -629,7 +629,7 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                    if ($_POST['id'] == 0) {//Mew
+                    /**if ($_POST['id'] == 0) {//Mew
                         if(!in_array('A',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
@@ -638,7 +638,7 @@ class OmcAdditiveController extends OmcAppController
                         if(!in_array('E',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
-                    }
+                    }*/
                     
                     $data = array('AdditiveStock' => $_POST);
         
@@ -761,7 +761,7 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                    if ($_POST['id'] == 0) {//Mew
+                    /**if ($_POST['id'] == 0) {//Mew
                         if(!in_array('A',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
@@ -770,7 +770,7 @@ class OmcAdditiveController extends OmcAppController
                         if(!in_array('E',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
-                    }
+                    }*/
                     
                     $data = array('AdditiveStock' => $_POST);
         
@@ -893,7 +893,7 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                    if ($_POST['id'] == 0) {//Mew
+                    /**if ($_POST['id'] == 0) {//Mew
                         if(!in_array('A',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
@@ -902,7 +902,7 @@ class OmcAdditiveController extends OmcAppController
                         if(!in_array('E',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
-                    }
+                    }*/
                     
                     $data = array('AdditiveStock' => $_POST);
         

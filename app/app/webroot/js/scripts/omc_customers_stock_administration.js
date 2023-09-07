@@ -44,7 +44,7 @@ var JSObject = {
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:300,
+            height:500,
             subgrid:{
                 use:true,
                 url:$('#table-details-url').val(),
