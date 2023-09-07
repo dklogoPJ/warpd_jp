@@ -3,25 +3,24 @@ class Option extends AppModel {
   var $name = 'Option';
   var $useTable = false;
 
-  public function getDSRPLinkTypes($company_profile_id = null) {
-
+  public function getDSRPLinkTypes($company_profile_id = null, $custom_date = '') {
       return array(
           array('id'=>'', 'name'=>'None', 'data'=>array(), 'columns'=>array(
               array('id'=>'', 'name'=>'None')
           )),
-          array('id'=>'products', 'name'=>'Products', 'data'=>ClassRegistry::init('ProductType')->getProductList(), //TODO get AND FILTER the product list for the OMC
+          array('id'=>'products', 'name'=>'Products', 'data'=> ClassRegistry::init('ProductType')->getProductList(), //TODO get AND FILTER the product list for the OMC
               'columns'=>array(
                   array('id'=>'products:price', 'name'=>'Products: price')
               )
           ),
-          array('id'=>'lpg_settings', 'name'=>'LPG Settings', 'data'=>ClassRegistry::init('LpgSetting')->getProductList($company_profile_id),
+          array('id'=>'lpg_settings', 'name'=>'LPG Settings', 'data'=> ClassRegistry::init('LpgSetting')->getProductList($company_profile_id),
               'columns'=>array(
                   array('id'=>'lpg_settings:unit_volume', 'name'=>'LPG Settings: unit_volume'),
                   array('id'=>'lpg_settings:unit_price', 'name'=>'LPG Settings: unit_price'),
                   array('id'=>'lpg_settings:price_per_kg', 'name'=>'LPG Settings:price_per_kg')
               )
           ),
-          array('id'=>'lube_settings', 'name'=>'Lube Settings', 'data'=>ClassRegistry::init('LubeSetting')->getProductList($company_profile_id),
+          array('id'=>'lube_settings', 'name'=>'Lube Settings', 'data'=> ClassRegistry::init('LubeSetting')->getProductList($company_profile_id),
               'columns'=>array(
                   array('id'=>'lube_settings:unit_volume', 'name'=>'Lube Settings: unit_volume'),
                   array('id'=>'lube_settings:total_qty_per_pack', 'name'=>'Lube Settings: total_qty_per_pack'),
@@ -33,5 +32,19 @@ class Option extends AppModel {
           )
       );
   }
+
+    public function getOtherModulesTypes() {
+        return array(
+            array('id'=>'', 'name'=>'None', 'data'=>array(), 'columns'=>array(
+                array('id'=>'', 'name'=>'None')
+            )),
+            array('id'=>'credit_sales_record', 'name'=>'Credit Sales Record', 'data'=> array(),
+                'columns'=>array(
+                    array('id'=>'credit_sales_record:sales_qty', 'name'=>'Credit Sales Record: sales_qty'),
+                    array('id'=>'credit_sales_record:sales_amount', 'name'=>'Credit Sales Record: sales_amount')
+                )
+            ),
+        );
+    }
 
 }

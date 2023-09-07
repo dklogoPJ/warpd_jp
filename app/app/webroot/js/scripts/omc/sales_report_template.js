@@ -2,6 +2,8 @@ var SalesReport = {
     datasource_category:[],
     datasource_sub_category:[],
     tr_edit:null,
+    field_tr_edit:null,
+    pf_tr_edit:null,
     td_edit:null,
 
     init:function () {
@@ -296,7 +298,7 @@ var SalesReport = {
 
         $("table#report_field_list tbody tr").live('click',function(){
             $("table#report_field_list tbody tr").removeClass('selected');
-            self.tr_edit = $(this);
+            self.field_tr_edit = $(this);
             $(this).addClass('selected');
             var report_id = $(this).attr('data-report_id');
             var report_field_id = $(this).attr('data-report_field_id');
@@ -314,7 +316,7 @@ var SalesReport = {
             $("#sales-report-fields #report_dsrp_form").val('').change();
             $("#sales-report-fields #report_field_action_type").val('report_field_save');
             $("table#report_field_list tbody tr").removeClass('selected');
-            self.tr_edit = null;
+            self.field_tr_edit = null;
         });
 
         $("#report_field_delete_btn").click(function(){
@@ -568,7 +570,7 @@ var SalesReport = {
 
         $("table#primary-field-option_list_table tbody tr").live('click',function(){
             $("table#primary-field-option_list_table tr").removeClass('selected');
-            self.tr_edit = $(this);
+            self.pf_tr_edit = $(this);
             $(this).addClass('selected');
             var report_id = $(this).attr('data-report_id');
             var report_option_id = $(this).attr('data-pf_option_id');
@@ -601,7 +603,7 @@ var SalesReport = {
             self.reset_primary_field_total_options_list(report_id);
             self.reset_primary_field_total_fields_list(report_id);
             $("table#primary-field-option_list_table tbody tr").removeClass('selected');
-            self.tr_edit = null;
+            self.pf_tr_edit = null;
         });
 
         $("#report_pf_option_delete_btn").click(function(){
@@ -649,9 +651,9 @@ var SalesReport = {
             $("#sales-report-primary-field-option #report_pf_option_is_total").val(val);
             $(".pf_total_options_and_fields_wrapper").show('slow');
             //$("#sales-report-primary-field-option").validate().cancelSubmit = true;
-            if(self.tr_edit){
-                var report_id = self.tr_edit.attr('data-report_id');
-                var report_option_id = self.tr_edit.attr('data-pf_option_id');
+            if(self.pf_tr_edit){
+                var report_id = self.pf_tr_edit.attr('data-report_id');
+                var report_option_id = self.pf_tr_edit.attr('data-pf_option_id');
                 var report_pf_option = $reports_fields[report_id]['primary_field_options'][report_option_id];
                 if(report_pf_option) {
                     if(report_pf_option.report_total_option_list) {
@@ -676,9 +678,9 @@ var SalesReport = {
             var text = $(this).find("option:selected").text();
             $("#sales-report-primary-field-option #option_link_id_label").html(text);
 
-            if(self.tr_edit){
-                var report_id = self.tr_edit.attr('data-report_id');
-                var report_option_id = self.tr_edit.attr('data-pf_option_id');
+            if(self.pf_tr_edit){
+                var report_id = self.pf_tr_edit.attr('data-report_id');
+                var report_option_id = self.pf_tr_edit.attr('data-pf_option_id');
                 var report_pf_option = $reports_fields[report_id]['primary_field_options'][report_option_id];
                 if(report_pf_option) {
                     self.reset_option_link_ids(val, report_pf_option.report_option_link_id);
@@ -888,9 +890,10 @@ var SalesReport = {
                     });
                 }
 
-                var pfna = primary_fields_names_arr.join('||');
-                if(primary_fields_names_arr.length > 3) {
-                    pfna = primary_fields_names_arr.join('<br />');
+                var pfna = primary_fields_names_arr[0]; //Always take the first option, and if there are more append ... and (count) more
+                if(primary_fields_names_arr.length > 1) {
+                    var count = primary_fields_names_arr.length - 1;
+                    pfna = `${pfna} ... and (${count}) more.`;
                 }
 
                 var html = `
@@ -1197,15 +1200,15 @@ var SalesReport = {
                                 fields_names_arr.push($forms_fields[cell.dsrp_form]['fields'][f_id]['field_name']);
                             });
 
-                           /* name = `
-                            <b>Form:</b> '${form_name}' <br />
-                            <b>Primary Fields:</b> <br /> ${primary_fields_names_arr.join('<br />')} <br />
-                            <b>Fields:</b> <br /> ${fields_names_arr.join('<br />')}
-                            `;*/
+                            var pfna = primary_fields_names_arr[0]; //Always take the first option, and if there are more append ... and (count) more
+                            if(primary_fields_names_arr.length > 1) {
+                                var count = primary_fields_names_arr.length - 1;
+                                pfna = `${pfna} ... and (${count}) more.`;
+                            }
 
                             name = `
                             <b>Form:</b> '${form_name}' <br />
-                            <b>Primary Fields:</b> '${primary_fields_names_arr.join('||')}' <br />
+                            <b>Primary Fields:</b> '${pfna}' <br />
                              <b>Fields:</b> <br /> ${fields_names_arr.join('<br />')}
                             `;
                         }
