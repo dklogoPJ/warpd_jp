@@ -146,6 +146,12 @@ class OmcDailySalesController extends OmcAppController
         $this->set(compact('permissions'));
     }
 
+    function makeUrlActionName($string) {
+        $string = str_replace(' ', '_', strtolower(trim($string))); // Replaces all spaces with underscore.
+        $string = preg_replace('/[^a-zA-Z0-9_\/]/', '', $string);// Removes special chars.
+        return preg_replace('/_+/', '_', $string); // Replaces multiple underscore with single one.
+    }
+
     function _createOrUpdateMenu($data){
         return $this->Menu->createMenu($data);
     }
@@ -171,7 +177,7 @@ class OmcDailySalesController extends OmcAppController
             }
             //Form
             if($action_type == 'form_save'){
-                $menu_action = str_replace(" ","_",strtolower(trim($post['form_name'])));
+                $menu_action = $this->makeUrlActionName($post['form_name']);
                 //Create form url so it can be accessed via menus
                 $menu_data = array(
                     'id'=>$post['menu_id'],
@@ -453,9 +459,9 @@ class OmcDailySalesController extends OmcAppController
             if(isset($post['report_cell_action_type'])) {
                 $action_type = $post['report_cell_action_type'];
             }
-            //Form
+            //Report
             if($action_type == 'report_save'){
-                $menu_action = str_replace(" ","_",strtolower(trim($post['report_name'])));
+                $menu_action = $this->makeUrlActionName($post['report_name']);
                 //Create report url so it can be accessed via menus
                 $menu_data = array(
                     'id'=>$post['menu_id'],
