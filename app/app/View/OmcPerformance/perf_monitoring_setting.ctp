@@ -93,5 +93,5 @@
 
 <!-- Le Script -->
 <?php
-echo $this->Html->script('scripts/omc_performance/performance_settin.js');
+echo $this->Html->script('scripts/omc_performance/performance_settings.js');
 ?>
