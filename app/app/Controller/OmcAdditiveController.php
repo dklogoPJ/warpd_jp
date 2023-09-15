@@ -11,7 +11,7 @@ class OmcAdditiveController extends OmcAppController
 
     var $name = 'OmcAdditive';
     # set the model to use
-    var $uses = array('OmcCustomer','OmcCustomerTankMinstocklevel','OmcCustomerTank','OmcDsrpDataOption','OmcTank','OmcTankStatus','OmcTankType','AdditiveSetup','AdditiveStock','Omc','AdditiveDopingRatio','AdditiveCostGeneration','ProductType','Truck','Depot');
+    var $uses = array('OmcCustomer','OmcCustomerTankMinstocklevel','OmcCustomerTank','OmcDsrpDataOption','OmcTank','OmcTankStatus','OmcTankType','AdditiveSetup','AdditiveStock','Omc','AdditiveDopingRatio','AdditiveCostGeneration','ProductType','Truck','Depot','AdditiveAverageCost');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -57,6 +57,7 @@ class OmcAdditiveController extends OmcAppController
 
                     $condition_array = array(
                         'AdditiveStock.omc_id' => $company_profile['id'],
+                        'AdditiveStock.stock1' => 'y',
                         'AdditiveStock.deleted' => 'n'
                     );
 
@@ -115,7 +116,9 @@ class OmcAdditiveController extends OmcAppController
                         $data['AdditiveStock']['modified_by'] = $authUser['id'];
                     }
 
+                    $data['AdditiveStock']['stock1'] = 'y';
                     $data['AdditiveStock']['omc_id'] = $company_profile['id'];
+
                     if ($this->AdditiveStock->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -460,6 +463,7 @@ class OmcAdditiveController extends OmcAppController
 
                     $condition_array = array(
                         'AdditiveStock.omc_id' => $company_profile['id'],
+                        'AdditiveStock.inv1' => 'y',
                         'AdditiveStock.deleted' => 'n'
                     );
 
@@ -508,6 +512,7 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }*/
+                    }*/
                     
                     $data = array('AdditiveStock' => $_POST);
         
@@ -519,6 +524,7 @@ class OmcAdditiveController extends OmcAppController
                     }
 
                     $data['AdditiveStock']['omc_id'] = $company_profile['id'];
+                    $data['AdditiveStock']['inv1'] = 'y';
                     if ($this->AdditiveStock->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -591,6 +597,7 @@ class OmcAdditiveController extends OmcAppController
 
                     $condition_array = array(
                         'AdditiveStock.omc_id' => $company_profile['id'],
+                        'AdditiveStock.stock2' => 'y',
                         'AdditiveStock.deleted' => 'n'
                     );
 
@@ -630,6 +637,7 @@ class OmcAdditiveController extends OmcAppController
 
                 case 'save' :
                     /**if ($_POST['id'] == 0) {//Mew
+                    /**if ($_POST['id'] == 0) {//Mew
                         if(!in_array('A',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
@@ -638,6 +646,7 @@ class OmcAdditiveController extends OmcAppController
                         if(!in_array('E',$permissions)){
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
+                    }*/
                     }*/
                     
                     $data = array('AdditiveStock' => $_POST);
@@ -650,6 +659,7 @@ class OmcAdditiveController extends OmcAppController
                     }
 
                     $data['AdditiveStock']['omc_id'] = $company_profile['id'];
+                    $data['AdditiveStock']['stock2'] = 'y';
                     if ($this->AdditiveStock->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -691,9 +701,9 @@ class OmcAdditiveController extends OmcAppController
 
 
 
-    function additive_stock_stock2($type = 'get') {
+    function additive_stock_inventory2($type = 'get') {
 
-        $this->setPermission('additive_stock_stock2');
+        $this->setPermission('additive_stock_inventory2');
         $this->autoLayout = false;
         $this->autoRender = false;
         
@@ -723,6 +733,7 @@ class OmcAdditiveController extends OmcAppController
 
                     $condition_array = array(
                         'AdditiveStock.omc_id' => $company_profile['id'],
+                        'AdditiveStock.inv2' => 'y',
                         'AdditiveStock.deleted' => 'n'
                     );
 
@@ -771,6 +782,7 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }*/
+                    }*/
                     
                     $data = array('AdditiveStock' => $_POST);
         
@@ -782,6 +794,7 @@ class OmcAdditiveController extends OmcAppController
                     }
 
                     $data['AdditiveStock']['omc_id'] = $company_profile['id'];
+                    $data['AdditiveStock']['inv2'] = 'y';
                     if ($this->AdditiveStock->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -854,16 +867,16 @@ class OmcAdditiveController extends OmcAppController
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
-                        'AdditiveStock.omc_id' => $company_profile['id'],
-                        'AdditiveStock.deleted' => 'n'
+                        'AdditiveAverageCost.omc_id' => $company_profile['id'],
+                        'AdditiveAverageCost.deleted' => 'n'
                     );
 
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
                     
-                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
-                    $data_table_count = $this->AdditiveStock->find('count', array('recursive' => -1));
+                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table_count = $this->AdditiveAverageCost->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
 
@@ -871,16 +884,15 @@ class OmcAdditiveController extends OmcAppController
                         $return_arr = array();
                         foreach ($data_table as $obj) {
                             $return_arr[] = array(
-                                'id' => $obj['AdditiveStock']['id'],
+                                'id' => $obj['AdditiveAverageCost']['id'],
                                 'cell' => array(
-                                    $obj['AdditiveStock']['id'],
+                                    $obj['AdditiveAverageCost']['id'],
                                     $obj['AdditiveSetup']['name'],
-                                    $obj['AdditiveStock']['drum_size'],
-                                    $obj['AdditiveStock']['drum_cost'],
-                                    $obj['AdditiveStock']['cost_per_ltr'],
-                                    $obj['AdditiveStock']['total_no_dum'],
-                                    $obj['AdditiveStock']['total_no_ltr'],
-                                    $obj['AdditiveStock']['total_stock_cost']
+                                    $obj['AdditiveAverageCost']['cost_per_ltr'],
+                                    $obj['AdditiveAverageCost']['total_no_dum'],
+                                    $obj['AdditiveAverageCost']['total_no_ltr'],
+                                    $obj['AdditiveAverageCost']['total_stock_cost']
+                                   
                                 )
                             );
                         }
@@ -903,23 +915,25 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }*/
+                    }*/
                     
-                    $data = array('AdditiveStock' => $_POST);
+                    $data = array('AdditiveAverageCost' => $_POST);
         
                     if($_POST['id'] == 0){
-                        $data['AdditiveStock']['created_by'] = $authUser['id'];
+                        $data['AdditiveAverageCost']['created_by'] = $authUser['id'];
                     }
                     else{
-                        $data['AdditiveStock']['modified_by'] = $authUser['id'];
+                        $data['AdditiveAverageCost']['modified_by'] = $authUser['id'];
                     }
 
-                    $data['AdditiveStock']['omc_id'] = $company_profile['id'];
-                    if ($this->AdditiveStock->save($this->sanitize($data))) {
+                    $data['AdditiveAverageCost']['omc_id'] = $company_profile['id'];
+                   
+                    if ($this->AdditiveAverageCost->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
                         else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->AdditiveStock->id));
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->AdditiveAverageCost->id));
                         }
                     } else {
                         return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
@@ -928,16 +942,16 @@ class OmcAdditiveController extends OmcAppController
 
                 case 'delete':
                     $ids = $_POST['ids'];
-                    $modObj = ClassRegistry::init('AdditiveStock');
+                    $modObj = ClassRegistry::init('AdditiveAverageCost');
                     $result = $modObj->updateAll(
-                        array('AdditiveStock.deleted' => "'y'"),
-                        array('AdditiveStock.id' => $ids)
+                        array('AdditiveAverageCost.deleted' => "'y'"),
+                        array('AdditiveAverageCost.id' => $ids)
                     );
                     if ($result) {
-                        $modObj = ClassRegistry::init('AdditiveStock');
+                        $modObj = ClassRegistry::init('AdditiveAverageCost');
                         $modObj->updateAll(
-                            array('AdditiveStock.deleted' => "'y'"),
-                            array('AdditiveStock.id' => $ids)
+                            array('AdditiveAverageCost.deleted' => "'y'"),
+                            array('AdditiveAverageCost.id' => $ids)
                         );
 
                      echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
