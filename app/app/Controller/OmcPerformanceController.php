@@ -26,6 +26,7 @@ class OmcPerformanceController extends OmcAppController
     {
         //$this->redirect('daily_stock');
     }
+    
 
     public function perf_monitoring_setting() {
 
