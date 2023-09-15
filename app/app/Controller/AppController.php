@@ -439,7 +439,7 @@ class AppController extends Controller
         }
         //Custom controller skip// TODO we need to re implement this so the controller is only validated if we want to skip all actions
         $con_arr = array('OmcAdditive');
-        $act_arr = array('additive_stock_inventory1','additive_stock_received2','additive_stock_stock2','additive_cost_wac');
+        $act_arr = array('additive_stock_inventory1','additive_stock_received2','additive_stock_inventory2','additive_cost_wac');
         if(in_array($controller,$con_arr) && in_array($action,$act_arr)){
             return true;
         }

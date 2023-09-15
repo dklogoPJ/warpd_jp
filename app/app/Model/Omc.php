@@ -233,6 +233,18 @@ class Omc extends AppModel
             'offset' => '',
             'exclusive' => '',
             'finderQuery' => '',
+        ),
+        'AdditiveAverageCost' => array(
+            'className' => 'AdditiveAverageCost',
+            'foreignKey' => 'omc_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
         )
     );
 

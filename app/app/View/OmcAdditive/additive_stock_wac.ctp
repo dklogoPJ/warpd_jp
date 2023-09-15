@@ -145,10 +145,10 @@
 <input type="hidden" id="grid3_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_received2/delete')); ?>" />
 <input type="hidden" id="export3_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_received2_export')); ?>" />
 
-<input type="hidden" id="table4-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_stock2/get')); ?>" />
-<input type="hidden" id="table4-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_stock2/save')); ?>" />
-<input type="hidden" id="grid4_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_stock2/delete')); ?>" />
-<input type="hidden" id="export4_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_stock2_export')); ?>" />
+<input type="hidden" id="table4-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_inventory2/get')); ?>" />
+<input type="hidden" id="table4-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_inventory2/save')); ?>" />
+<input type="hidden" id="grid4_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_inventory2/delete')); ?>" />
+<input type="hidden" id="export4_url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_stock_inventory2_export')); ?>" />
 
 
 <input type="hidden" id="table5-url" value="<?php echo $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'additive_cost_wac/get')); ?>" />

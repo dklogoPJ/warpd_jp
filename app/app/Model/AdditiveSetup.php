@@ -65,6 +65,19 @@ class AdditiveSetup extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'AdditiveAverageCost' => array(
+            'className' => 'AdditiveAverageCost',
+            'foreignKey' => 'additive_setup_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 

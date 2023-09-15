@@ -1,4 +1,4 @@
-var OmcTrucks5 = {
+var OmcTrucks = {
 
     selected_row_id:null,
     objGrid:null,
@@ -30,16 +30,18 @@ var OmcTrucks5 = {
             btn_actions.push({separator:true});
         }*/
 
-        self.objGrid = $('#flex5').flexigrid({
-            url:$('#table5-url').val(),
+        self.objGrid = $('#flex').flexigrid({
+            url:$('#table-url').val(),
             dataType:'json',
             colModel:[
-                {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
+                /**{display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
                 {display:'Additive Name', name:'additive_setup_id', width:300, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:additives}},
-                {display:' Cost per Ltr - WAC', name:'cost_per_ltr', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:' Total No. of Drums ', name:'total_no_dum', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:' Total no. of Ltrs', name:'total_no_ltr', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'  Total Stock Cost', name:'total_stock_cost', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Doping Name', name:'drum_name', width:100, sortable:true, align:'left', hide:false,  editable:{form:'text', validate:'empty', defval:''}},
+                {display:'No. of Ltrs', name:'ltr', width:80, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'', on_key_up:'{"action":"division", "sources":["ltr","product_qty"], "targets":["doping_ratio"]}'}},
+                {display:'Product Qty - Ltrs', name:'product_qty', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"division", "sources":["ltr","product_qty"], "targets":["doping_ratio"]}'}},
+                {display:'Doping Ratio', name:'doping_ratio', width:180, sortable:true, align:'left', format_number: false, hide:false, editable:{form:'text',readonly:'readonly', validate:'empty', defval:''}}*/
+
+              
             ],
             formFields:btn_actions,
             /*searchitems:[
@@ -48,7 +50,7 @@ var OmcTrucks5 = {
             checkboxSelection:true,
             editablegrid:{
                 use:true,
-                url:$('#table5-editable-url').val(),
+                url:$('#table-editable-url').val(),
                 add:inArray('A',permissions),
                 edit:inArray('E',permissions),
                 confirmSave:true,
@@ -74,26 +76,26 @@ var OmcTrucks5 = {
 
     handleGridEvent:function (com, grid, json) {
         if (com == 'New') {
-            OmcTrucks5.objGrid.flexBeginAdd();
+            OmcTrucks.objGrid.flexBeginAdd();
         }
         else if (com == 'Edit') {
             //var row = jLib.getSelectedRows(grid);
             var row = FlexObject.getSelectedRows(grid);
-            OmcTrucks5.objGrid.flexBeginEdit(row[0]);
+            OmcTrucks.objGrid.flexBeginEdit(row[0]);
         }
         else if (com == 'Save') {
-            OmcTrucks5.objGrid.flexSaveChanges();
+            OmcTrucks.objGrid.flexSaveChanges();
         }
         else if (com == 'Cancel') {
-            OmcTrucks5.objGrid.flexCancel();
+            OmcTrucks.objGrid.flexCancel();
         }
         else if (com == 'Delete') {
-            if (FlexObject.rowSelectedCheck(OmcTrucks5.objGrid,grid,1)) {
-                OmcTrucks5.delete_(grid);
+            if (FlexObject.rowSelectedCheck(OmcTrucks.objGrid,grid,1)) {
+                OmcTrucks.delete_(grid);
             }
         }
         else if (com == 'Export All') {
-            var url = $("#export5_url").val();
+            var url = $("#export_url").val();
             window.open(url, "PrintExportWindow", "menubar=yes, width=600, height=500,location=no,status=no,scrollbars=yes,resizable=yes");
         }
 
@@ -101,12 +103,12 @@ var OmcTrucks5 = {
 
     delete_:function (grid) {
         var self = this;
-        var url = $('#grid5_delete_url').val();
+        var url = $('#grid_delete_url').val();
         jLib.do_delete(url, grid);
     }
 };
 
 /* when the page is loaded */
 $(document).ready(function () {
-    OmcTrucks5.init();
+    OmcTrucks.init();
 });
