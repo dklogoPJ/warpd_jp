@@ -34,14 +34,13 @@ var OmcTrucks = {
             url:$('#table-url').val(),
             dataType:'json',
             colModel:[
-                /**{display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
-                {display:'Additive Name', name:'additive_setup_id', width:300, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:additives}},
-                {display:'Doping Name', name:'drum_name', width:100, sortable:true, align:'left', hide:false,  editable:{form:'text', validate:'empty', defval:''}},
-                {display:'No. of Ltrs', name:'ltr', width:80, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'', on_key_up:'{"action":"division", "sources":["ltr","product_qty"], "targets":["doping_ratio"]}'}},
-                {display:'Product Qty - Ltrs', name:'product_qty', width:130, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"division", "sources":["ltr","product_qty"], "targets":["doping_ratio"]}'}},
-                {display:'Doping Ratio', name:'doping_ratio', width:180, sortable:true, align:'left', format_number: false, hide:false, editable:{form:'text',readonly:'readonly', validate:'empty', defval:''}}*/
-
-              
+                {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
+                {display:'Station Name', name:'omc_customer_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:customerLists}},
+                {display:'Product Type', name:'product_type_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products}},
+                {display:'Manager Name', name:'manager_name', width:120, sortable:true, align:'left', hide:false,  editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Daily Target', name:'daily_target', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
+                {display:'Teritory', name:'teritory', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:teritory_name}}
+                //{display:'Teritory', name:'gerteritory', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', bclass:'product_type_id-class', options:products}}
             ],
             formFields:btn_actions,
             /*searchitems:[

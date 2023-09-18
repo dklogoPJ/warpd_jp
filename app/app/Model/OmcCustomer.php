@@ -215,6 +215,19 @@ class OmcCustomer extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'PerformanceSetting' => array(
+            'className' => 'PerformanceSetting',
+            'foreignKey' => 'omc_customer_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
         
     );
