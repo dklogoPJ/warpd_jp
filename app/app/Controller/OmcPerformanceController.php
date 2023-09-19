@@ -49,16 +49,27 @@ class OmcPerformanceController extends OmcAppController
                     $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
                     /** Search column */
                     $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+
+                    $filter_customer =   isset($_POST['filter_customer']) ? $_POST['filter_customer'] : 0 ;
+
+                    $filter_product =   isset($_POST['filter_product']) ? $_POST['filter_product'] : 0 ;
                     /** Search string */
                     $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
-                        'PerformanceSetting.omc_customer_id' => $company_profile['id'],
                         'PerformanceSetting.deleted' => 'n'
                     );
 
+                    if($filter_customer != 0){
+                        $condition_array['PerformanceSetting.omc_customer_id'] = $filter_customer;
+                    }
+
+                    if($filter_product != 0){
+                        $condition_array['PerformanceSetting.product_type_id'] = $filter_product;
+                    }
+                   
                     $contain = array(
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
@@ -150,11 +161,22 @@ class OmcPerformanceController extends OmcAppController
         }
         $teritory = array('0'=>array('id'=>'Southern','name'=>'Southern'),'1'=>array('id'=>'Northern','name'=>'Northern'),'2'=>array('id'=>'Western','name'=>'Western'),'3'=>array('id'=>'Eastern','name'=>'Eastern'));
         $additives_lists = $this->get_additives();
-        $products_lists = $this->get_products();
+        $products_data = $this->get_products();
+        $products_lists =array(array('name'=>'All','value'=>0));
+        foreach($products_data as $arr){
+            $products_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+        }
+
         $additives_lists = $this->get_additives();
         $numbers = $this->Truck->getTruckNo();
         $depot_lists = $this->get_depot_list();
-        $omc_customers_lists = $this->get_customer_list();
+
+        $omc_customers_data = $this->get_customer_list();
+        $omc_customers_lists =array(array('name'=>'All','value'=>0));
+        foreach($omc_customers_data as $arr){
+            $omc_customers_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+        }
+        //$omc_customers_lists = $this->get_customer_list();
         
         $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory'));
 	}

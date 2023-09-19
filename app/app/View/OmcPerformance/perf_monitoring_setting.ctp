@@ -8,6 +8,7 @@
     var numbers = <?php echo json_encode($numbers);?>;
     var depotLists = <?php echo json_encode($depot_lists);?>;
     var customerLists = <?php echo json_encode($omc_customers_lists);?>;
+    var customers = <?php echo json_encode($omc_customers_lists);?>;
     var teritory_name = <?php echo json_encode($teritory);?>;
 </script>
 

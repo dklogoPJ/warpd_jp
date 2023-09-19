@@ -5,6 +5,17 @@ var OmcTrucks = {
 
     init:function () {
         var self = this;
+        var user_group = jLib.user_group;
+        var columns = Array();
+
+        columns.push({display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true}),
+        columns.push({display:'Station Name', name:'omc_customer_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:customerLists}}),
+        columns.push({display:'Product Type', name:'product_type_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products}}),
+        columns.push({display:'Manager Name', name:'manager_name', width:120, sortable:true, align:'left', hide:false,  editable:{form:'text', validate:'empty', defval:''}}),
+        columns.push({display:'Daily Target', name:'daily_target', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}),
+        columns.push({display:'Teritory', name:'teritory', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:teritory_name}})
+       
+
 
         var btn_actions = [];
         if(inArray('A',permissions)){
@@ -25,23 +36,17 @@ var OmcTrucks = {
             btn_actions.push({type:'buttom', name:'Cancel', bclass:'cancel', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-        /*if(inArray('PX',permissions)){
-            btn_actions.push({type:'buttom', name:'Export All', bclass:'export', onpress:self.handleGridEvent});
+        if(inArray('PX',permissions)){
+            btn_actions.push({type:'select',name: 'Filter Customer', id: 'filter_customer',bclass: 'filter',onchange:self.handleGridEvent,options:customerLists});
             btn_actions.push({separator:true});
-        }*/
+            btn_actions.push({type:'select',name: 'Product Type', id: 'filter_product',bclass: 'filter',onchange:self.handleGridEvent,options:products});
+            btn_actions.push({separator:true});
+        }
 
         self.objGrid = $('#flex').flexigrid({
             url:$('#table-url').val(),
             dataType:'json',
-            colModel:[
-                {display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true},
-                {display:'Station Name', name:'omc_customer_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:customerLists}},
-                {display:'Product Type', name:'product_type_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products}},
-                {display:'Manager Name', name:'manager_name', width:120, sortable:true, align:'left', hide:false,  editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Daily Target', name:'daily_target', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
-                {display:'Teritory', name:'teritory', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:teritory_name}}
-                //{display:'Teritory', name:'gerteritory', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', bclass:'product_type_id-class', options:products}}
-            ],
+            colModel:columns,
             formFields:btn_actions,
             /*searchitems:[
              {display:'Proforma Number', name:'invoice_number', isdefault:true}
@@ -97,8 +102,23 @@ var OmcTrucks = {
             var url = $("#export_url").val();
             window.open(url, "PrintExportWindow", "menubar=yes, width=600, height=500,location=no,status=no,scrollbars=yes,resizable=yes");
         }
+        else if (com == 'Filter Customer' || com == 'Product Type') {
+            OmcTrucks.filterGrid(json);
+        }
 
     },
+
+    filterGrid:function(json){
+        var customer_filter = $("#filter_customer").val();
+        var filter_product = $("#filter_product").val();
+        $(OmcTrucks.objGrid).flexOptions({
+            params: [
+                {name: 'filter_customer', value: customer_filter},
+                {name: 'filter_product', value: filter_product}
+            ]
+        }).flexReload();
+    },
+
 
     delete_:function (grid) {
         var self = this;
