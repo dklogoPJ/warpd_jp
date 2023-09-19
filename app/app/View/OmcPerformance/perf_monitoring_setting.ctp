@@ -4,11 +4,12 @@
 <script type="text/javascript">
     var permissions = <?php echo json_encode($permissions); ?>;
     var products = <?php echo json_encode($products_lists);?>;
+    var products_list = <?php echo json_encode($products);?>;
     var additives = <?php echo json_encode($additives_lists);?>;
     var numbers = <?php echo json_encode($numbers);?>;
     var depotLists = <?php echo json_encode($depot_lists);?>;
     var customerLists = <?php echo json_encode($omc_customers_lists);?>;
-    var customers = <?php echo json_encode($omc_customers_lists);?>;
+    var customers = <?php echo json_encode($omc_customers);?>;
     var teritory_name = <?php echo json_encode($teritory);?>;
 </script>
 

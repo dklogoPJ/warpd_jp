@@ -9,8 +9,8 @@ var OmcTrucks = {
         var columns = Array();
 
         columns.push({display:'ID', name:'id', width:20, sortable:true, align:'left', hide:true}),
-        columns.push({display:'Station Name', name:'omc_customer_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:customerLists}}),
-        columns.push({display:'Product Type', name:'product_type_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products}}),
+        columns.push({display:'Station Name', name:'omc_customer_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:customers}}),
+        columns.push({display:'Product Type', name:'product_type_id', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products_list}}),
         columns.push({display:'Manager Name', name:'manager_name', width:120, sortable:true, align:'left', hide:false,  editable:{form:'text', validate:'empty', defval:''}}),
         columns.push({display:'Daily Target', name:'daily_target', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}}),
         columns.push({display:'Teritory', name:'teritory', width:200, sortable:true, align:'left', hide:false,  editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:teritory_name}})

@@ -162,6 +162,7 @@ class OmcPerformanceController extends OmcAppController
         $teritory = array('0'=>array('id'=>'Southern','name'=>'Southern'),'1'=>array('id'=>'Northern','name'=>'Northern'),'2'=>array('id'=>'Western','name'=>'Western'),'3'=>array('id'=>'Eastern','name'=>'Eastern'));
         $additives_lists = $this->get_additives();
         $products_data = $this->get_products();
+        $products = $this->get_products();
         $products_lists =array(array('name'=>'All','value'=>0));
         foreach($products_data as $arr){
             $products_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
@@ -176,9 +177,9 @@ class OmcPerformanceController extends OmcAppController
         foreach($omc_customers_data as $arr){
             $omc_customers_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
         }
-        //$omc_customers_lists = $this->get_customer_list();
+        $omc_customers = $this->get_customer_list();
         
-        $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory'));
+        $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory','omc_customers','products'));
 	}
 
     public function perf_monitoring_analytics($type = 'get') {
