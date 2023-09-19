@@ -23,8 +23,8 @@ class OmcReportingController extends OmcAppController
     function index()
     {
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $product_type = null;
         $default_product_type = 'all';
         $omc = null;
@@ -324,8 +324,8 @@ class OmcReportingController extends OmcAppController
 
     function report_orders(){
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $bdc = null;
         $default_bdc = 'all';
         $bdc_name = '';
@@ -710,8 +710,8 @@ class OmcReportingController extends OmcAppController
 
     function station_orders (){
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $omc_customer = null;
         $default_omc_customer = 'all';
         $omc_customer_name = '';
@@ -797,8 +797,8 @@ class OmcReportingController extends OmcAppController
     function station_product_loading()
     {
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $product_type = null;
         $default_product_type = 'all';
         $omc_customer = null;
@@ -912,8 +912,8 @@ class OmcReportingController extends OmcAppController
         $company_profile = $this->global_company;
         $year = date('Y');
         $month = date('m');
-        //$start_dt = date('01-m-Y');
-        //$end_dt = date('t-m-Y');
+        //$start_dt = date('Y-m-01');
+        //$end_dt = date('Y-m-t');
         $report_type = 'margin_default';
         $report_types = array(
             'margin_default'=>'Margin Analysis On Transactions',

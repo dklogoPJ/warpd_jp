@@ -147,6 +147,19 @@ class ProductType extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'PerformanceSetting' => array(
+            'className' => 'PerformanceSetting',
+            'foreignKey' => 'product_type_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 

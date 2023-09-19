@@ -93,8 +93,8 @@ class NpaReportController extends NpaAppController
 
     function omc_uppf() {
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $product_group = 'Premix';
         $default_product_group = 'Premix';
         $product_group_name = 'On Premix';
@@ -192,7 +192,7 @@ class NpaReportController extends NpaAppController
 
     function bdc_stock_by_product(){
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
+        $start_dt = date('Y-m-01');
         $product = 1;
         $default_product = '1';
         $stock_type = 'Opening';//Closing

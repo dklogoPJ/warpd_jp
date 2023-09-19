@@ -8,6 +8,7 @@
     var numbers = <?php echo json_encode($numbers);?>;
     var depotLists = <?php echo json_encode($depot_lists);?>;
     var customerLists = <?php echo json_encode($omc_customers_lists);?>;
+    var teritory_name = <?php echo json_encode($teritory);?>;
 </script>
 
 <div class="workplace">
@@ -39,6 +40,8 @@
 
         </div>
     </div>
+
+
 
     <div class="row-fluid" id="export-form">
         <div class="span3">
@@ -93,5 +96,5 @@
 
 <!-- Le Script -->
 <?php
-echo $this->Html->script('scripts/omc_performance/performance_settin.js');
+echo $this->Html->script('scripts/omc_performance/performance_settings.js');
 ?>
