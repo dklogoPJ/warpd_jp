@@ -30,8 +30,8 @@ class OmcUppfController extends OmcAppController
 
     function uppf() {
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $product_group = 'Premix';
         $default_product_group = 'Premix';
         $product_group_name = 'On Premix';

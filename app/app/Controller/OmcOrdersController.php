@@ -295,8 +295,8 @@ class OmcOrdersController extends OmcAppController
         $omc_customers_lists = $this->get_customer_list();
         //Get Bdcs for this Omc
         $bdc_list = $bdclists_data = $this->get_bdc_list();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -727,8 +727,8 @@ class OmcOrdersController extends OmcAppController
         $omc_customers_lists = $this->get_customer_list();
 
         $bdc_list = $bdclists_data = $this->get_bdc_list();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -1010,8 +1010,8 @@ class OmcOrdersController extends OmcAppController
          //Get Bdcs for this Omc
          $bdc_list = $this->get_bdc_list('crm');
          $bdclists_data = $this->get_bdc_list();*/
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -1213,8 +1213,8 @@ class OmcOrdersController extends OmcAppController
          //Get Bdcs for this Omc
          $bdc_list = $this->get_bdc_list('crm');
          $bdclists_data = $this->get_bdc_list();*/
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -2307,8 +2307,8 @@ class OmcOrdersController extends OmcAppController
         $omc_customers_lists = $this->get_customer_list();
 
         $bdc_list = $bdclists_data = $this->get_bdc_list();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 

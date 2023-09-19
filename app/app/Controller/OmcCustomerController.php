@@ -664,8 +664,8 @@ class OmcCustomerController extends OmcCustomerAppController
         }
 
         $products_lists = $this->get_products();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -839,8 +839,8 @@ class OmcCustomerController extends OmcCustomerAppController
         //$cus_lists = $this->get_credit_customers();
 
       
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
        
@@ -987,8 +987,8 @@ class OmcCustomerController extends OmcCustomerAppController
         }
 
         $products_lists = $this->get_products();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
          // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
@@ -1104,8 +1104,8 @@ class OmcCustomerController extends OmcCustomerAppController
         }
 
         $products_lists = $this->get_products();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -1207,8 +1207,8 @@ class OmcCustomerController extends OmcCustomerAppController
         }
 
         $products_lists = $this->get_products();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
         //$customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
