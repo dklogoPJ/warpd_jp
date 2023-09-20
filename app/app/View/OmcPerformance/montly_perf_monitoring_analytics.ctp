@@ -1,99 +1,128 @@
-<?php
-
-?>
-<script type="text/javascript">
-    var permissions = <?php echo json_encode($permissions); ?>;
-    var products = <?php echo json_encode($products_lists);?>;
-    var additives = <?php echo json_encode($additives_lists);?>;
-    var numbers = <?php echo json_encode($numbers);?>;
-    var depotLists = <?php echo json_encode($depot_lists);?>;
-    var customerLists = <?php echo json_encode($omc_customers_lists);?>;
-</script>
-
 <div class="workplace">
-
+<?php //debug($authUser); ?>
     <div class="page-header">
-        <h1 style="font-size: 30px;">RM Monthly Performance Monitoring Analytics  <small> Dashboard</small></h1>
+        <h1>Monthly Performance Monitoring Analytics <small></small></h1>
     </div>
 
     <div class="row-fluid">
-
-        <div class="span12">
-
-            <div class="demo-info" style="margin-bottom:10px">
-                <div class="demo-tip icon-tip"></div>
-                <div>
-                    Click on a row to select it, click again to deselect it.
-                    Click the New to add new row.
-                    Click on Edit to begin editing on a selected row.
-                    Click Save to save the row.
-                    Click on Cancel to quit changes to a row.
-                </div>
-            </div>
-
+        <div class="span8">
             <div class="head clearfix">
-                <div class="isw-text_document"></div>
-                <h1>Monthly Performance Monitoring Analytics Table</h1>
+                <div class="isw-edit"></div>
+                <h1>Data Filter Options</h1>
             </div>
-            <table id="flex" style="display:none;"></table>
-
-        </div>
-    </div>
-
-    <br/><br/><br/>
-
-    <div class="row-fluid" id="export-form">
-        <div class="span3">
-            <div class="head clearfix">
-                <div class="isw-text_document"></div>
-                <h1>Export Data</h1>
-            </div>
-            <?php echo $this->Form->create('Export', array('id' => 'form-export', 'target'=>'ExportWindow' ,'inputDefaults' => array('label' => false,'div' => false)));?>
+            <?php echo $this->Form->create('Query', array('id' => 'form-query', 'inputDefaults' => array('label' => false,'div' => false)));?>
             <div class="block-fluid">
                 <div class="row-form clearfix" style="border-top-width: 0px; padding: 5px 16px;">
-                    <div class="span5">Start Date:</div>
-                    <div class="span5">
-                        <?php echo $this->Form->input('export_startdt', array('id'=>'export_startdt', 'class' => 'span2 date-masking validate[required]','default'=>date('d-m-Y'),'placeholder'=>'dd-mm-yyyy', 'div' => false, 'label' => false,)); ?>
-
+                    <div class="span3">Monthly Performance Indicator:</div>
+                    <div class="span4">
+                        <?php echo $this->Form->input('indicator', array('id'=>'indicator', 'class' => '','default'=>$indicator,'options'=>array('all'=>'All Indicators','red'=>'Target Not Met','yellow_red'=>'All Taget Met'), 'div' => false, 'label' => false,)); ?>
                     </div>
-                    <span>Example: 01-12-2012 (dd-mm-yyyy)</span>
-                </div>
-
-                <div class="row-form clearfix" style="border-top-width: 0px; padding: 3px 16px;">
-                    <div class="span5">End Date:</div>
-                    <div class="span5">
-                        <?php echo $this->Form->input('export_enddt', array('id'=>'export_enddt', 'class' => 'span2 date-masking validate[required]','default'=>date('d-m-Y'),'placeholder'=>'dd-mm-yyyy', 'div' => false, 'label' => false,)); ?>
-
+                    <div class="span4">
+                        <button class="btn" type="submit" id="query-btn">Get Monthly Target Indicator </button>
                     </div>
-                    <span>Example: 01-12-2012 (dd-mm-yyyy)</span>
-                </div>
-
-                <div class="footer tal">
-                    <button class="btn" type="button" id="export-btn">Export</button>
-                    <?php echo $this->Form->input('export_type', array('type'=>'hidden','id'=>'export_type', 'value'=>$authUser['user_type'])); ?>
-                    <?php echo $this->Form->input('export_url', array('type'=>'hidden','id'=>'export_url', 'value'=> $this->Html->url(array('controller' => 'OmcAdditive', 'action' => 'export_additive_cost')))); ?>
-                    <?php echo $this->Form->input('action', array('type'=>'hidden','id'=>'action', 'value'=> 'export_me')); ?>
                 </div>
                 <?php echo $this->Form->end();?>
             </div>
         </div>
     </div>
 
+    <div class="row-fluid">
+        <div class="span12">
+
+            <div class="head clearfix">
+                <div class="isw-grid"></div>
+                <h1><?php echo $table_title ?></h1>
+                <ul class="buttons">
+                    <li>
+                        <?php
+                        if(in_array('PX',$permissions)){
+                            ?>
+                            <button class="btn btn-success" type="button" id="print-btn">Print </button>
+                            <button class="btn btn-success" type="button" id="export-btn">Export </button>
+                        <?php
+                        }
+                        ?>
+                    </li>
+                </ul>
+            </div>
+            <div class="block-fluid">
+                <style type="text/css">
+                    .table th, .table td {
+                        padding: 2px;
+                    }
+                    [class*="block"] .table tr th, [class*="block"] .table tr td {
+                        border-right: 1px solid #8A8484;
+                    }
+                    .table th, .table td {
+                        border-top: 1px solid #8A8484;
+                    }
+                </style>
+                <table cellpadding="0" cellspacing="0" width="100%" class="table">
+                    <tbody>
+                    <?php
+                    $headers = array(
+                        'current_stock_level'=>'Stock Levels',
+                        'min_stock_level'=>'Minimum Stock Level',
+                        'variance'=>'Variance',
+                        'color'=>'Stocking Action Indicator',
+                        'status'=>'Stocking Action Required'
+                    );
+                    $final_str = '';
+                    foreach($g_data as $tbd_arr){
+                        //inject the header into the stock data
+                        $tbd_arr['stock'] = array_merge(array('headers'=>$headers),$tbd_arr['stock']);
+                        $total_rows = count($tbd_arr['stock']);
+                       // debug($tbd_arr);
+                        foreach($tbd_arr['stock'] as $key => $v_arr){
+                            $tr_str = "<tr>";
+                            if($key == 'headers'){
+                                $tr_str .= "<td rowspan='$total_rows' style='vertical-align: middle;font-weight:bolder; background:#E8EBF0;'><strong>".$tbd_arr['info']['name']."</strong></td>";
+                                $tr_str .= "<td>&nbsp;</td>";
+                                $tr_str .= "<td><strong>".$v_arr['current_stock_level']."</strong></td>";
+                                $tr_str .= "<td><strong>".$v_arr['min_stock_level']."</strong></td>";
+                                $tr_str .= "<td><strong>".$v_arr['variance']."</strong></td>";
+                                $tr_str .= "<td><strong>".$v_arr['color']."</strong></td>";
+                                $tr_str .= "<td><strong>".$v_arr['status']."</strong></td>";
+                            }
+                            else{
+                                $tr_str .= "<td>".$key."</td>";
+                                $tr_str .= "<td>".$controller->formatNumber($v_arr['current_stock_level'],'money',0)."</td>";
+                                $tr_str .= "<td>".$controller->formatNumber($v_arr['min_stock_level'],'money',0)."</td>";
+                                $tr_str .= "<td>".$controller->formatNumber($v_arr['variance'],'money',0)."</td>";
+                                $cl = 'success';
+                                if($v_arr['color'] == 'red'){
+                                    $cl = 'important';
+                                }
+                                elseif($v_arr['color'] == 'yellow'){
+                                    $cl = 'warning';
+                                }
+                                $tr_str .= "<td><span class='label label-$cl' style='display: block;'>&nbsp;</span></td>";
+
+
+                                $tr_str .= "<td>".$v_arr['status']."</td>";
+                            }
+                            $tr_str .= "</tr>";
+                            $final_str .= $tr_str;
+                        }
+                    }
+                    echo $final_str;
+                    ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <form id="print-export-form" method="post" action="<?php echo $this->Html->url(array('controller' => 'OmcStock', 'action' => 'print_export_daily_stock_variance')); ?>" target="PrintExportWindow">
+        <input type="hidden" name="data_type" id="data_type" value="" />
+        <input type="hidden" name="data_indicator" id="data_indicator" value="" />
+    </form>
+
     <div class="dr"><span></span></div>
-
 </div>
-
-<!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcPerformance', 'action' => 'perf_monitoring_setting/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcPerformance', 'action' => 'perf_monitoring_setting/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcPerformance', 'action' => 'perf_monitoring_setting/load_details')); ?>" />
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcPerformance', 'action' => 'perf_monitoring_setting/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcPerformance', 'action' => 'perf_monitoring_setting/delete')); ?>" />
-<input type="hidden" id="export_url" value="<?php echo $this->Html->url(array('controller' => 'OmcPerformance', 'action' => 'export_performance')); ?>" />
-
-
 
 <!-- Le Script -->
 <?php
-echo $this->Html->script('scripts/omc_performance/month_performance_analytics.js');
+echo $this->Html->script('scripts/omc_performance/monthly_performance_analytics.js');
 ?>
