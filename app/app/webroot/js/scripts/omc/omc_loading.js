@@ -29,7 +29,7 @@ var Enter = {
             {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
             {display:'Date', name:'loading_date', width:80, sortable:false, align:'left', hide:false},
             {display:'Order No.', name:'order_id', width:80, sortable:true, align:'left', hide:false},
-            {display:'Loading Depot', name:'depot_id', width:100, sortable:true, align:'left', hide:false},
+            {display:'Loading Depot', name:'depot_id', width:160, sortable:true, align:'left', hide:false},
             {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
             {display:'Product Quantity', name:'quantity', width:100, sortable:true, align:'left', hide:false},
             /*{display:'Region', name:'region_id', width:150, sortable:true, align:'left', hide:false},

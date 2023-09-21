@@ -13,12 +13,12 @@
             <?php echo $this->Form->create('Query', array('id' => 'form-query', 'inputDefaults' => array('label' => false,'div' => false)));?>
             <div class="block-fluid">
                 <div class="row-form clearfix" style="border-top-width: 0px; padding: 5px 16px;">
-                    <div class="span3" style="">Performance Indicator:</div>
+                    <div class="span2">Filter Station Data:</div>
                     <div class="span4">
-                        <?php echo $this->Form->input('indicator', array('id'=>'indicator', 'class' => '','default'=>$indicator,'options'=>array('all'=>'All Indicators','red'=>'Target Not Met','yellow_red'=>'All Taget Met'), 'div' => false, 'label' => false,)); ?>
+                        <?php echo $this->Form->input('indicator', array('id'=>'omc_customer_id', 'class' => '', 'options'=>array('all'=>'All Stations','1'=>'JP Spintex 1','2'=>'Jp Ahinsan'), 'div' => false, 'label' => false,)); ?>
                     </div>
                     <div class="span4">
-                        <button class="btn" type="submit" id="query-btn">Get Target Indicator </button>
+                        <button class="btn" type="submit" id="query-btn">Get Station Target</button>
                     </div>
                 </div>
                 <?php echo $this->Form->end();?>
@@ -72,7 +72,6 @@
                         //inject the header into the stock data
                         $tbd_arr['stock'] = array_merge(array('headers'=>$headers),$tbd_arr['stock']);
                         $total_rows = count($tbd_arr['stock']);
-                       // debug($tbd_arr);
                         foreach($tbd_arr['stock'] as $key => $v_arr){
                             $tr_str = "<tr>";
                             if($key == 'headers'){
@@ -97,8 +96,6 @@
                                     $cl = 'warning';
                                 }
                                 $tr_str .= "<td><span class='label label-$cl' style='display: block;'>&nbsp;</span></td>";
-
-
                                 $tr_str .= "<td>".$v_arr['status']."</td>";
                             }
                             $tr_str .= "</tr>";
@@ -110,7 +107,6 @@
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 

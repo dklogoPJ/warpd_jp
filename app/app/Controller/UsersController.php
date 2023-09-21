@@ -288,6 +288,7 @@ class UsersController extends AppController
         $this->clearLoginSession($user_id,$trail_id);
         $this->Session->destroy();
         $this->redirect($this->Auth->logout().$path);
+        
     }
 
     private function createLoginSession($id) {

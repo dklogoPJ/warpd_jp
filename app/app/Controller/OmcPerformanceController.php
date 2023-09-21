@@ -182,6 +182,7 @@ class OmcPerformanceController extends OmcAppController
         $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory','omc_customers','products'));
 	}
 
+
     public function perf_monitoring_analytics($type = 'get') {
 
         $permissions = $this->action_permission;
@@ -199,13 +200,15 @@ class OmcPerformanceController extends OmcAppController
         }
         $g_data = $this->getDailyStockVariance($today,null,$indicator);
 
-        $table_title = $export_title = 'RM Performance Monitoring Analytics';
+        $table_title = $export_title = 'RM Performance Monitoring Analytics Table';
 
         $controller = $this;
 
         $this->set(compact('controller','g_data','table_title','indicator'));
         
 	}
+
+    
 
     public function montly_perf_monitoring_analytics($type = 'get') {
         $permissions = $this->action_permission;
@@ -223,7 +226,7 @@ class OmcPerformanceController extends OmcAppController
         }
         $g_data = $this->getDailyStockVariance($today,null,$indicator);
 
-        $table_title = $export_title = 'Monthly Performance Monitoring Analytics';
+        $table_title = $export_title = 'Monthly Performance Monitoring Analytics Table';
 
         $controller = $this;
 
