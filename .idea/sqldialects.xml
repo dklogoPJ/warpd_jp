@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/app/db/Dynamic_Form_Stored_Proc.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/app/db/PRO-1/warpd_backup.sql" dialect="MySQL" />
-    <file url="file://$PROJECT_DIR$/app/db/PRO-1/warpd_backup_20_07_2023.sql" dialect="MySQL" />
-  </component>
-</project>
