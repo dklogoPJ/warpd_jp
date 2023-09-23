@@ -1,597 +1,230 @@
-<div class="workplace">
-
-    <div class="row-fluid">
-        <div class="span12">
-
-            <div class="widgetButtons">
-                <div class="bb"><a href="#" class="tipb" title="Edit"><span class="ibw-edit"></span></a></div>
-                <div class="bb">
-                    <a href="#" class="tipb" title="Upload"><span class="ibw-folder"></span></a>
-                    <div class="caption red">31</div>
-                </div>
-                <div class="bb"><a href="#" class="tipb" title="Add new"><span class="ibw-plus"></span></a></div>
-                <div class="bb"><a href="#" class="tipb" title="Add to favorite"><span class="ibw-favorite"></span></a></div>
-                <div class="bb">
-                    <a href="#" class="tipb" title="Send mail"><span class="ibw-mail"></span></a>
-                    <div class="caption green">31</div>
-                </div>
-                <div class="bb"><a href="#" class="tipb" title="Settings"><span class="ibw-settings"></span></a></div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="row-fluid">
-
-        <div class="span4">
-
-            <div class="wBlock red clearfix">
-                <div class="dSpace">
-                    <h3>Invoices statistics</h3>
-                    <span class="mChartBar" sparkType="bar" sparkBarColor="white"><!--130,190,260,230,290,400,340,360,390--></span>
-                    <span class="number">60%</span>
-                </div>
-                <div class="rSpace">
-                    <span>$1,530 <b>amount paid</b></span>
-                    <span>$2,102 <b>in queue</b></span>
-                    <span>$11,100 <b>total taxes</b></span>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="span4">
-
-            <div class="wBlock green clearfix">
-                <div class="dSpace">
-                    <h3>Users</h3>
-                    <span class="mChartBar" sparkType="bar" sparkBarColor="white"><!--5,10,15,20,23,21,25,20,15,10,25,20,10--></span>
-                    <span class="number">2,513</span>
-                </div>
-                <div class="rSpace">
-                    <span>351 <b>active</b></span>
-                    <span>2102 <b>passive</b></span>
-                    <span>100 <b>removed</b></span>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="span4">
-
-            <div class="wBlock blue clearfix">
-                <div class="dSpace">
-                    <h3>Last visits</h3>
-                    <span class="mChartBar" sparkType="bar" sparkBarColor="white"><!--240,234,150,290,310,240,210,400,320,198,250,222,111,240,221,340,250,190--></span>
-                    <span class="number">6,302</span>
-                </div>
-                <div class="rSpace">
-                    <span>65% <b>New</b></span>
-                    <span>35% <b>Returning</b></span>
-                    <span>00:05:12 <b>Average time on site</b></span>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="dr"><span></span></div>
-
-    <div class="row-fluid">
-
-        <div class="span4">
-            <div class="head clearfix">
-                <div class="isw-archive"></div>
-                <h1>Orders</h1>
-                <ul class="buttons">
-                    <li>
-                        <a href="#" class="isw-settings"></a>
-                        <ul class="dd-list">
-                            <li><a href="#"><span class="isw-list"></span> Show all</a></li>
-                            <li><a href="#"><span class="isw-ok"></span> Approved</a></li>
-                            <li><a href="#"><span class="isw-minus"></span> Unapproved</a></li>
-                            <li><a href="#"><span class="isw-refresh"></span> Refresh</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="block-fluid accordion">
-
-                <h3>November 2012</h3>
-                <div>
-                    <table cellpadding="0" cellspacing="0" width="100%" class="sOrders">
-                        <thead>
-                            <tr>
-                                <th width="60">Date</th><th>User</th><th width="60">Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="date">Nov 6</span><span class="time">12:35</span></td>
-                                <td><a href="#">Aqvatarius</a></td>
-                                <td><span class="price">$1366.12</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="date">Nov 8</span><span class="time">18:42</span></td>
-                                <td><a href="#">Olga</a></td>
-                                <td><span class="price">$146.00</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="date">Nov 15</span><span class="time">8:21</span></td>
-                                <td><a href="#">Alex</a></td>
-                                <td><span class="price">$879.24</span></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" align="right"><button class="btn btn-small">More...</button></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <h3>October 2012</h3>
-                <div>
-                    <table cellpadding="0" cellspacing="0" width="100%" class="sOrders">
-                        <thead>
-                            <tr>
-                                <th width="60">Date</th><th>User</th><th width="60">Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="date">Oct 6</span><span class="time">12:35</span></td>
-                                <td><a href="#">Aqvatarius</a></td>
-                                <td><span class="price">$1366.12</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="date">Oct 8</span><span class="time">18:42</span></td>
-                                <td><a href="#">Olga</a></td>
-                                <td><span class="price">$146.00</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="date">Oct 15</span><span class="time">8:21</span></td>
-                                <td><a href="#">Alex</a></td>
-                                <td><span class="price">$879.24</span></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" align="right"><button class="btn btn-small">More...</button></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-                <h3>September 2012</h3>
-                <div>
-                    <table cellpadding="0" cellspacing="0" width="100%" class="sOrders">
-                        <thead>
-                            <tr>
-                                <th width="60">Date</th><th>User</th><th width="60">Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span class="date">Sep 6</span><span class="time">12:35</span></td>
-                                <td><a href="#">Aqvatarius</a></td>
-                                <td><span class="price">$1366.12</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="date">Sep 8</span><span class="time">18:42</span></td>
-                                <td><a href="#">Olga</a></td>
-                                <td><span class="price">$146.00</span></td>
-                            </tr>
-                            <tr>
-                                <td><span class="date">Sep 15</span><span class="time">8:21</span></td>
-                                <td><a href="#">Alex</a></td>
-                                <td><span class="price">$879.24</span></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="3" align="right"><button class="btn btn-small">More...</button></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="span4">
-            <div class="head clearfix">
-                <div class="isw-edit"></div>
-                <h1>Latest news</h1>
-                <ul class="buttons">
-                    <li>
-                        <a href="#" class="isw-text_document"></a>
-                    </li>
-                    <li>
-                        <a href="#" class="isw-settings"></a>
-                        <ul class="dd-list">
-                            <li><a href="#"><span class="isw-list"></span> Show all</a></li>
-                            <li><a href="#"><span class="isw-edit"></span> Add new</a></li>
-                            <li><a href="#"><span class="isw-refresh"></span> Refresh</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="block news scrollBox">
-
-                <div class="scroll" style="height: 270px;">
-
-                    <div class="item">
-                        <a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        <p>Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus.</p>
-                        <span class="date">02.11.2012 14:23</span>
-                        <div class="controls">
-                            <a href="#" class="icon-pencil tip" title="Edit"></a>
-                            <a href="#" class="icon-trash tip" title="Remove"></a>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        <p>Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus.</p>
-                        <span class="date">02.11.2012 14:23</span>
-                        <div class="controls">
-                            <a href="#" class="icon-pencil tip" title="Edit"></a>
-                            <a href="#" class="icon-trash tip" title="Remove"></a>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        <p>Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus.</p>
-                        <span class="date">02.11.2012 14:23</span>
-                        <div class="controls">
-                            <a href="#" class="icon-pencil tip" title="Edit"></a>
-                            <a href="#" class="icon-trash tip" title="Remove"></a>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        <p>Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus.</p>
-                        <span class="date">02.11.2012 14:23</span>
-                        <div class="controls">
-                            <a href="#" class="icon-pencil tip" title="Edit"></a>
-                            <a href="#" class="icon-trash tip" title="Remove"></a>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        <p>Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus.</p>
-                        <span class="date">02.11.2012 14:23</span>
-                        <div class="controls">
-                            <a href="#" class="icon-pencil tip" title="Edit"></a>
-                            <a href="#" class="icon-trash tip" title="Remove"></a>
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <a href="#">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        <p>Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus.</p>
-                        <span class="date">02.11.2012 14:23</span>
-                        <div class="controls">
-                            <a href="#" class="icon-pencil tip" title="Edit"></a>
-                            <a href="#" class="icon-trash tip" title="Remove"></a>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-        <div class="span4">
-            <div class="head clearfix">
-                <div class="isw-cloud"></div>
-                <h1>Registrations</h1>
-                <ul class="buttons">
-                    <li>
-                        <a href="#" class="isw-users"></a>
-                    </li>
-                    <li>
-                        <a href="#" class="isw-settings"></a>
-                        <ul class="dd-list">
-                            <li><a href="#"><span class="isw-list"></span> Show all</a></li>
-                            <li><a href="#"><span class="isw-mail"></span> Send mail</a></li>
-                            <li><a href="#"><span class="isw-refresh"></span> Refresh</a></li>
-                        </ul>
-                    </li>
-                    <li class="toggle"><a href="#"></a></li>
-                </ul>
-            </div>
-            <div class="block users scrollBox">
-
-                <div class="scroll" style="height: 270px;">
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/aqvatarius_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Aqvatarius</a>
-                            <div class="controls">
-                                <a href="#" class="icon-ok"></a>
-                                <a href="#" class="icon-remove"></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/olga_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Olga</a>
-                            <div class="controls">
-                                <a href="#" class="icon-ok"></a>
-                                <a href="#" class="icon-remove"></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/alexey_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Alexey</a>
-                            <div class="controls">
-                                <a href="#" class="icon-ok"></a>
-                                <a href="#" class="icon-remove"></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/dmitry_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Dmitry</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/helen_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Helen</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/alexander_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Alexander</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/aqvatarius_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Aqvatarius</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/olga_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Olga</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/alexey_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Alexey</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/dmitry_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Dmitry</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/helen_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Helen</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                    <div class="item clearfix">
-                        <div class="image"><a href="#"><img src="img/users/alexander_s.jpg" width="32"/></a></div>
-                        <div class="info">
-                            <a href="#" class="name">Alexander</a>
-                            <span>approved</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-
-    </div>
-
-    <div class="dr"><span></span></div>
-
-    <div class="row-fluid">
-
-        <div class="span12">
-            <div class="head clearfix">
-                <div class="isw-graph"></div>
-                <h1>Chart</h1>
-            </div>
-            <div class="block">
-                <div id="chart-1" style="height: 300px; margin-top: 10px;">
-
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="dr"><span></span></div>
-
-    <div class="row-fluid">
-
-        <div class="span6">
-            <div class="head clearfix">
-                <div class="isw-chats"></div>
-                <h1>Messaging</h1>
-                <ul class="buttons">
-                    <li>
-                        <a href="#" class="isw-attachment"></a>
-                    </li>
-                    <li>
-                        <a href="#" class="isw-settings"></a>
-                        <ul class="dd-list">
-                            <li><a href="#"><span class="isw-plus"></span> New document</a></li>
-                            <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
-                            <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="block messaging">
-
-                <div class="itemIn">
-                    <a href="#" class="image"><img src="img/users/olga.jpg" class="img-polaroid"/></a>
-                    <div class="text">
-                        <div class="info clearfix">
-                            <span class="name">Olga</span>
-                            <span class="date">10 min ago</span>
-                        </div>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus ut diam quis dolor mollis tristique. Suspendisse vestibulum convallis felis vitae facilisis. Praesent eu nisi vestibulum erat lacinia sollicitudin. Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus. Maecenas nulla felis, commodo et adipiscing vel, accumsan eget augue. Morbi volutpat iaculis molestie.
-                    </div>
-                </div>
-
-                <div class="itemOut">
-                    <a href="#" class="image"><img src="img/users/aqvatarius.jpg" class="img-polaroid"/></a>
-                    <div class="text">
-                        <div class="info clearfix">
-                            <span class="name">Aqvatarius</span>
-                            <span class="date">7 min ago</span>
-                        </div>
-                        In id adipiscing diam. Sed lobortis dui ut odio tempor blandit. Suspendisse scelerisque mi nec nunc gravida quis mollis lacus dignissim.
-                    </div>
-                </div>
-
-                <div class="itemIn">
-                    <a href="#" class="image"><img src="img/users/olga.jpg" class="img-polaroid"/></a>
-                    <div class="text">
-                        <div class="info clearfix">
-                            <span class="name">Olga</span>
-                            <span class="date">15 sec ago</span>
-                        </div>
-                        Cras nec risus dolor, ut tristique neque. Donec mauris sapien, pellentesque at porta id, varius eu tellus. Maecenas nulla felis, commodo et adipiscing vel, accumsan eget augue morbi volutpat.
-                    </div>
-                </div>
-
-                <div class="controls">
-                    <div class="control">
-                        <textarea name="textarea" placeholder="Your message..." style="height: 70px; width: 100%;"></textarea>
-                    </div>
-                    <button class="btn">Send message</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="span6">
-            <div class="head clearfix">
-                <div class="isw-calendar"></div>
-                <h1>Calendar</h1>
-            </div>
-            <div class="block-fluid">
-                <div id="calendar" class="fc"></div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="row-fluid">
-
-        <div class="span12">
-            <div class="head clearfix">
-                <div class="isw-grid"></div>
-                <h1>Simple table</h1>
-                <ul class="buttons">
-                    <li><a href="#" class="isw-download"></a></li>
-                    <li><a href="#" class="isw-attachment"></a></li>
-                    <li>
-                        <a href="#" class="isw-settings"></a>
-                        <ul class="dd-list">
-                            <li><a href="#"><span class="isw-plus"></span> New document</a></li>
-                            <li><a href="#"><span class="isw-edit"></span> Edit</a></li>
-                            <li><a href="#"><span class="isw-delete"></span> Delete</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div class="block-fluid">
-                <table cellpadding="0" cellspacing="0" width="100%" class="table">
-                    <thead>
-                        <tr>
-                            <th><input type="checkbox" name="checkall"/></th>
-                            <th width="25%">ID</th>
-                            <th width="25%">Name</th>
-                            <th width="25%">E-mail</th>
-                            <th width="25%">Phone</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="checkbox" name="checkbox"/></td>
-                            <td>101</td>
-                            <td>Dmitry</td>
-                            <td>dmitry@domain.com</td>
-                            <td>+98(765) 432-10-98</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="checkbox"/></td>
-                            <td>102</td>
-                            <td>Alex</td>
-                            <td>alex@domain.com</td>
-                            <td>+98(765) 432-10-99</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="checkbox"/></td>
-                            <td>103</td>
-                            <td>John</td>
-                            <td>john@domain.com</td>
-                            <td>+98(765) 432-10-97</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="checkbox"/></td>
-                            <td>104</td>
-                            <td>Angelina</td>
-                            <td>angelina@domain.com</td>
-                            <td>+98(765) 432-10-90</td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" name="checkbox"/></td>
-                            <td>105</td>
-                            <td>Tom</td>
-                            <td>tom@domain.com</td>
-                            <td>+98(765) 432-10-92</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="dr"><span></span></div>
-
-</div>
+<?php
+/**
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @package       app.View.Pages
+ * @since         CakePHP(tm) v 0.10.0.1076
+ */
+
+if (!Configure::read('debug')):
+	throw new NotFoundException();
+endif;
+
+App::uses('Debugger', 'Utility');
+?>
+<h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
+<p>
+	<?php echo $this->Html->link(__d('cake_dev', 'Read the changelog'), 'https://cakephp.org/changelogs/' . Configure::version()); ?>
+</p>
+<?php
+if (Configure::read('debug') > 0):
+	Debugger::checkSecurityKeys();
+endif;
+?>
+<?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
+	<p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
+		<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
+		1) <a target="_blank" href="https://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
+		2) <a target="_blank" href="https://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
+	</p>
+<?php endif; ?>
+<p>
+<?php
+if (version_compare(PHP_VERSION, '5.2.8', '>=')):
+	echo '<span class="notice success">';
+		echo __d('cake_dev', 'Your version of PHP is 5.2.8 or higher.');
+	echo '</span>';
+else:
+	echo '<span class="notice">';
+		echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use CakePHP.');
+	echo '</span>';
+endif;
+?>
+</p>
+<p>
+	<?php
+	if (is_writable(TMP)):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'Your tmp directory is writable.');
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'Your tmp directory is NOT writable.');
+		echo '</span>';
+	endif;
+	?>
+</p>
+<p>
+	<?php
+	$settings = Cache::settings();
+	if (!empty($settings)):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>' . $settings['engine'] . 'Engine</em>', CONFIG . 'core.php');
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', CONFIG . 'core.php');
+		echo '</span>';
+	endif;
+	?>
+</p>
+<p>
+	<?php
+	$filePresent = null;
+	if (file_exists(CONFIG . 'database.php')):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'Your database configuration file is present.');
+			$filePresent = true;
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'Your database configuration file is NOT present.');
+			echo '<br/>';
+			echo __d('cake_dev', 'Rename %s to %s', CONFIG . 'database.php.default', CONFIG . 'database.php');
+		echo '</span>';
+	endif;
+	?>
+</p>
+<?php
+if (isset($filePresent)):
+	App::uses('ConnectionManager', 'Model');
+	try {
+		$connected = ConnectionManager::getDataSource('default');
+	} catch (Exception $connectionError) {
+		$connected = false;
+		$errorMsg = $connectionError->getMessage();
+		if (method_exists($connectionError, 'getAttributes')):
+			$attributes = $connectionError->getAttributes();
+			if (isset($attributes['message'])):
+				$errorMsg .= '<br />' . $attributes['message'];
+			endif;
+		endif;
+	}
+	?>
+	<p>
+		<?php
+			if ($connected && $connected->isConnected()):
+				echo '<span class="notice success">';
+					echo __d('cake_dev', 'CakePHP is able to connect to the database.');
+				echo '</span>';
+			else:
+				echo '<span class="notice">';
+					echo __d('cake_dev', 'CakePHP is NOT able to connect to the database.');
+					echo '<br /><br />';
+					echo $errorMsg;
+				echo '</span>';
+			endif;
+		?>
+	</p>
+<?php
+endif;
+
+App::uses('Validation', 'Utility');
+if (!Validation::alphaNumeric('cakephp')):
+	echo '<p><span class="notice">';
+		echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
+		echo '<br/>';
+		echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+	echo '</span></p>';
+endif;
+?>
+
+<p>
+	<?php
+	if (CakePlugin::loaded('DebugKit')):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'DebugKit plugin is present');
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
+			echo '<br/>';
+			echo __d('cake_dev', 'You can install it from %s', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit/tree/2.2'));
+		echo '</span>';
+	endif;
+	?>
+</p>
+
+<h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
+<p>
+<?php
+echo __d('cake_dev', 'To change the content of this page, edit: %s.<br />
+To change its layout, edit: %s.<br />
+You can also add some CSS styles for your pages at: %s.',
+	'APP/View/Pages/home.ctp', 'APP/View/Layouts/default.ctp', 'APP/webroot/css');
+?>
+</p>
+
+<h3><?php echo __d('cake_dev', 'Getting Started'); ?></h3>
+<p>
+	<?php
+	echo $this->Html->link(
+		sprintf('<strong>%s</strong> %s', __d('cake_dev', 'New'), __d('cake_dev', 'CakePHP 2.0 Docs')),
+		'https://book.cakephp.org/2.0/en/',
+		array('target' => '_blank', 'escape' => false)
+	);
+	?>
+</p>
+<p>
+	<?php
+	echo $this->Html->link(
+		__d('cake_dev', 'The 15 min Blog Tutorial'),
+		'https://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
+		array('target' => '_blank', 'escape' => false)
+	);
+	?>
+</p>
+
+<h3><?php echo __d('cake_dev', 'Official Plugins'); ?></h3>
+<p>
+<ul>
+	<li>
+		<?php echo $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit/tree/2.2') ?>:
+		<?php echo __d('cake_dev', 'provides a debugging toolbar and enhanced debugging tools for CakePHP applications.'); ?>
+	</li>
+	<li>
+		<?php echo $this->Html->link('Localized', 'https://github.com/cakephp/localized') ?>:
+		<?php echo __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
+	</li>
+</ul>
+</p>
+
+<h3><?php echo __d('cake_dev', 'More about CakePHP'); ?></h3>
+<p>
+<?php echo __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
+</p>
+<p>
+<?php echo __d('cake_dev', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
+</p>
+
+<ul>
+	<li><a href="https://cakephp.org">CakePHP</a>
+	<ul><li><?php echo __d('cake_dev', 'The Rapid Development Framework'); ?></li></ul></li>
+	<li><a href="https://book.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Documentation'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Your Rapid Development Cookbook'); ?></li></ul></li>
+	<li><a href="https://api.cakephp.org"><?php echo __d('cake_dev', 'CakePHP API'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Quick API Reference'); ?></li></ul></li>
+	<li><a href="https://bakery.cakephp.org"><?php echo __d('cake_dev', 'The Bakery'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Everything CakePHP'); ?></li></ul></li>
+	<li><a href="https://plugins.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Plugins'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'A comprehensive list of all CakePHP plugins created by the community'); ?></li></ul></li>
+	<li><a href="https://community.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Community Center'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Everything related to the CakePHP community in one place'); ?></li></ul></li>
+	<li><a href="http://discourse.cakephp.org/">CakePHP Official Forum </a>
+	<ul><li>CakePHP discussion forum</li></ul></li>
+	<li><a href="http://discourse.cakephp.org/"><?php echo __d('cake_dev', 'CakePHP Official Forum'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'CakePHP discussion forum'); ?></li></ul></li>
+	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
+	<ul><li><?php echo __d('cake_dev', 'Live chat about CakePHP'); ?></li></ul></li>
+	<li><a href="https://github.com/cakephp/"><?php echo __d('cake_dev', 'CakePHP Code'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Find the CakePHP code on GitHub and contribute to the framework'); ?></li></ul></li>
+	<li><a href="https://github.com/cakephp/cakephp/issues"><?php echo __d('cake_dev', 'CakePHP Issues'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'CakePHP Issues'); ?></li></ul></li>
+	<li><a href="https://github.com/cakephp/cakephp/wiki#roadmaps"><?php echo __d('cake_dev', 'CakePHP Roadmaps'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'CakePHP Roadmaps'); ?></li></ul></li>
+	<li><a href="https://training.cakephp.org"><?php echo __d('cake_dev', 'Training'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Join a live session and get skilled with the framework'); ?></li></ul></li>
+	<li><a href="https://cakefest.org"><?php echo __d('cake_dev', 'CakeFest'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Don\'t miss our annual CakePHP conference'); ?></li></ul></li>
+	<li><a href="https://cakefoundation.org"><?php echo __d('cake_dev', 'Cake Software Foundation'); ?> </a>
+	<ul><li><?php echo __d('cake_dev', 'Promoting development related to CakePHP'); ?></li></ul></li>
+</ul>
