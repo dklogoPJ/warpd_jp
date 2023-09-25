@@ -208,7 +208,7 @@ class OmcPerformanceController extends OmcAppController
         
 	}
 
-    
+
 
     public function montly_perf_monitoring_analytics($type = 'get') {
         $permissions = $this->action_permission;
@@ -233,6 +233,11 @@ class OmcPerformanceController extends OmcAppController
         $this->set(compact('controller','g_data','table_title','indicator'));
 	}
 
+}
+
+
+function report(){
+    
 }
 
 ?>
