@@ -236,8 +236,4 @@ class OmcPerformanceController extends OmcAppController
 }
 
 
-function report(){
-    
-}
-
 ?>
