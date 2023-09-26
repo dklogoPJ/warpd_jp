@@ -15,7 +15,7 @@ services:
       MYSQL_DATABASE: ${DB_DATABASE}
     volumes:
       - './db/data:/var/lib/mysql/'
-      - './db/my.cnf:/etc/mysql/my.cnf'
+      - './db/my.cnf:/etc/my.cnf'
     networks:
       - warpd-network
 
@@ -28,7 +28,7 @@ services:
       dockerfile: ${DOCKER_COMPOSE_DIR}/app/Dockerfile
     volumes:
       - '../app:/var/www/app'
-    #  - './api/local.ini:/usr/local/etc/php/conf.d/local.ini'
+      - './app/php.ini:/etc/php/5.6/apache2/conf.d/custom.ini'
     external_links:
       - warpd-dbase:warpd-dbase
     ports:

@@ -4,6 +4,9 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/app_cakephp_2_10/app/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/app_cakephp_2_10/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app/app/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/app/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/app/app/Vendor/php_excel/PHPExcel" />
       <excludeFolder url="file://$MODULE_DIR$/app_cakephp_2_10/app/Vendor/php_excel/PHPExcel" />
     </content>
     <orderEntry type="inheritedJdk" />

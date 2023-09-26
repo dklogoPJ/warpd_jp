@@ -246,15 +246,15 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
 
     function pump_tank_sales($type = 'get')
-    {   
-        
+    {
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $this->autoLayout = false;
             $authUser = $this->Auth->user();
             $company_profile = $this->global_company;
-            
+
             switch ($type) {
                 case 'get' :
                     /**  Get posted data */
@@ -286,7 +286,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
 
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -309,8 +309,8 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
                             $delivery_quantity =  isset($obj['OmcCustomerOrder']['delivery_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['delivery_quantity'],'number',0) : '';
                             $received_quantity =  isset($obj['OmcCustomerOrder']['received_quantity']) ? $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0) : '';
                             $delivery_date =  isset($obj['OmcCustomerOrder']['delivery_date']) ? $this->covertDate($obj['OmcCustomerOrder']['delivery_date'],'mysql_flip') : '';
-                            
-                        
+
+
                             $return_arr[] = array(
                                 'id' => $obj['OmcCustomerOrder']['id'],
                                 'cell' => array(
@@ -341,7 +341,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
                     if ($this->OmcCustomerOrder->save($this->sanitize($data))) {
                         $order_id  = $this->OmcCustomerOrder->id;
-                        //Array Data here 
+                        //Array Data here
                         //Activity Log
                         $log_description = $this->getLogMessage('UpdateDeliveryQuantity')." (Order #".$order_id.")";
                         $this->logActivity('Order',$log_description);
@@ -370,7 +370,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $group_by = 'monthly';
         $group_by_title = date('F');
 
-        
+
         /* $bdclists =array(array('name'=>'All','value'=>0));
          foreach($bdclists_data as $arr){
              $bdclists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
@@ -381,7 +381,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
 
         $volumes = $this->Volume->getVolsList();
-     
+
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
@@ -390,7 +390,7 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
 
 
     function nct_sales_record($type = 'get')
-    {   
+    {
         $permissions = $this->action_permission;
         $company_profile = $this->global_company;
         $sheet_id = $this->OmcSalesSheet->setUpSheet($company_profile['id'],$company_profile['omc_id']);

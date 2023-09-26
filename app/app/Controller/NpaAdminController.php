@@ -68,7 +68,7 @@ class NpaAdminController extends NpaAppController
 
                     $contain = array('Group');
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->User->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -266,7 +266,7 @@ class NpaAdminController extends NpaAppController
                         }
                     }
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'order' => "Group.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'order' => "Group.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->Group->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -541,7 +541,7 @@ class NpaAdminController extends NpaAppController
                         $condition_array['ActivityLog.user_id'] = $filter;
                     }
 
-                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->ActivityLog->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -634,7 +634,7 @@ class NpaAdminController extends NpaAppController
                         'FreightRateCategory'=>array('fields' => array('FreightRateCategory.id', 'FreightRateCategory.name'))
                     );
 
-                    $data_table = $this->ProductType->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "ProductType.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->ProductType->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "ProductType.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->ProductType->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -796,7 +796,7 @@ class NpaAdminController extends NpaAppController
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
 
-                    $data_table = $this->PriceChange->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PriceChange.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->PriceChange->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PriceChange.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->PriceChange->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -980,7 +980,7 @@ class NpaAdminController extends NpaAppController
                         }
                     }
 
-                    $data_table = $this->Region->find('all', array('conditions' => $condition_array,'order' => "Region.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->Region->find('all', array('conditions' => $condition_array,'order' => "Region.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->Region->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;

@@ -109,7 +109,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         'DeliveryLocation'=>array('fields' => array('DeliveryLocation.id', 'DeliveryLocation.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcBdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcBdcDistribution.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->OmcBdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcBdcDistribution.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->OmcBdcDistribution->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -523,15 +523,15 @@ class OmcCustomerController extends OmcCustomerAppController
 
 
     function pump_tank_sales($type = 'get')
-    {   
-        
+    {
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
             $this->autoLayout = false;
             $authUser = $this->Auth->user();
             $company_profile = $this->global_company;
-            
+
             switch ($type) {
                 case 'get' :
                     /**  Get posted data */
@@ -573,7 +573,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
 
-                    $data_table = $this->PumpTankSale->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PumpTankSale.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->PumpTankSale->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PumpTankSale.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->PumpTankSale->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -582,7 +582,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         foreach ($data_table as $obj) {
 
                             $received_quantity =  isset($obj['PumpTankSale']['received_quantity']) ? $this->formatNumber($obj['PumpTankSale']['received_quantity'],'number',0) : '';
-                        
+
                             $return_arr[] = array(
                                 'id' => $obj['PumpTankSale']['id'],
                                 'cell' => array(
@@ -640,7 +640,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
                     if ($this->PumpTankSale->save($this->sanitize($data))) {
                         $sale_id  = $this->PumpTankSale->id;
-                        //Array Data here 
+                        //Array Data here
                         //Activity Log
                         $log_description = $this->getLogMessage('UpdatePumpTankSale')." (Order #".$sale_id.")";
                         $this->logActivity('Pump Tank Sales',$log_description);
@@ -669,7 +669,7 @@ class OmcCustomerController extends OmcCustomerAppController
         $group_by = 'monthly';
         $group_by_title = date('F');
 
-        
+
         /* $bdclists =array(array('name'=>'All','value'=>0));
          foreach($bdclists_data as $arr){
              $bdclists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
@@ -680,7 +680,7 @@ class OmcCustomerController extends OmcCustomerAppController
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
 
         $volumes = $this->Volume->getVolsList();
-     
+
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
@@ -749,7 +749,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
                     );
 
-                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->CustomerCredit->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -838,12 +838,12 @@ class OmcCustomerController extends OmcCustomerAppController
         $products_lists = $this->get_products();
         //$cus_lists = $this->get_credit_customers();
 
-      
+
         $start_dt = date('Y-m-01');
         $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
-       
+
        // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
         $customer_name_lists = $this->get_credit_customers();
 
@@ -855,7 +855,7 @@ class OmcCustomerController extends OmcCustomerAppController
         $order_filter = $this->order_filter;
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
         $volumes = $this->Volume->getVolsList();
-        
+
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('all_customers_products_prices','omc_customer_id','volumes','permissions', 'products_lists','graph_title','g_data','order_filter','customer_name_lists','delivery_method'));
@@ -902,7 +902,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
                     );
 
-                    $data_table = $this->CustomerCreditPayment->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditPayment.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->CustomerCreditPayment->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditPayment.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->CustomerCreditPayment->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1057,7 +1057,7 @@ class OmcCustomerController extends OmcCustomerAppController
                                                                           'CustomerCreditPayment.payment_instrument'))*/
                     );
 
-                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->CustomerCredit->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1109,7 +1109,7 @@ class OmcCustomerController extends OmcCustomerAppController
         $group_by = 'monthly';
         $group_by_title = date('F');
 
-    
+
        // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
         $customer_name_lists = $this->get_credit_customers();
         $delivery_method = array('0'=>array('id'=>'Fleet - Cars','name'=>'Fleet - Cars'),'1'=>array('id'=>'Fleet - Trucks','name'=>'Fleet - Trucks'),'2'=>array('id'=>'Fleet - Site Vehicles','name'=>'Fleet - Site Vehicles'),'3'=>array('id'=>'Fuel Bowser','name'=>'Fuel Bowser'),'4'=>array('id'=>'Fuel - Mobile Tanks','name'=>'Fuel - Mobile Tanks'));
@@ -1163,7 +1163,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
 
-                    $data_table = $this->CustomerCreditPayment->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditPayment.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->CustomerCreditPayment->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditPayment.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->CustomerCreditPayment->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1197,7 +1197,7 @@ class OmcCustomerController extends OmcCustomerAppController
                     break;
 
                 case 'save' :
-                    
+
                     break;
 
                 case 'load':
@@ -1273,7 +1273,7 @@ class OmcCustomerController extends OmcCustomerAppController
                         'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
                     );
 
-                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->CustomerCredit->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCredit.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->CustomerCredit->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1363,12 +1363,12 @@ class OmcCustomerController extends OmcCustomerAppController
         $products_lists = $this->get_products();
         //$cus_lists = $this->get_credit_customers();
 
-      
+
         $start_dt = date('Y-m-01');
         $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
-       
+
        // $customer_name_lists = $this->CustomerCreditSetting->getCustomerNameList();
         $customer_name_lists = $this->get_credit_customers();
 
@@ -1381,7 +1381,7 @@ class OmcCustomerController extends OmcCustomerAppController
         $order_filter = $this->order_filter;
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
         $volumes = $this->Volume->getVolsList();
-        
+
         $graph_title = $group_by_title.", Orders-Consolidated";
 
         $this->set(compact('all_customers_products_prices','omc_customer_id','volumes','permissions', 'products_lists','graph_title','g_data','order_filter','customer_name_lists','delivery_method','approved_status'));

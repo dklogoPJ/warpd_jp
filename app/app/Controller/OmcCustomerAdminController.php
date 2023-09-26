@@ -143,7 +143,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
                     }
                     //$contian = array('OmcCustomer'=>array('fields'=>array('OmcCustomer.id', 'OmcCustomer.name')));
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'order' => "Group.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'order' => "Group.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Group->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -272,7 +272,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
                         'Group'
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->User->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -521,7 +521,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
                         $condition_array['ActivityLog.user_id'] = $filter;
                     }
 
-                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->ActivityLog->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -561,7 +561,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
         $this->set(compact('entity_users_filter'));
     }
 
-    
-    
+
+
 
 }

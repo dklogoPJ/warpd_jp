@@ -30,7 +30,7 @@ class OmcAdditiveController extends OmcAppController
 
 
     function additive_stock_wac($type = 'get') {
-        
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -64,8 +64,8 @@ class OmcAdditiveController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveStock->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -106,9 +106,9 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('AdditiveStock' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveStock']['created_by'] = $authUser['id'];
                     }
@@ -154,13 +154,13 @@ class OmcAdditiveController extends OmcAppController
         }
 
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 
 
     function additives_doping_ratios($type = 'get') {
-        
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -193,8 +193,8 @@ class OmcAdditiveController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveDopingRatio->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveDopingRatio.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveDopingRatio->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveDopingRatio.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveDopingRatio->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -233,9 +233,9 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('AdditiveDopingRatio' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveDopingRatio']['created_by'] = $authUser['id'];
                     }
@@ -280,7 +280,7 @@ class OmcAdditiveController extends OmcAppController
         }
 
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 
@@ -322,11 +322,11 @@ class OmcAdditiveController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name'))
                     );
-                    
-                    $data_table = $this->AdditiveCostGeneration->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveCostGeneration.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveCostGeneration->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveCostGeneration.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveCostGeneration->find('count', array('recursive' => -1));
                     $total_records = $data_table_count;
-                    
+
 
 
                     if ($data_table) {
@@ -371,9 +371,9 @@ class OmcAdditiveController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('AdditiveCostGeneration' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveCostGeneration']['created_by'] = $authUser['id'];
                     }
@@ -385,10 +385,10 @@ class OmcAdditiveController extends OmcAppController
                    //$data['AdditiveCostGeneration']['doping_ratio'] = $this->covertDate($_POST['loading_date'], 'mysql') . ' ' . date('H:i:s');
                      $data['AdditiveCostGeneration']['doping_ratio'] =  round($_POST['doping_ratio'], 5);
                      $data['AdditiveCostGeneration']['additive_quantity'] =  number_format(round($_POST['additive_quantity'], 0, PHP_ROUND_HALF_UP),2);
-             
+
                     $data['AdditiveCostGeneration']['omc_id'] = $company_profile['id'];
                     if ($this->AdditiveCostGeneration->save($this->sanitize($data))) {
-                       
+
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
                         }
@@ -426,13 +426,13 @@ class OmcAdditiveController extends OmcAppController
         $numbers = $this->Truck->getTruckNo();
         $depot_lists = $this->get_depot_list();
         $omc_customers_lists = $this->get_customer_list();
-        
+
         $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists'));
 	}
 
 
     function additive_stock_inventory1($type = 'get') {
-        
+
         $this->setPermission('additive_stock_inventory1');
         $this->autoLayout = false;
         $this->autoRender = false;
@@ -470,8 +470,8 @@ class OmcAdditiveController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveStock->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -502,10 +502,10 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                   
-                    
+
+
                     $data = array('AdditiveStock' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveStock']['created_by'] = $authUser['id'];
                     }
@@ -550,7 +550,7 @@ class OmcAdditiveController extends OmcAppController
         }
 
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 
@@ -560,7 +560,7 @@ class OmcAdditiveController extends OmcAppController
         $this->setPermission('additive_stock_received2');
         $this->autoLayout = false;
         $this->autoRender = false;
-        
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -594,8 +594,8 @@ class OmcAdditiveController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveStock->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -626,10 +626,10 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                   
-                    
+
+
                     $data = array('AdditiveStock' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveStock']['created_by'] = $authUser['id'];
                     }
@@ -674,7 +674,7 @@ class OmcAdditiveController extends OmcAppController
         }
 
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 
@@ -685,7 +685,7 @@ class OmcAdditiveController extends OmcAppController
         $this->setPermission('additive_stock_inventory2');
         $this->autoLayout = false;
         $this->autoRender = false;
-        
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -719,8 +719,8 @@ class OmcAdditiveController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveStock->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveStock.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveStock->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -751,10 +751,10 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                    
-                    
+
+
                     $data = array('AdditiveStock' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveStock']['created_by'] = $authUser['id'];
                     }
@@ -799,7 +799,7 @@ class OmcAdditiveController extends OmcAppController
         }
 
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 
@@ -810,7 +810,7 @@ class OmcAdditiveController extends OmcAppController
         $this->setPermission('additive_cost_wac');
         $this->autoLayout = false;
         $this->autoRender = false;
-        
+
         $permissions = $this->action_permission;
         if ($this->request->is('ajax')) {
             $this->autoRender = false;
@@ -843,8 +843,8 @@ class OmcAdditiveController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveAverageCost->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -861,7 +861,7 @@ class OmcAdditiveController extends OmcAppController
                                     $obj['AdditiveAverageCost']['total_no_dum'],
                                     $obj['AdditiveAverageCost']['total_no_ltr'],
                                     $obj['AdditiveAverageCost']['total_stock_cost']
-                                   
+
                                 )
                             );
                         }
@@ -874,10 +874,10 @@ class OmcAdditiveController extends OmcAppController
                     break;
 
                 case 'save' :
-                   
-                    
+
+
                     $data = array('AdditiveAverageCost' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveAverageCost']['created_by'] = $authUser['id'];
                     }
@@ -886,7 +886,7 @@ class OmcAdditiveController extends OmcAppController
                     }
 
                     $data['AdditiveAverageCost']['omc_id'] = $company_profile['id'];
-                   
+
                     if ($this->AdditiveAverageCost->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -922,7 +922,7 @@ class OmcAdditiveController extends OmcAppController
         }
 
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 }
