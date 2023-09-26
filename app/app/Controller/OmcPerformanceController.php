@@ -26,7 +26,7 @@ class OmcPerformanceController extends OmcAppController
     {
         //$this->redirect('daily_stock');
     }
-    
+
 
     public function perf_monitoring_setting($type = 'get') {
 
@@ -63,8 +63,8 @@ class OmcPerformanceController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
-                    
-                    $data_table = $this->PerformanceSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PerformanceSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->PerformanceSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PerformanceSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->PerformanceSetting->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -103,9 +103,9 @@ class OmcPerformanceController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('PerformanceSetting' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['PerformanceSetting']['created_by'] = $authUser['id'];
                     }
@@ -114,7 +114,7 @@ class OmcPerformanceController extends OmcAppController
                     }
 
                     $data['PerformanceSetting']['omc_id'] = $company_profile['id'];
-                   
+
                     if ($this->PerformanceSetting->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -155,7 +155,7 @@ class OmcPerformanceController extends OmcAppController
         $numbers = $this->Truck->getTruckNo();
         $depot_lists = $this->get_depot_list();
         $omc_customers_lists = $this->get_customer_list();
-        
+
         $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory'));
 	}
 
@@ -193,8 +193,8 @@ class OmcPerformanceController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveAverageCost->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -211,7 +211,7 @@ class OmcPerformanceController extends OmcAppController
                                     $obj['AdditiveAverageCost']['total_no_dum'],
                                     $obj['AdditiveAverageCost']['total_no_ltr'],
                                     $obj['AdditiveAverageCost']['total_stock_cost']
-                                   
+
                                 )
                             );
                         }
@@ -224,10 +224,10 @@ class OmcPerformanceController extends OmcAppController
                     break;
 
                 case 'save' :
-                   
-                    
+
+
                     $data = array('AdditiveAverageCost' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveAverageCost']['created_by'] = $authUser['id'];
                     }
@@ -236,7 +236,7 @@ class OmcPerformanceController extends OmcAppController
                     }
 
                     $data['AdditiveAverageCost']['omc_id'] = $company_profile['id'];
-                   
+
                     if ($this->AdditiveAverageCost->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -271,7 +271,7 @@ class OmcPerformanceController extends OmcAppController
             }
         }
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 
@@ -308,8 +308,8 @@ class OmcPerformanceController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-                    
-                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveAverageCost->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -326,7 +326,7 @@ class OmcPerformanceController extends OmcAppController
                                     $obj['AdditiveAverageCost']['total_no_dum'],
                                     $obj['AdditiveAverageCost']['total_no_ltr'],
                                     $obj['AdditiveAverageCost']['total_stock_cost']
-                                   
+
                                 )
                             );
                         }
@@ -339,10 +339,10 @@ class OmcPerformanceController extends OmcAppController
                     break;
 
                 case 'save' :
-                   
-                    
+
+
                     $data = array('AdditiveAverageCost' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveAverageCost']['created_by'] = $authUser['id'];
                     }
@@ -351,7 +351,7 @@ class OmcPerformanceController extends OmcAppController
                     }
 
                     $data['AdditiveAverageCost']['omc_id'] = $company_profile['id'];
-                   
+
                     if ($this->AdditiveAverageCost->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -386,7 +386,7 @@ class OmcPerformanceController extends OmcAppController
             }
         }
         $additives_lists = $this->get_additives();
-        
+
         $this->set(compact('additives_lists'));
 	}
 

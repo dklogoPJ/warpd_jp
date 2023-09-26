@@ -96,7 +96,7 @@ class AdministrationController extends AppController
 
                 $grid_count = $this->Region->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->Region->find('all', array('conditions' => $condition_array, 'order' => "Region.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                $grid_data = $this->Region->find('all', array('conditions' => $condition_array, 'order' => "Region.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
 
                 foreach ($grid_data as $data) {
                     $items[] = $data['Region'];
@@ -174,7 +174,7 @@ class AdministrationController extends AppController
 
                 $grid_count = $this->District->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->District->find('all', array('conditions' => $condition_array, 'order' => "District.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                $grid_data = $this->District->find('all', array('conditions' => $condition_array, 'order' => "District.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
 
                 foreach ($grid_data as $data) {
                     $items[] = $data['District'];
@@ -261,7 +261,7 @@ class AdministrationController extends AppController
 
                 $grid_count = $this->Omclist->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->Omclist->find('all', array('conditions' => $condition_array, 'order' => "Omclist.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                $grid_data = $this->Omclist->find('all', array('conditions' => $condition_array, 'order' => "Omclist.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
 
                 foreach ($grid_data as $data) {
                     $items[] = $data['Omclist'];
@@ -354,7 +354,7 @@ class AdministrationController extends AppController
 
                 $grid_count = $this->Omc->find('count', array('conditions' => $condition_array, 'contain' => array('Omclist', 'OmcUser'), 'recursive' => 1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->Omc->find('all', array('conditions' => $condition_array, 'contain' => array('Omclist', 'OmcUser'), 'order' => "Omc.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                $grid_data = $this->Omc->find('all', array('conditions' => $condition_array, 'contain' => array('Omclist', 'OmcUser'), 'order' => "Omc.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
 
                 /* $grid_data = $this->Omc->find('all', array(
                      'conditions'=>array('Omc.bdc_id'=>$cp['id']),
@@ -425,7 +425,7 @@ class AdministrationController extends AppController
 
                 $grid_count = $this->Depot->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->Depot->find('all', array('conditions' => $condition_array, 'order' => "Depot.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                $grid_data = $this->Depot->find('all', array('conditions' => $condition_array, 'order' => "Depot.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
 
                 foreach ($grid_data as $data) {
                     $items[] = $data['Depot'];
@@ -499,7 +499,7 @@ class AdministrationController extends AppController
 
                 $grid_count = $this->ProductType->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->ProductType->find('all', array('conditions' => $condition_array, 'order' => "ProductType.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                $grid_data = $this->ProductType->find('all', array('conditions' => $condition_array, 'order' => "ProductType.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
 
                 foreach ($grid_data as $data) {
                     $items[] = $data['ProductType'];
@@ -599,7 +599,7 @@ class AdministrationController extends AppController
                 $fields = array('id', 'title', 'fname', 'lname', 'mname', 'username', 'user_type', 'user_level', 'telephone', 'email');
                 $grid_count = $this->User->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                 $result["total"] = $grid_count;
-                $grid_data = $this->User->find('all', array('fields' => $fields, 'conditions' => $condition_array, 'order' => "User.$sort $order", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                $grid_data = $this->User->find('all', array('fields' => $fields, 'conditions' => $condition_array, 'order' => "User.$sort $order", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
 
                 foreach ($grid_data as $data) {
                     $items[] = $data['User'];

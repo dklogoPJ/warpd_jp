@@ -37,7 +37,7 @@ class AppModel extends Model
     var $actsAs = array('Containable');
     var $inserted_ids = array();
 
-    function afterSave($created)
+    function afterSave($created, $options = array())
     {
         if ($created) {
             $this->inserted_ids[] = $this->getInsertID();
@@ -131,5 +131,5 @@ class AppModel extends Model
                 $_SERVER['SERVER_PORT'] === 80 ? '' : ':'.$_SERVER['SERVER_PORT']))).
             substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
     }
-    
+
 }

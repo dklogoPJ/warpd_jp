@@ -2,20 +2,20 @@
 /**
  * ScaffoldViewTest file
  *
- * PHP 5
- *
- * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) Tests <https://book.cakephp.org/2.0/en/development/testing.html>
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
+ * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
 App::uses('ScaffoldView', 'View');
@@ -52,7 +52,7 @@ class ScaffoldViewMockController extends Controller {
 /**
  * name property
  *
- * @var string 'ScaffoldMock'
+ * @var string
  */
 	public $name = 'ScaffoldMock';
 
@@ -118,7 +118,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->request->params['action'] = 'index';
 		$ScaffoldView = new TestScaffoldView($this->Controller);
 		$result = $ScaffoldView->testGetFilename('index');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'tanks_setup.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'index.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('edit');
@@ -134,7 +134,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_index');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'tanks_setup.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'index.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_view');
@@ -204,7 +204,7 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$result = $ScaffoldView->testGetFilename('index');
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS .
-			'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'scaffold.tanks_setup.ctp';
+			'Themed' . DS . 'TestTheme' . DS . 'Posts' . DS . 'scaffold.index.ctp';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -364,7 +364,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
@@ -407,7 +407,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
@@ -448,7 +448,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->Controller->constructClasses();
 
 		ob_start();
-		$Scaffold = new Scaffold($this->Controller, $this->Controller->request);
+		new Scaffold($this->Controller, $this->Controller->request);
 		$this->Controller->response->send();
 		$result = ob_get_clean();
 
