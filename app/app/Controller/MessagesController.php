@@ -309,7 +309,7 @@ class MessagesController extends AppController
     }
 
 
-    function sendMessage(){
+    function sendMessage($params = array()){
         $loggedUser = $this->Auth->user();
         $user_id = $loggedUser['id'];
 

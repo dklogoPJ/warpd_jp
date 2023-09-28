@@ -110,10 +110,7 @@
                         </select>
                     </li>
 
-                    <li class="spacer">
-                        &nbsp;
-                    </li>
-
+                    <li class="spacer">&nbsp</li>
 
                     <?php
                     if($current_day_records) {
@@ -121,17 +118,18 @@
                         <?php
                         if (in_array("D", $permissions)) {
                         ?>
-                        <li><a href="javascript:void(0);" id="delete_sales_sheet_btn" class="grid_menu"><i class="isw-delete"></i> Delete Sales Sheet</a></li>
+                        <li><button class="btn btn-danger" type="button" id="delete_sales_sheet_btn">Delete Sales Sheet</button> <!--<a href="javascript:void(0);" id="delete_sales_sheet_btn" class="grid_menu"><i class="isw-delete"></i> Delete Sales Sheet</a>--></li>
                         <?php
                         }
                         ?>
+						<li class="spacer">&nbsp</li>
 
                         <?php
                         if (in_array("E", $permissions)) {
                             ?>
-                            <li><a href="javascript:void(0);" id="edit_row_btn" class="grid_menu"><i class="isw-edit"></i>Edit Row</a></li>
-                            <li><a href="javascript:void(0);" id="cancel_row_btn" class="grid_menu"><i class="isw-cancel"></i>Cancel Editing</a></li>
-                            <li><a href="javascript:void(0);" id="save_row_btn" class="grid_menu"><i class="isw-ok"></i>Save Row</a></li>
+                            <li><button class="btn btn-info" type="button" id="edit_row_btn">Edit Row</button><!--<a href="javascript:void(0);" id="edit_row_btn" class="grid_menu"><i class="isw-edit"></i>Edit Row</a>--></li>
+                            <li><button class="btn btn-inverse" type="button" id="cancel_row_btn">Cancel Editing</button><!--<a href="javascript:void(0);" id="cancel_row_btn" class="grid_menu"><i class="isw-cancel"></i>Cancel Editing</a></li>-->
+                            <li><button class="btn btn-success" type="button" id="save_row_btn">Save Row</button><!--<a href="javascript:void(0);" id="save_row_btn" class="grid_menu"><i class="isw-ok"></i>Save Row</a></li>-->
                             <?php
                         }
                         ?>

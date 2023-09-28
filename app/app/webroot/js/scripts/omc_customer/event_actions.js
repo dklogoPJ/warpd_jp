@@ -1,6 +1,18 @@
 var EventActions = {
 
-    init: function () {},
+    init: function () {
+		Number.prototype.countDecimals = function () {
+			if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
+
+			var str = this.toString();
+			if (str.indexOf(".") !== -1 && str.indexOf("-") !== -1) {
+				return str.split("-")[1] || 0;
+			} else if (str.indexOf(".") !== -1) {
+				return str.split(".")[1].length || 0;
+			}
+			return str.split("-")[1] || 0;
+		}
+	},
 
     getValue: function (action, source_data = [], properties={} ) {
         var result = '';
@@ -40,12 +52,14 @@ var EventActions = {
     },
 
     multiply: function (accumulator, number) {
-        return accumulator * number;
-    },
+		var result = accumulator * number;
+		return result.countDecimals() > 2 ? (Math.round(result * 100) / 100).toFixed(2) : result;
+	},
 
     divide: function (accumulator, number) {
-        return accumulator / number;
-    },
+        var result = accumulator / number;
+		return result.countDecimals() > 2 ? (Math.round(result * 100) / 100).toFixed(2) : result;
+	},
 
     getFieldValue: function (collection, search_row, search_column, compare_row_property, compare_column_property, value_key) {
         var return_value = '';
