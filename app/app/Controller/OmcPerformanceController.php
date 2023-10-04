@@ -316,7 +316,7 @@ class OmcPerformanceController extends OmcAppController
                     }
                     break;
             }
-        }
+        
         $additives_lists = $this->get_additives();
         
         $this->set(compact('additives_lists'));
