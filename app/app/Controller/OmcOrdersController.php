@@ -639,19 +639,25 @@ class OmcOrdersController extends OmcAppController
 
                     if ($this->Order->save($this->sanitize($data))) {
                         $order_id  = $this->Order->id;
+                        $orders = $this->Order->find('first', array(
+                            'conditions' => array('Order.id' => $order_id),
+                            'recursive' => -1
+                        ));
 
-                        /** Save to Additve Cost Generation Table */
-                        $additive_data['AdditiveCostGeneration']['omc_id'] = $company_profile;
-                        $additive_data['AdditiveCostGeneration']['order_id'] = $order_id;
-                        $additive_data['AdditiveCostGeneration']['loading_quantity'] = $_POST['loaded_quantity'];
-                        $additive_data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
-                        $additive_data['AdditiveCostGeneration']['truck_no'] = $_POST['truck_no'];
-                        $additive_data['AdditiveCostGeneration']['depot_id'] = $_POST['depot_id'];
-                        $additive_data['AdditiveCostGeneration']['omc_customer_id'] = $_POST['omc_customer_id'];
-                        $additive_data['AdditiveCostGeneration']['product_type_id'] = $_POST['product_type_id'];
-                        $additive_data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        $additive_data = array('AdditiveCostGeneration'=>array(
+                            'omc_id' => $orders['Order']['omc_id'],
+                            'order_id' => $order_id,
+                            'loading_quantity' => $orders['Order']['loaded_quantity'],
+                            'loading_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s'),
+                            'truck_no' => $orders['Order']['truck_no'],
+                            'depot_id' => $orders['Order']['depot_id'],
+                            'omc_customer_id' => $orders['Order']['omc_customer_id'],
+                            'product_type_id' => $orders['Order']['product_type_id'],
+                            'order_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s')
                         
-                        $this->AdditiveCostGeneration->save($additive_data);
+                        ));
+                       
+                        $this->AdditiveCostGeneration->save($this->sanitize($additive_data));
                     
                         if($auto_flow){
                             $order_data = $this->Order->find('first', array(
