@@ -77,7 +77,7 @@ class OmcDailySalesController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );*/
 
-                    $data_table = $this->OmcSalesProduct->find('all', array('conditions' => $condition_array,'order' => "OmcSalesProduct.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcSalesProduct->find('all', array('conditions' => $condition_array,'order' => "OmcSalesProduct.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcSalesProduct->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;

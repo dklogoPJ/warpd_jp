@@ -65,7 +65,7 @@ class OmcAdminController extends OmcAppController
 
                     $contain = array('Group');
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->User->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -360,7 +360,7 @@ class OmcAdminController extends OmcAppController
                         'Region'=>array('fields' => array('Region.id', 'Region.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomer->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomer.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomer->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomer.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomer->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -469,7 +469,7 @@ class OmcAdminController extends OmcAppController
         $glbl_region_district = $data['region_district'];
         //$location_list = $this->get_location_list();
         $st_type = array('0'=>array('id'=>'COSS','name'=>'COSS'),'1'=>array('id'=>'DOCO','name'=>'DOCO'),'2'=>array('id'=>'DODO','name'=>'DODO'));
-        
+
         $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list','st_type'));
 
     }
@@ -602,7 +602,7 @@ class OmcAdminController extends OmcAppController
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'contain'=>$contain,'order' => "Group.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'contain'=>$contain,'order' => "Group.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Group->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1085,7 +1085,7 @@ class OmcAdminController extends OmcAppController
                         $condition_array['ActivityLog.user_id'] = $filter;
                     }
 
-                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->ActivityLog->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1154,8 +1154,8 @@ class OmcAdminController extends OmcAppController
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
-                   
-                    $data_table = $this->Truck->find('all', array('order' => "Truck.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->Truck->find('all', array('order' => "Truck.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Truck->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1192,11 +1192,11 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
-                   
+
+
 
                     $data = array('Truck' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['Truck']['created_by'] = $authUser['id'];
                     }
@@ -1266,8 +1266,8 @@ class OmcAdminController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
 
-                   
-                    $data_table = $this->CustomerCreditSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->CustomerCreditSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->CustomerCreditSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1309,11 +1309,11 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
-                   
+
+
 
                     $data = array('CustomerCreditSetting' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['CustomerCreditSetting']['created_by'] = $authUser['id'];
                     }
@@ -1346,7 +1346,7 @@ class OmcAdminController extends OmcAppController
                                 array('CustomerCreditSetting.deleted' => "'y'"),
                                 array('CustomerCreditSetting.id' => $ids)
                             );
-    
+
                          echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
                         } else {
                             echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
@@ -1355,7 +1355,7 @@ class OmcAdminController extends OmcAppController
             }
         }
 
-        
+
         $station_list = $this->get_customer_list();
         $yes_no = array('0'=>array('id'=>'Yes','name'=>'Yes'),'1'=>array('id'=>'No','name'=>'No'));
         $risk_rate = array('0'=>array('id'=>'Low','name'=>'Low'),'1'=>array('id'=>'Medium','name'=>'Medium'),'2'=>array('id'=>'High','name'=>'High'));
@@ -1396,8 +1396,8 @@ class OmcAdminController extends OmcAppController
                         'Nct.deleted' => 'n'
                     );
 
-                    
-                    $data_table = $this->Nct->find('all', array('conditions' => $condition_array,'order' => "Nct.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->Nct->find('all', array('conditions' => $condition_array,'order' => "Nct.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Nct->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1432,9 +1432,9 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('Nct' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['Nct']['created_by'] = $authUser['id'];
                     }
@@ -1515,8 +1515,8 @@ class OmcAdminController extends OmcAppController
                     $contain = array(
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
-                    
-                    $data_table = $this->LubeSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LubeSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->LubeSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LubeSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->LubeSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1557,9 +1557,9 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('LubeSetting' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['LubeSetting']['created_by'] = $authUser['id'];
                     }
@@ -1638,12 +1638,12 @@ class OmcAdminController extends OmcAppController
                         'LpgSetting.deleted' => 'n'
                     );
 
-                    
+
                     $contain = array(
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
-                    
-                    $data_table = $this->LpgSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LpgSetting.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->LpgSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LpgSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->LpgSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
@@ -1680,9 +1680,9 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('LpgSetting' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['LpgSetting']['created_by'] = $authUser['id'];
                     }
@@ -1762,8 +1762,8 @@ class OmcAdminController extends OmcAppController
                     $contain = array(
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
-                    
-                    $data_table = $this->AdditiveSetup->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveSetup.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->AdditiveSetup->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveSetup.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveSetup->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1799,9 +1799,9 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
+
                     $data = array('AdditiveSetup' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['AdditiveSetup']['created_by'] = $authUser['id'];
                     }
@@ -1846,7 +1846,7 @@ class OmcAdminController extends OmcAppController
         }
 
         $products_lists = $this->get_products();
-        
+
         $this->set(compact('products_lists'));
 
     }

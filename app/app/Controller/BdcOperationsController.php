@@ -162,7 +162,7 @@ class BdcOperationsController extends BdcAppController
                         'Region'=>array('fields' => array('Region.id', 'Region.name')),
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->BdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "BdcDistribution.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->BdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "BdcDistribution.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->BdcDistribution->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     //debug($data_table);
                     $total_records = $data_table_count;

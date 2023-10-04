@@ -104,7 +104,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -480,7 +480,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity','OmcCustomerOrder.approved_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -639,25 +639,19 @@ class OmcOrdersController extends OmcAppController
 
                     if ($this->Order->save($this->sanitize($data))) {
                         $order_id  = $this->Order->id;
-                        $orders = $this->Order->find('first', array(
-                            'conditions' => array('Order.id' => $order_id),
-                            'recursive' => -1
-                        ));
 
-                        $additive_data = array('AdditiveCostGeneration'=>array(
-                            'omc_id' => $orders['Order']['omc_id'],
-                            'order_id' => $order_id,
-                            'loading_quantity' => $orders['Order']['loaded_quantity'],
-                            'loading_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s'),
-                            'truck_no' => $orders['Order']['truck_no'],
-                            'depot_id' => $orders['Order']['depot_id'],
-                            'omc_customer_id' => $orders['Order']['omc_customer_id'],
-                            'product_type_id' => $orders['Order']['product_type_id'],
-                            'order_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s')
+                        /** Save to Additve Cost Generation Table */
+                        $additive_data['AdditiveCostGeneration']['omc_id'] = $company_profile;
+                        $additive_data['AdditiveCostGeneration']['order_id'] = $order_id;
+                        $additive_data['AdditiveCostGeneration']['loading_quantity'] = $_POST['loaded_quantity'];
+                        $additive_data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        $additive_data['AdditiveCostGeneration']['truck_no'] = $_POST['truck_no'];
+                        $additive_data['AdditiveCostGeneration']['depot_id'] = $_POST['depot_id'];
+                        $additive_data['AdditiveCostGeneration']['omc_customer_id'] = $_POST['omc_customer_id'];
+                        $additive_data['AdditiveCostGeneration']['product_type_id'] = $_POST['product_type_id'];
+                        $additive_data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
                         
-                        ));
-                       
-                        $this->AdditiveCostGeneration->save($this->sanitize($additive_data));
+                        $this->AdditiveCostGeneration->save($additive_data);
                     
                         if($auto_flow){
                             $order_data = $this->Order->find('first', array(
@@ -833,7 +827,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name','OmcCustomer.credit_limit','OmcCustomer.credit_days'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1117,7 +1111,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name','OmcCustomer.credit_limit','OmcCustomer.credit_days'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1318,7 +1312,7 @@ class OmcOrdersController extends OmcAppController
                         'Region'=>array('fields' => array('Region.id', 'Region.name')),
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->BdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "BdcDistribution.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->BdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "BdcDistribution.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->BdcDistribution->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1827,7 +1821,7 @@ class OmcOrdersController extends OmcAppController
                         )
                     );
 
-                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->Waybill->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -2081,7 +2075,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -2351,6 +2345,6 @@ class OmcOrdersController extends OmcAppController
     }
 
 
-    
+
 
 }

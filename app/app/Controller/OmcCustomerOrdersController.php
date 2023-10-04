@@ -83,7 +83,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -312,7 +312,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'Order' => array('fields' => array('Order.id'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -486,7 +486,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -745,7 +745,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                     /** Search string */
                     $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
                     $limit = $rp;
-                    $start = ($page - 1) * $rp;
+                    //$start = ($page - 1) * $rp;
 
                     $condition_array = array('OmcBdcDistribution.omc_customer_id' => $company_profile['id'], 'OmcBdcDistribution.deleted' => 'n');
 
@@ -771,7 +771,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'DeliveryLocation' => array('fields' => array('DeliveryLocation.id', 'DeliveryLocation.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcBdcDistribution->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcBdcDistribution.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->OmcBdcDistribution->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcBdcDistribution.$sortname $sortorder", 'page' => $page, 'limit'=>$limit, 'recursive' => 2));
                     $data_table_count = $this->OmcBdcDistribution->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -968,7 +968,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1167,7 +1167,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'OmcCustomer' => array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1288,8 +1288,8 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
 
         $this->set(compact('grid_data', 'omc_customers_lists', 'volumes', 'permissions', 'depot_lists', 'products_lists', 'bdc_list', 'graph_title', 'g_data', 'bdclists', 'order_filter'));
     }
-    
-    
+
+
 
 
     function temperature_compensation($type = 'get')
@@ -1342,7 +1342,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                         'ProductType' => array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
 
-                    $data_table = $this->TemperatureCompensation->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "TemperatureCompensation.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->TemperatureCompensation->find('all', array('conditions' => $condition_array, 'contain' => $contain, 'order' => "TemperatureCompensation.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->TemperatureCompensation->find('count', array('conditions' => $condition_array, 'recursive' => -1));
                     $total_records = $data_table_count;
 
