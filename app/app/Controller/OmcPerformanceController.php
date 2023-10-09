@@ -49,16 +49,27 @@ class OmcPerformanceController extends OmcAppController
                     $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
                     /** Search column */
                     $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+
+                    $filter_customer =   isset($_POST['filter_customer']) ? $_POST['filter_customer'] : 0 ;
+
+                    $filter_product =   isset($_POST['filter_product']) ? $_POST['filter_product'] : 0 ;
                     /** Search string */
                     $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
                     $condition_array = array(
-                        'PerformanceSetting.omc_customer_id' => $company_profile['id'],
                         'PerformanceSetting.deleted' => 'n'
                     );
 
+                    if($filter_customer != 0){
+                        $condition_array['PerformanceSetting.omc_customer_id'] = $filter_customer;
+                    }
+
+                    if($filter_product != 0){
+                        $condition_array['PerformanceSetting.product_type_id'] = $filter_product;
+                    }
+                   
                     $contain = array(
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
@@ -150,138 +161,59 @@ class OmcPerformanceController extends OmcAppController
         }
         $teritory = array('0'=>array('id'=>'Southern','name'=>'Southern'),'1'=>array('id'=>'Northern','name'=>'Northern'),'2'=>array('id'=>'Western','name'=>'Western'),'3'=>array('id'=>'Eastern','name'=>'Eastern'));
         $additives_lists = $this->get_additives();
-        $products_lists = $this->get_products();
+        $products_data = $this->get_products();
+        $products = $this->get_products();
+        $products_lists =array(array('name'=>'All','value'=>0));
+        foreach($products_data as $arr){
+            $products_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+        }
+
         $additives_lists = $this->get_additives();
         $numbers = $this->Truck->getTruckNo();
         $depot_lists = $this->get_depot_list();
-        $omc_customers_lists = $this->get_customer_list();
 
-        $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory'));
+        $omc_customers_data = $this->get_customer_list();
+        $omc_customers_lists =array(array('name'=>'All','value'=>0));
+        foreach($omc_customers_data as $arr){
+            $omc_customers_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+        }
+        $omc_customers = $this->get_customer_list();
+        
+        $this->set(compact('additives_lists','products_lists','numbers','depot_lists','omc_customers_lists','teritory','omc_customers','products'));
 	}
+
 
     public function perf_monitoring_analytics($type = 'get') {
 
         $permissions = $this->action_permission;
-        if ($this->request->is('ajax')) {
-            $this->autoRender = false;
-            $this->autoLayout = false;
-            $authUser = $this->Auth->user();
-            $company_profile = $this->global_company;
+        $authUser = $this->Auth->user();
+        $company_profile = $this->global_company;
 
-            switch ($type) {
-                case 'get' :
-                    /**  Get posted data */
-                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
-                    /** The current page */
-                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
-                    /** Sort column */
-                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
-                    /** Sort order */
-                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
-                    /** Search column */
-                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
-                    /** Search string */
-                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
-                    $limit = $rp;
-                    $start = ($page - 1) * $rp;
+        $today = date('Y-m-d');
+        $indicator = null;
 
-                    $condition_array = array(
-                        'AdditiveAverageCost.omc_id' => $company_profile['id'],
-                        'AdditiveAverageCost.deleted' => 'n'
-                    );
-
-                    $contain = array(
-                        'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
-                    );
-
-                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
-                    $data_table_count = $this->AdditiveAverageCost->find('count', array('recursive' => -1));
-
-                    $total_records = $data_table_count;
-
-                    if ($data_table) {
-                        $return_arr = array();
-                        foreach ($data_table as $obj) {
-                            $return_arr[] = array(
-                                'id' => $obj['AdditiveAverageCost']['id'],
-                                'cell' => array(
-                                    $obj['AdditiveAverageCost']['id'],
-                                    $obj['AdditiveSetup']['name'],
-                                    $obj['AdditiveAverageCost']['cost_per_ltr'],
-                                    $obj['AdditiveAverageCost']['total_no_dum'],
-                                    $obj['AdditiveAverageCost']['total_no_ltr'],
-                                    $obj['AdditiveAverageCost']['total_stock_cost']
-
-                                )
-                            );
-                        }
-                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
-                    }
-                    else {
-                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
-                    }
-
-                    break;
-
-                case 'save' :
-
-
-                    $data = array('AdditiveAverageCost' => $_POST);
-
-                    if($_POST['id'] == 0){
-                        $data['AdditiveAverageCost']['created_by'] = $authUser['id'];
-                    }
-                    else{
-                        $data['AdditiveAverageCost']['modified_by'] = $authUser['id'];
-                    }
-
-                    $data['AdditiveAverageCost']['omc_id'] = $company_profile['id'];
-
-                    if ($this->AdditiveAverageCost->save($this->sanitize($data))) {
-                        if($_POST['id'] > 0){
-                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
-                        }
-                        else{
-                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->AdditiveAverageCost->id));
-                        }
-                    } else {
-                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
-                    }
-                    break;
-
-                case 'delete':
-                    $ids = $_POST['ids'];
-                    $modObj = ClassRegistry::init('AdditiveAverageCost');
-                    $result = $modObj->updateAll(
-                        array('AdditiveAverageCost.deleted' => "'y'"),
-                        array('AdditiveAverageCost.id' => $ids)
-                    );
-                    if ($result) {
-                        $modObj = ClassRegistry::init('AdditiveAverageCost');
-                        $modObj->updateAll(
-                            array('AdditiveAverageCost.deleted' => "'y'"),
-                            array('AdditiveAverageCost.id' => $ids)
-                        );
-
-                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
-                    } else {
-                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
-                    }
-                    break;
+        if($this->request->is('post')){
+            $indicator = $this->request->data['Query']['indicator'];
+            if($indicator == 'all'){
+                $indicator = null;
             }
         }
-        $additives_lists = $this->get_additives();
+        $g_data = $this->getDailyStockVariance($today,null,$indicator);
 
-        $this->set(compact('additives_lists'));
+        $table_title = $export_title = 'RM Performance Monitoring Analytics Table';
+
+        $controller = $this;
+
+        $this->set(compact('controller','g_data','table_title','indicator'));
+        
 	}
+
+
 
     public function montly_perf_monitoring_analytics($type = 'get') {
         $permissions = $this->action_permission;
-        if ($this->request->is('ajax')) {
-            $this->autoRender = false;
-            $this->autoLayout = false;
-            $authUser = $this->Auth->user();
-            $company_profile = $this->global_company;
+        $authUser = $this->Auth->user();
+        $company_profile = $this->global_company;
 
             switch ($type) {
                 case 'get' :
@@ -308,8 +240,8 @@ class OmcPerformanceController extends OmcAppController
                     $contain = array(
                         'AdditiveSetup'=>array('fields' => array('AdditiveSetup.id', 'AdditiveSetup.name'))
                     );
-
-                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    
+                    $data_table = $this->AdditiveAverageCost->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveAverageCost.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
                     $data_table_count = $this->AdditiveAverageCost->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -326,7 +258,7 @@ class OmcPerformanceController extends OmcAppController
                                     $obj['AdditiveAverageCost']['total_no_dum'],
                                     $obj['AdditiveAverageCost']['total_no_ltr'],
                                     $obj['AdditiveAverageCost']['total_stock_cost']
-
+                                   
                                 )
                             );
                         }
@@ -339,10 +271,10 @@ class OmcPerformanceController extends OmcAppController
                     break;
 
                 case 'save' :
-
-
+                   
+                    
                     $data = array('AdditiveAverageCost' => $_POST);
-
+        
                     if($_POST['id'] == 0){
                         $data['AdditiveAverageCost']['created_by'] = $authUser['id'];
                     }
@@ -351,7 +283,7 @@ class OmcPerformanceController extends OmcAppController
                     }
 
                     $data['AdditiveAverageCost']['omc_id'] = $company_profile['id'];
-
+                   
                     if ($this->AdditiveAverageCost->save($this->sanitize($data))) {
                         if($_POST['id'] > 0){
                             return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
@@ -384,12 +316,13 @@ class OmcPerformanceController extends OmcAppController
                     }
                     break;
             }
-        }
+        
         $additives_lists = $this->get_additives();
-
+        
         $this->set(compact('additives_lists'));
 	}
 
 }
+
 
 ?>

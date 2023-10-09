@@ -477,7 +477,7 @@ class OmcOrdersController extends OmcAppController
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
-                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity','OmcCustomerOrder.approved_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
                     $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
@@ -532,12 +532,14 @@ class OmcOrdersController extends OmcAppController
                                 $loaded_date = $this->covertDate($obj['Order']['loaded_date'],'mysql_flip');
                             }
 
-                            $approved_quantity = '';
+                            
                             $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
+                            $approved_quantity = $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0);
 
                             //echo $received_quantity;
                             //echo $received_quantity;
-
+                            //pr($obj['Order']);
+                            //exit;
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
                             }else{
@@ -545,9 +547,9 @@ class OmcOrdersController extends OmcAppController
                             }
 
                             //$git_status = '';
-                            if($obj['Order']['approved_quantity']){
-                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
-                            }
+                            //if($obj['Order']['approved_quantity']){
+                             //   $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
+                          //  }
                             $loaded_quantity = '';
                             if($obj['Order']['loaded_quantity']){
                                 $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
@@ -637,20 +639,26 @@ class OmcOrdersController extends OmcAppController
 
                     if ($this->Order->save($this->sanitize($data))) {
                         $order_id  = $this->Order->id;
+                        $orders = $this->Order->find('first', array(
+                            'conditions' => array('Order.id' => $order_id),
+                            'recursive' => -1
+                        ));
 
-                        /** Save to Additve Cost Generation Table */
-                        $additive_data['AdditiveCostGeneration']['omc_id'] = $company_profile;
-                        $additive_data['AdditiveCostGeneration']['order_id'] = $order_id;
-                        $additive_data['AdditiveCostGeneration']['loading_quantity'] = $_POST['loaded_quantity'];
-                        $additive_data['AdditiveCostGeneration']['loading_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
-                        $additive_data['AdditiveCostGeneration']['truck_no'] = $_POST['truck_no'];
-                        $additive_data['AdditiveCostGeneration']['depot_id'] = $_POST['depot_id'];
-                        $additive_data['AdditiveCostGeneration']['omc_customer_id'] = $_POST['omc_customer_id'];
-                        $additive_data['AdditiveCostGeneration']['product_type_id'] = $_POST['product_type_id'];
-                        $additive_data['AdditiveCostGeneration']['order_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
-
-                        $this->AdditiveCostGeneration->save($additive_data);
-
+                        $additive_data = array('AdditiveCostGeneration'=>array(
+                            'omc_id' => $orders['Order']['omc_id'],
+                            'order_id' => $order_id,
+                            'loading_quantity' => $orders['Order']['loaded_quantity'],
+                            'loading_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s'),
+                            'truck_no' => $orders['Order']['truck_no'],
+                            'depot_id' => $orders['Order']['depot_id'],
+                            'omc_customer_id' => $orders['Order']['omc_customer_id'],
+                            'product_type_id' => $orders['Order']['product_type_id'],
+                            'order_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s')
+                        
+                        ));
+                       
+                        $this->AdditiveCostGeneration->save($this->sanitize($additive_data));
+                    
                         if($auto_flow){
                             $order_data = $this->Order->find('first', array(
                                 'conditions' => array('Order.id' => $order_id),

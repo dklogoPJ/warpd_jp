@@ -858,6 +858,8 @@ class BdcDistribution extends AppModel
                     'quantity'=>$order['loaded_quantity'],
                     'transporter'=>$order['transporter'],
                     'vehicle_no'=>$order['truck_no'],
+                    'region_id'=>0,
+                    'district_id'=>0,
                     'order_id'=>$order['id'],
                     'row_bg_color' => 'tr_green',
                     'order_status'=>'Complete',

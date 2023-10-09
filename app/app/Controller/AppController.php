@@ -430,6 +430,9 @@ class AppController extends Controller
         if(stristr($action, 'view') !== false){
             return true;
         }
+        if(stristr($action, 'logout') !== false){
+            return true;
+        }
 
         //Allow All dashboards
         $con_arr = array('Bdc','Omc','Ceps','Depot','OmcCustomer','Npa');
