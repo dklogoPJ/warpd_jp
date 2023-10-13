@@ -1,7 +1,7 @@
 <div class="workplace">
 
     <div class="page-header">
-        <h1 style="font-size: 30px;">Credit Sales Request <small> Dashboard</small></h1>
+        <h1 style="font-size: 30px;">Credit Sales Request Approval <small> Dashboard</small></h1>
     </div>
 
     <div class="row-fluid">
@@ -21,7 +21,7 @@
 
             <div class="head clearfix">
                 <div class="isw-text_document"></div>
-                <h1>Credit Sales Request Table</h1>
+                <h1>Credit Sales Request Approval Table</h1>
             </div>
             <table id="flex" style="display:none;"></table>
 
@@ -72,12 +72,12 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_approval/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_approval/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_approval/load_details')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_request_approval/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_request_approval/save')); ?>" />
+<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_request_approval/load_details')); ?>" />
 
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_approval/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_approval/delete')); ?>" />
+<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_request_approval/load')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'omc_customer_credit_request_approval/delete')); ?>" />
 
 
 <!-- This URL will be used by Ajax upload -->
@@ -99,5 +99,5 @@
 
 <!-- Le Script -->
 <?php
- echo $this->Html->script('scripts/omc_customer/credit_approval.js');
+ echo $this->Html->script('scripts/omc_customer/credit_request_approval.js');
 ?>

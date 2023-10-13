@@ -32,17 +32,18 @@ var Order = {
             dataType:'json',
             colModel:[
                 {display:'ID', name:'id', width:20, sortable:false, align:'left', hide:true},
-                {display:'Customer Name', name:'customer_credit_setting_id', width:120, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:customer_name_lists}},
-                {display:'Request Date.', name:'invoice_date', width:100, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', bclass:'product_type_id-class', options:products}},
-                {display:'Request Quantity (ltr)', name:'req_sales_qty', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"multiply", "sources":["req_sales_qty","price"], "targets":["req_sales_amount"]}'}},
-                {display:'Price', name:'price', width:70, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}},
-                {display:'Delivery Method', name:'delivery_method', width:150, sortable:true, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:delivery_method}},
-                {display:'Request Sales Amount (GHs.)', name:'req_sales_amount', width:180, sortable:true, align:'left',format_number:true, hide:false, editable:{form:'text',readonly:'readonly', validate:'', defval:''}}
-                /**{display:'Approved Quantity (ltr)', name:'approved_qty', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"multiply", "sources":["approved_qty","price"], "targets":["approved_amount"]}'}},
+                {display:'Customer Name', name:'customer_credit_setting_id', width:120, sortable:false, align:'left', hide:false},
+                {display:'Request Date.', name:'invoice_date', width:100, sortable:false, align:'left', hide:false},
+                {display:'Product Type', name:'product_type_id', width:150, sortable:true, align:'left', hide:false},
+                {display:'Request Quantity (ltr)', name:'req_sales_qty', width:140, sortable:false, align:'left', hide:false},
+                {display:'Price', name:'price', width:70, sortable:true, align:'left', hide:false,editable:{form:'text',readonly:'readonly', validate:'', defval:''}},
+                {display:'Delivery Method', name:'delivery_method', width:150, sortable:true, align:'left', hide:false},
+                {display:'Request Sales Amount (GHs.)', name:'req_sales_amount', width:180, sortable:true, align:'left',format_number:true, hide:false},
+              
+                {display:'Approved Quantity (ltr)', name:'approved_qty', width:140, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'', defval:'', on_key_up:'{"action":"multiply", "sources":["approved_qty","price"], "targets":["approved_amount"]}'}},
                 {display:'Approved Sales Amount (GHs.)', name:'approved_amount', width:190, sortable:true, align:'left',format_number:true, hide:false, editable:{form:'text',readonly:'readonly', validate:'', defval:''}},
                 {display:'Approved Status', name:'approved_status', width:120, sortable:false, align:'left', hide:false, editable:{form:'select', validate:'', defval:'', options:approved_status}},
-                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}*/
+                {display:'Comments', name:'comments', width:170, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'', defval:''}}
             ],
             formFields:btn_actions,
             searchitems:[
