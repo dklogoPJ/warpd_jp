@@ -77,7 +77,7 @@ var Enter = {
                 use:true,
                 url:$('#table-details-url').val(),
                 colModel:[
-                    {display:'Inv. No.', name:'invoice_number', width:100, align:'center', format_number:false, editable:{form:'text', validate:'empty', defval: ''}},
+                    {display:'Inv. No.', name:'invoice_number', width:100, align:'center', format_number:false, editable:{form:'text', validate:'empty', defval: inv_no}},
                     {display:'Customer Name', name:'omc_customer_id', width:150, align:'center', editable:{form:'select', validate:'', defval:'', bclass:'omc_customer-class', options:customers}},
                     {display:'Unit Price', name:'unit_price', width:100, align:'center', editable:{form:'text', validate:'empty', defval:'', on_key_up:'{"action":"multiply", "sources":["unit_price","quantity"], "targets":["total_amount"]}'}},
                     {display:'Quantity', name:'quantity', width:100, align:'center', editable:{form:'select', validate:'empty,numeric', defval:'',bclass:'quantity-class',options:volumes, on_change:'{"action":"multiply", "sources":["unit_price","quantity"], "targets":["total_amount"]}'}},

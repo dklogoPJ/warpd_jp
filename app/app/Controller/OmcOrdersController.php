@@ -1644,9 +1644,10 @@ class OmcOrdersController extends OmcAppController
         $all_customers_products_prices = $this->OmcCustomerPriceChange->getAllProductsPumpPrices($company_profile['id']);
         $tr_year = date("y");
         $invoice_no = $tr_year.'00001';
+        $inv_no = 'JP-IN/'.(date('y')).'/'. (date('d'));
 
 
-        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no', 'all_customers_products_prices'));
+        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no', 'all_customers_products_prices','inv_no'));
 
     }
 
