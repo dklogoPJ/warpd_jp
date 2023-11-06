@@ -201,6 +201,7 @@ class OmcCustomerAdminController extends OmcCustomerAppController
 
                     break;
 
+
                 case 'delete':
                     if(!in_array('D',$permissions)){
                         return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));

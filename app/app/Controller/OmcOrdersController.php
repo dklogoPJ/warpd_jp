@@ -328,7 +328,7 @@ class OmcOrdersController extends OmcAppController
            // pr($export_params);
             $start_dt = $this->covertDate($export_params['Export']['exp_startdt'],'mysql').' 00:00:00';
             $end_dt =  $this->covertDate($export_params['Export']['exp_enddt'],'mysql').' 23:59:59';
-            $export_filter_bdc = $export_params['Export']['exp_filter_bdc'];
+            $export_filter_bdc = isset($export_params['Export']['exp_filter_bdc']) ? $export_params['Export']['exp_filter_bdc'] : 0;
             $type = $this->request->data['Export']['export_type'];
             $export_filter_status = isset($export_params['exp_filter_status'])? $export_params['exp_filter_status'] : 'complete_orders';
             $conditions = array(
@@ -557,6 +557,7 @@ class OmcOrdersController extends OmcAppController
 
                             $cell = array(
                                 $obj['Order']['id'],
+                                $obj['Order']['omc_customer_order_id'],
                                 $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
                                 //$obj['Order']['omc_order_priority'],
                                 $order_time_elapsed,
@@ -2136,9 +2137,7 @@ class OmcOrdersController extends OmcAppController
 
                             $approved_quantity = '';
                             $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
-                            pr('test');
-                            pr($received_quantity);
-
+                         
 
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
@@ -2154,20 +2153,19 @@ class OmcOrdersController extends OmcAppController
                             if($obj['Order']['loaded_quantity']){
                                 $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
                             }
+                            
 
                             $cell = array(
-                                $obj['Order']['id'],
+                                $obj['Order']['omc_customer_order_id'],
                                 $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
-                                //$obj['Order']['omc_order_priority'],
                                 $order_time_elapsed,
                                 $obj['OmcCustomer']['name'],
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
                                 $this->formatNumber($obj['Order']['order_quantity'],'number',0),
-                                /*,$mkt_feed*/
+                                
                                 $obj['Order']['transporter'],
                                 $obj['Order']['truck_no'],
-                                /*$obj['Bdc']['name'],*/
                                 $approved_quantity,
                                 $loaded_quantity,
                                 $loaded_date,

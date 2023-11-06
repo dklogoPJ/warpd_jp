@@ -59,7 +59,8 @@ var OmcOrder = {
         btn_actions.push({type: 'select', name: 'Order Status', id: 'filter_status', bclass: 'filter', onchange: self.handleGridEvent, options: order_filter});
 
         var col_models = [
-            {display: 'Order Id', name: 'id', width: 50, sortable: false, align: 'left', hide: false},
+            {display: 'ID', name: 'id', width: 50, sortable: false, align: 'left', hide: true},
+            {display: 'Order Id', name: 'omc_customer_order_id', width: 50, sortable: false, align: 'left', hide: false},
             {display: 'Order Date', name: 'order_date', width: 90, sortable: false, align: 'left', hide: false},
             //{display:'Priority', name:'omc_order_priority', width:85, sortable:false, align:'left', hide:false},
             {display: 'Time Elapsed', name: 'time_elapsed', width: 85, sortable: false, align: 'left', hide: false},

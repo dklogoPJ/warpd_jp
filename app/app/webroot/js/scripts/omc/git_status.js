@@ -59,7 +59,7 @@ var OmcOrder = {
         btn_actions.push({type: 'select', name: 'Order Status', id: 'filter_status', bclass: 'filter', onchange: self.handleGridEvent, options: order_filter});
 
         var col_models = [
-            {display: 'Order Id', name: 'id', width: 50, sortable: false, align: 'left', hide: false},
+            {display: 'Customer Order Id', name: 'id', width: 140, sortable: false, align: 'left', hide: false},
             {display: 'Order Date', name: 'order_date', width: 90, sortable: false, align: 'left', hide: false},
             //{display:'Priority', name:'omc_order_priority', width:85, sortable:false, align:'left', hide:false},
             {display: 'Time Elapsed', name: 'time_elapsed', width: 85, sortable: false, align: 'left', hide: false},
@@ -67,6 +67,7 @@ var OmcOrder = {
             {display: 'Loading Depot', name: 'depot_id', width: 120, sortable: true, align: 'left', hide: false},
             {display: 'Product Type', name: 'product_type_id', width: 100, sortable: true, align: 'left', hide: false},
             {display: 'Order Quantity', name: 'order_quantity', width: 100, sortable: true, align: 'left', hide: false},
+            
             {display: 'Transporter', name: 'transporter', width: 95, sortable: true, align: 'left', hide: false},
             {display: 'Truck No.', name: 'truck_no', width: 89, sortable: true, align: 'left', hide: false},
             {display: 'Approved Quantity', name: 'approved_quantity', width: 130, sortable: true, align: 'left', hide: false},
