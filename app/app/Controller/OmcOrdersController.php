@@ -2080,7 +2080,7 @@ class OmcOrdersController extends OmcAppController
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
-                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity','OmcCustomerOrder.approved_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
                     $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
@@ -2146,8 +2146,8 @@ class OmcOrdersController extends OmcAppController
                             }
 
                             //$git_status = '';
-                            if($obj['Order']['approved_quantity']){
-                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
+                            if($obj['OmcCustomerOrder']['approved_quantity']){
+                                $approved_quantity = $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0);
                             }
                             $loaded_quantity = '';
                             if($obj['Order']['loaded_quantity']){
