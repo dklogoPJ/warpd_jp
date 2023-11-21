@@ -795,7 +795,7 @@ class OmcOrdersController extends OmcAppController
                     /** @var $filter  */
                     $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'incomplete_orders' ;
                     /** Search string */
-                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] :50;
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
@@ -863,6 +863,7 @@ class OmcOrdersController extends OmcAppController
                             }*/
 
                             $depot_id =  $obj['Depot']['id'];
+                            //pr($depot_id);
                             $depot_name = '';
                             if($depot_id > 0){
                                 $depot_name = $obj['Depot']['name'];
@@ -883,6 +884,7 @@ class OmcOrdersController extends OmcAppController
                                     $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
                                     $approve,
+                                    //$depot_name = $obj['Depot']['name'],
                                     $depot_name,
                                     $marketing_feed
                                 ),
@@ -1253,6 +1255,7 @@ class OmcOrdersController extends OmcAppController
 
         $graph_title = $group_by_title.", Orders-Consolidated";
         $volumes = $this->Volume->getVolsList();
+        
 
 
         $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));

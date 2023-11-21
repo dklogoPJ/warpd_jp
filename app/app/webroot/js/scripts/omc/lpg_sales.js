@@ -38,7 +38,7 @@ var OmcTrucks = {
                 {display:'LPG Types', name:'name', width:100, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
                 {display:'Unit Volume (kg)', name:'unit_volume', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:''}},
                 {display:'Unit Price (GHs)', name:'unit_price', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'', on_key_up:'{"action":"division", "sources":["unit_price","unit_volume"], "targets":["price_per_kg"]}'}},
-                {display:'Price Per KG (GHs)', name:'price_per_kg', width:120, sortable:true, align:'left', hide:false, editable:{form:'text', validate:'empty', defval:'',readonly:'readonly'}}
+                {display:'Price Per KG (GHs)', name:'price_per_kg', width:120, sortable:true, align:'left', format_number: false, hide:false, editable:{form:'text', validate:'empty', defval:'',readonly:'readonly'}}
             ],
             formFields:btn_actions,
             /*searchitems:[
