@@ -92,6 +92,7 @@ var OmcTrucks = {
             }
         }
         else if (com == 'Export All') {
+            //test
             var url = $("#export_url").val();
             window.open(url, "PrintExportWindow", "menubar=yes, width=600, height=500,location=no,status=no,scrollbars=yes,resizable=yes");
         }
