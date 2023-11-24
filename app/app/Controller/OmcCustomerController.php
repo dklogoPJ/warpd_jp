@@ -1556,8 +1556,65 @@ class OmcCustomerController extends OmcCustomerAppController
         $volumes = $this->Volume->getVolsList();
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('grid_data','omc_customers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method'));
+        $this->set(compact('grid_data','omc_custo   mers_lists','volumes','permissions','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','list_tm','customer_name_lists','payment_method'));
     }
+
+
+
+    function export_orders()
+    {
+        $download = false;
+        $company_profile = $this->global_company;;
+        if ($this->request->is('post')) {
+            if ($this->request->data['Export']['action'] == 'export_me') {
+                $start_dt = $this->covertDate($this->request->data['Export']['export_startdt'], 'mysql') . ' 00:00:00';
+                $end_dt = $this->covertDate($this->request->data['Export']['export_enddt'], 'mysql') . ' 23:59:59';
+                $type = $this->request->data['Export']['export_type'];
+
+                $contain = array(
+                    'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
+                    'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                    'CustomerCreditSetting'=>array('fields' => array('CustomerCreditSetting.id', 'CustomerCreditSetting.name'))
+                );
+                $export_data = $this->CustomerCredit->find('all', array(
+                    'conditions' => array('CustomerCredit.omc_customer_id' => $company_profile['id'], 'CustomerCredit.deleted' => 'n', 'CustomerCredit.created >=' => $start_dt, 'CustomerCredit.created <=' => $end_dt),
+                    'contain' => $contain,
+                    'order' => array("CustomerCredit.id" => 'desc'),
+                    'recursive' => 1
+                ));
+
+                if ($export_data) {
+                    $download = true;
+                    $list_data = array();
+                    foreach ($export_data as $obj) {
+                        $list_data[] = array(
+                            $obj['CustomerCredit']['id'],
+                            $obj['CustomerCreditSetting']['name'],
+                            $obj['CustomerCredit']['invoice_no'],
+                            $obj['CustomerCredit']['invoice_date'],
+                            $obj['ProductType']['name'],
+                            $obj['CustomerCredit']['sales_qty'],
+                            $obj['CustomerCredit']['price'],
+                            $obj['CustomerCredit']['delivery_method'],
+                            $obj['CustomerCredit']['sales_amount'],
+                            $obj['CustomerCredit']['staff_name'],
+                            $obj['CustomerCredit']['comments'],
+                        );
+                    }
+                    $list_headers = array('Cus. Credit Id', 'Customer Name', 'Invoice No', 'Invoice Date', 'Product Type', 'Sale Quantity', 'Price', 'Delivery Method','Sales Amount','Staff Name','Comment');
+                    $filename = $company_profile['name'] . " Credit Date " . date('Ymdhis');
+                    $res = $this->convertToExcel($list_headers, $list_data, $filename);
+                    $objPHPExcel = $res['excel_obj'];
+                    $filename = $res['filename'];
+                }
+            }
+        }
+
+        $this->autoLayout = false;
+
+        $this->set(compact('objPHPExcel', 'download', 'filename'));
+    }
+
 
 
 

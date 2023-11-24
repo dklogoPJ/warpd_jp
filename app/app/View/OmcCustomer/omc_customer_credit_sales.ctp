@@ -59,7 +59,7 @@
                 <div class="footer tal">
                     <button class="btn" type="button" id="export-btn">Export</button>
                     <?php echo $this->Form->input('export_type', array('type'=>'hidden','id'=>'export_type', 'value'=>$authUser['user_type'])); ?>
-                    <?php echo $this->Form->input('export_url', array('type'=>'hidden','id'=>'export_url', 'value'=> $this->Html->url(array('controller' => 'OmcDealerOrders', 'action' => 'export_orders')))); ?>
+                    <?php echo $this->Form->input('export_url', array('type'=>'hidden','id'=>'export_url', 'value'=> $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'export_orders')))); ?>
                     <?php echo $this->Form->input('action', array('type'=>'hidden','id'=>'action', 'value'=> 'export_me')); ?>
                 </div>
                 <?php echo $this->Form->end();?>
