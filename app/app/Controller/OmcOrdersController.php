@@ -328,7 +328,7 @@ class OmcOrdersController extends OmcAppController
            // pr($export_params);
             $start_dt = $this->covertDate($export_params['Export']['exp_startdt'],'mysql').' 00:00:00';
             $end_dt =  $this->covertDate($export_params['Export']['exp_enddt'],'mysql').' 23:59:59';
-            $export_filter_bdc = $export_params['Export']['exp_filter_bdc'];
+            $export_filter_bdc = isset($export_params['Export']['exp_filter_bdc']) ? $export_params['Export']['exp_filter_bdc'] : 0;
             $type = $this->request->data['Export']['export_type'];
             $export_filter_status = isset($export_params['exp_filter_status'])? $export_params['exp_filter_status'] : 'complete_orders';
             $conditions = array(
@@ -557,6 +557,7 @@ class OmcOrdersController extends OmcAppController
 
                             $cell = array(
                                 $obj['Order']['id'],
+                                $obj['Order']['omc_customer_order_id'],
                                 $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
                                 //$obj['Order']['omc_order_priority'],
                                 $order_time_elapsed,
@@ -794,7 +795,7 @@ class OmcOrdersController extends OmcAppController
                     /** @var $filter  */
                     $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'incomplete_orders' ;
                     /** Search string */
-                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] :50;
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
@@ -862,6 +863,7 @@ class OmcOrdersController extends OmcAppController
                             }*/
 
                             $depot_id =  $obj['Depot']['id'];
+                            //pr($depot_id);
                             $depot_name = '';
                             if($depot_id > 0){
                                 $depot_name = $obj['Depot']['name'];
@@ -882,6 +884,7 @@ class OmcOrdersController extends OmcAppController
                                     $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
                                     $approve,
+                                    //$depot_name = $obj['Depot']['name'],
                                     $depot_name,
                                     $marketing_feed
                                 ),
@@ -1252,6 +1255,7 @@ class OmcOrdersController extends OmcAppController
 
         $graph_title = $group_by_title.", Orders-Consolidated";
         $volumes = $this->Volume->getVolsList();
+        
 
 
         $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));
@@ -1644,9 +1648,10 @@ class OmcOrdersController extends OmcAppController
         $all_customers_products_prices = $this->OmcCustomerPriceChange->getAllProductsPumpPrices($company_profile['id']);
         $tr_year = date("y");
         $invoice_no = $tr_year.'00001';
+        $inv_no = 'JP-IN/'.(date('y')).'/'. (date('d'));
 
 
-        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no', 'all_customers_products_prices'));
+        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no', 'all_customers_products_prices','inv_no'));
 
     }
 
@@ -2078,7 +2083,7 @@ class OmcOrdersController extends OmcAppController
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
-                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity','OmcCustomerOrder.approved_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
                     $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
@@ -2135,9 +2140,7 @@ class OmcOrdersController extends OmcAppController
 
                             $approved_quantity = '';
                             $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
-                            pr('test');
-                            pr($received_quantity);
-
+                         
 
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
@@ -2146,27 +2149,26 @@ class OmcOrdersController extends OmcAppController
                             }
 
                             //$git_status = '';
-                            if($obj['Order']['approved_quantity']){
-                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
+                            if($obj['OmcCustomerOrder']['approved_quantity']){
+                                $approved_quantity = $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0);
                             }
                             $loaded_quantity = '';
                             if($obj['Order']['loaded_quantity']){
                                 $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
                             }
+                            
 
                             $cell = array(
-                                $obj['Order']['id'],
+                                $obj['Order']['omc_customer_order_id'],
                                 $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
-                                //$obj['Order']['omc_order_priority'],
                                 $order_time_elapsed,
                                 $obj['OmcCustomer']['name'],
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
                                 $this->formatNumber($obj['Order']['order_quantity'],'number',0),
-                                /*,$mkt_feed*/
+                                
                                 $obj['Order']['transporter'],
                                 $obj['Order']['truck_no'],
-                                /*$obj['Bdc']['name'],*/
                                 $approved_quantity,
                                 $loaded_quantity,
                                 $loaded_date,

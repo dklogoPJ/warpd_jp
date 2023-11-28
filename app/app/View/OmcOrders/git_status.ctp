@@ -67,12 +67,12 @@
 </div>
 
 <!-- URLs -->
-<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'order_allocation/get')); ?>" />
-<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'order_allocation/save')); ?>" />
-<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'order_allocation/load_details')); ?>" />
+<input type="hidden" id="table-url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'git_status/get')); ?>" />
+<input type="hidden" id="table-editable-url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'git_status/save')); ?>" />
+<input type="hidden" id="table-details-url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'git_status/load_details')); ?>" />
 
-<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'order_allocation/load')); ?>" />
-<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'order_allocation/delete')); ?>" />
+<input type="hidden" id="grid_load_url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'git_status/load')); ?>" />
+<input type="hidden" id="grid_delete_url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'git_status/delete')); ?>" />
 
 <!-- This URL will be used by Ajax upload -->
 <input type="hidden" id="get_attachments_url" value="<?php echo $this->Html->url(array('controller' => 'OmcOrders', 'action' => 'get_attachments')); ?>" />

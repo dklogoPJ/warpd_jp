@@ -81,6 +81,12 @@ var Order = {
                 $("#form-export").submit();
             }
         });
+        
+        $('.approved_quantity-class').live('focus', function(){
+            if (false == $(this).hasClass('hasMore')) {
+                $(this).select_more();
+            }
+        });
     },
 
     handleGridEvent:function (com, grid, json) {
