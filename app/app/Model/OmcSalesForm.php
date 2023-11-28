@@ -80,6 +80,33 @@ class OmcSalesForm extends AppModel
         ));
     }
 
+	function getSalesFormForReport($omc_customer_id, $omc_id, $form_key, $render_type = null) {
+        $conditions = array(
+			'OmcSalesForm.omc_id'=>$omc_id,
+			'OmcSalesForm.form_key'=>$form_key,
+			'OmcSalesForm.deleted'=>'n',
+			'OR'=>array(
+				'FIND_IN_SET("'.$omc_customer_id.'", OmcSalesForm.omc_customer_list) > 0',
+				'FIND_IN_SET("all", OmcSalesForm.omc_customer_list) > 0'
+			),
+		);
+        if($render_type != null){
+            $conditions['OmcSalesForm.render_type'] = $render_type;
+        }
+        return $this->find('first',array(
+			'fields'=>array('OmcSalesForm.id','OmcSalesForm.form_name','OmcSalesForm.form_key','OmcSalesForm.omc_customer_list'),
+            'conditions'=>$conditions,
+            'contain'=>array(
+                'OmcSalesFormField'=>array(
+					'fields'=>array('OmcSalesFormField.id','OmcSalesFormField.field_name')
+				),
+                'OmcSalesFormPrimaryFieldOption'=>array(
+					'fields'=>array('OmcSalesFormPrimaryFieldOption.id','OmcSalesFormPrimaryFieldOption.option_name')
+				)
+            )
+        ));
+    }
+
     function getSalesFormByKey($omc_id, $form_key) {
         $conditions = array('OmcSalesForm.omc_id'=>$omc_id, 'OmcSalesForm.form_key'=>$form_key, 'OmcSalesForm.deleted'=>'n');
         return $this->find('first',array(

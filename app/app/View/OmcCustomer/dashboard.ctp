@@ -6,18 +6,18 @@
 
     <div class="row-fluid">
         <div class="span6">
-            <?php echo $this->element('omc_customer/customer_stock_board'); ?>
+            <?php echo $this->element('omc_customer/total_day_sales_liters'); ?>
         </div>
         <div class="span6">
-            <?php echo $this->element('omc_customer/cash_credit_summary'); ?>
+            <?php echo $this->element('omc_customer/total_day_sales_cedis'); ?>
         </div>
     </div>
     <div class="row-fluid">
+		<div class="span6">
+			<?php echo $this->element('omc_customer/stock_calculation'); ?>
+		</div>
         <div class="span6">
             <?php echo $this->element('omc_customer/total_sales'); ?>
-        </div>
-        <div class="span6">
-            <?php echo $this->element('omc_customer/stock_calculation'); ?>
         </div>
     </div>
 

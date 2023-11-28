@@ -11,7 +11,7 @@ class OmcCustomerController extends OmcCustomerAppController
 
     var $name = 'OmcCustomer';
     # set the model to use
-    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange','CustomerCreditSetting','CustomerCredit','CustomerCreditPayment','Nct');
+    var $uses = array('OmcBdcDistribution', 'OmcCustomerDistribution','OmcCustomer', 'User', 'District', 'ProductType', 'Region','OmcCashCreditSummary','OmcDailySalesProduct','OmcBulkStockCalculation','Volume','OmcCustomerOrder','PumpTankSale', 'OmcCustomerPriceChange','CustomerCreditSetting','CustomerCredit','CustomerCreditPayment','Nct','OmcCustomerReport');
 
     # Set the layout to use
     var $layout = 'omc_customer_layout';
@@ -27,6 +27,16 @@ class OmcCustomerController extends OmcCustomerAppController
     function dashboard(){
         $company_profile = $this->global_company;
         $date = date('Y-m-d');
+		//Total Daily Sales Liters.
+		$dsl_bar_data = $this->OmcCustomerReport->getDailySalesLiters($company_profile['id'], $company_profile['omc_id'], '2023-08-13');
+		//Total Daily Sales Cedis.
+		$dsc_bar_data = $this->OmcCustomerReport->getDailySalesCedis($company_profile['id'], $company_profile['omc_id'], '2023-08-13');
+		//Stock Calculation.
+		$sc_bar_data = $this->OmcCustomerReport->getStockCalculation($company_profile['id'], $company_profile['omc_id'], $date);
+
+
+
+
         $last_stock_updates = $this->getStockBoard();
         $widget_data_cash_credit_summary = array();
         $widget_daily_sales_product = array();
@@ -48,13 +58,13 @@ class OmcCustomerController extends OmcCustomerAppController
         );
         foreach($widget_bulk_stock_calc as $row){
             if($row['closing_stock'] != null && $row['dipping'] != null){
-                $bar_data['x-axis'][]= $row['products'];
+                //$bar_data['x-axis'][]= $row['products'];
                 $bar_data['series'][0]['data'][]= floatval($row['closing_stock']);//meter_reading
                 $bar_data['series'][1]['data'][]= floatval($row['dipping']);//dipping
             }
         }
         $format_date =  date('l jS F Y',strtotime($date));
-        $this->set(compact('format_date','last_stock_updates','widget_data_cash_credit_summary','pie_daily_sales_product','bar_data'));
+        $this->set(compact('format_date', 'dsl_bar_data','dsc_bar_data','sc_bar_data','last_stock_updates','widget_data_cash_credit_summary','pie_daily_sales_product','bar_data'));
     }
 
     function index($type = 'get')
