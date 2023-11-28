@@ -25,7 +25,7 @@ class OmcCustomerReport extends AppModel {
 			'x-axis'=>array(),
 			'y-axis'=>array()
 		);
-		$query = ClassRegistry::init('OmcSalesForm')->getSalesFormForReport($omc_customer_id, $omc_id, $form_key);
+		$query = ClassRegistry::init('OmcSalesForm')->getSalesFormForReport($omc_id, $form_key, $omc_customer_id);
 		if($query) {
 			$form_id = $query['OmcSalesForm']['id'];
 			$primary_fields_array = array();

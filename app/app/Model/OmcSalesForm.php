@@ -80,16 +80,18 @@ class OmcSalesForm extends AppModel
         ));
     }
 
-	function getSalesFormForReport($omc_customer_id, $omc_id, $form_key, $render_type = null) {
+	function getSalesFormForReport($omc_id, $form_key, $omc_customer_id = null, $render_type = null) {
         $conditions = array(
 			'OmcSalesForm.omc_id'=>$omc_id,
 			'OmcSalesForm.form_key'=>$form_key,
-			'OmcSalesForm.deleted'=>'n',
-			'OR'=>array(
+			'OmcSalesForm.deleted'=>'n'
+		);
+		if($omc_customer_id != null) {
+			$conditions['OR']=array(
 				'FIND_IN_SET("'.$omc_customer_id.'", OmcSalesForm.omc_customer_list) > 0',
 				'FIND_IN_SET("all", OmcSalesForm.omc_customer_list) > 0'
-			),
-		);
+			);
+		}
         if($render_type != null){
             $conditions['OmcSalesForm.render_type'] = $render_type;
         }
