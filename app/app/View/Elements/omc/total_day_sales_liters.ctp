@@ -1,6 +1,6 @@
 <div class="head clearfix">
     <div class="isw-archive"></div>
-    <h1>Stock Calculation : <?php echo $format_date;?></h1>
+    <h1>Total Day Sales Ltrs - All Customers : <?php echo $format_date;?></h1>
     <ul class="buttons">
         <li>
             <a href="<?php echo $this->Html->url(array('controller' =>  $this->params['controller'], 'action' =>  'dashboard')); ?>" class="isw-refresh"></a>
@@ -9,26 +9,26 @@
 </div>
 <div class="block-fluid">
     <script type="text/javascript">
-        var sc_bar_data = <?php echo json_encode($sc_bar_data);?>;
+        var dsl_bar_data = <?php echo json_encode($dsl_bar_data);?>;
 
         $(function () {
             $(document).ready(function() {
-				var sc_options = {
+				var dsl_options = {
 					chart: {
-						renderTo: 'sc_content_bar',
+						renderTo: 'dsl_content_bar',
 						type: 'column'
 					},
 					title: {
 						text: ''
 					},
 					xAxis: {
-						categories: sc_bar_data['x-axis'],
-						/*title: {
+						categories: dsl_bar_data['x-axis'],
+						title: {
 							text: 'Products <br/> Category Tile'
-						},*/
-						/*labels: {
+						},
+						labels: {
 							enabled: false
-						}*/
+						}
 					},
 					yAxis: {
 						min: 0,
@@ -43,15 +43,9 @@
 					tooltip: {
 						valueSuffix: ' ltr'
 					},
-					plotOptions: {
-						column: {
-							pointPadding: 0.2,
-							borderWidth: 0
-						}
-					},
-					series: sc_bar_data['y-axis']
+					series: dsl_bar_data['y-axis']
 				};
-				new Highcharts.Chart(sc_options);
+				new Highcharts.Chart(dsl_options);
             });
         });
 
@@ -61,6 +55,6 @@
             width: inherit !important;
         }
     </style>
-    <div id="sc_content_bar"></div>
+    <div id="dsl_content_bar"></div>
 </div>
 
