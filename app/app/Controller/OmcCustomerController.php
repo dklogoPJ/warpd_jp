@@ -62,7 +62,7 @@ class OmcCustomerController extends OmcCustomerAppController
                 $bar_data['series'][1]['data'][]= floatval($row['dipping']);//dipping
             }
         }
-        $format_date =  date('l jS F Y',strtotime($date));
+        $format_date =  date('D jS M Y',strtotime($date));
         $this->set(compact('format_date', 'dsl_bar_data','dsc_bar_data','sc_bar_data','last_stock_updates','widget_data_cash_credit_summary','pie_daily_sales_product','bar_data'));
     }
 
