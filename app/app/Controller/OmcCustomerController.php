@@ -28,7 +28,7 @@ class OmcCustomerController extends OmcCustomerAppController
         $company_profile = $this->global_company;
         $date = date('Y-m-d');
 		//Total Daily Sales Liters.
-		$dsl_bar_data = $this->OmcCustomerReport->getDailySalesLiters($company_profile['id'], $company_profile['omc_id'], '2023-08-13');
+		$dsl_bar_data = $this->OmcCustomerReport->getDailySalesLiters($company_profile['id'], $company_profile['omc_id'], $date);
 		//Total Daily Sales Cedis.
 		$dsc_bar_data = $this->OmcCustomerReport->getDailySalesCedis($company_profile['id'], $company_profile['omc_id'], $date);
 		//Stock Calculation.
