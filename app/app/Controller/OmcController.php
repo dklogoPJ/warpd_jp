@@ -31,10 +31,10 @@ class OmcController extends   OmcAppController
 
 		$date = date('Y-m-d');
 		//Total Daily Sales Liters.
-		$dsl_bar_data = $this->OmcReport->getDailySalesLiters($company_profile['id'], '2023-08-13');
+		$dsl_bar_data = $this->OmcReport->getDailySalesLiters($company_profile['id'], $date);
 		//debug($dsl_bar_data);
 		//Total Daily Sales Cedis.
-		$dsc_bar_data = $this->OmcReport->getDailySalesCedis($company_profile['id'], '2023-08-13');
+		$dsc_bar_data = $this->OmcReport->getDailySalesCedis($company_profile['id'], $date);
 
         $products_lists = $this->get_products();
         $bdc_depot_lists = $this->get_depot_list();
@@ -69,7 +69,7 @@ class OmcController extends   OmcAppController
         $loaded_board = $this->get_loaded_board($group_depot);
         $is_connected_to_bdc = $this->is_connected_to_bdc();
 
-		$format_date =  date('l jS F Y',strtotime($date));
+		$format_date =  date('D jS M Y',strtotime($date));
 
         $this->set(compact('format_date','dsl_bar_data','dsc_bar_data','loading_board','loaded_board','company_profile','grid_data', 'liters_per_products', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists', 'products_lists', 'regions_lists', 'district_lists', 'bar_graph_data', 'pie_data','glbl_region_district','delivery_locations', 'is_connected_to_bdc'));
     }
