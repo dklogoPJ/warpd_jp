@@ -125,6 +125,20 @@ class OmcCustomerAppController extends AppController
         }
     }
 
+    function get_credit_customers($filter = true){
+        $company_profile = $this->global_company;
+        if($filter){
+            $customers = $this->OmcCustomer->getOmcCreditCustomer($company_profile['id']);
+            $cus_ids = $customers['my_products'];
+
+            return $this->get_credit_customer_list($cus_ids);
+        }
+        else{
+            return $this->get_credit_customer_list();
+        }
+    }
+    
+
 
     function getStockBoard()
     {
@@ -132,6 +146,26 @@ class OmcCustomerAppController extends AppController
         $company_profile = $this->global_company;
         $last_stock_update = $OmcCustomerStock->__getStockBoard($company_profile);
         return $last_stock_update;
+    }
+
+
+    function get_customer_name_list($id=null){
+        $company_profile = $this->global_company;
+        $conditions = array('CustomerCreditSetting.omc_customer_id' => $company_profile['id'],'CustomerCreditSetting.deleted' => 'n');
+        if($id != null){
+            $conditions['CustomerCreditSetting.omc_customer_id'] = $id;
+        }
+        $omc_customers = $this->CustomerCreditSetting->find('all', array(
+            'fields' => array('CustomerCreditSetting.customer_name', 'CustomerCreditSetting.customer_name'),
+            'conditions' => $conditions,
+            'recursive' => -1
+        ));
+        $omc_customers_lists = array();
+        foreach ($omc_customers as $value) {
+            $omc_customers_lists[] = $value['CustomerCreditSetting'];
+        }
+
+        return $omc_customers_lists;
     }
 
 }

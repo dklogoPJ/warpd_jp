@@ -9,54 +9,49 @@
 </div>
 <div class="block-fluid">
     <script type="text/javascript">
-        var bar_data = <?php echo json_encode($bar_data);?>;
+        var sc_bar_data = <?php echo json_encode($sc_bar_data);?>;
 
         $(function () {
             $(document).ready(function() {
-                var options = {
-                    chart: {
-                        renderTo: 'content_bar',
-                        type: 'bar'
-                    },
-                    title: {
-                        text: 'Stock Calculation'
-                    },
-                    subtitle: {
-                        text: ''
-                    },
-                    xAxis: {
-                        categories: bar_data['x-axis'],
-                        title: {
-                            text: null
-                        }
-                    },
-                    yAxis: {
-                        min: 0,
-                        title: {
-                            text: '',
-                            align: 'high'
-                        },
-                        labels: {
-                            overflow: 'justify'
-                        }
-                    },
-                    tooltip: {
-                        valueSuffix: ' ltr'
-                    },
-                    plotOptions: {
-                        bar: {
-                            dataLabels: {
-                                enabled: true
-                            }
-                        }
-                    },
-                    credits: {
-                        enabled: false
-                    },
-                    series: bar_data['series']
-                };
-
-                var chart_pie = new Highcharts.Chart(options);
+				var sc_options = {
+					chart: {
+						renderTo: 'sc_content_bar',
+						type: 'column'
+					},
+					title: {
+						text: ''
+					},
+					xAxis: {
+						categories: sc_bar_data['x-axis'],
+						/*title: {
+							text: 'Products <br/> Category Tile'
+						},*/
+						/*labels: {
+							enabled: false
+						}*/
+					},
+					yAxis: {
+						min: 0,
+						title: {
+							text: 'Ltr',
+							align: 'middle'
+						},
+						labels: {
+							overflow: 'justify'
+						}
+					},
+					tooltip: {
+						valueSuffix: ' ltr'
+					},
+					plotOptions: {
+						column: {
+							pointPadding: 0.2,
+							borderWidth: 0
+						}
+					},
+					series: sc_bar_data['y-axis']
+				};
+				new Highcharts.Chart(sc_options);
             });
         });
 
@@ -66,6 +61,6 @@
             width: inherit !important;
         }
     </style>
-    <div id="content_bar"></div>
+    <div id="sc_content_bar"></div>
 </div>
 

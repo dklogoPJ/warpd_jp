@@ -92,7 +92,7 @@ class MessagesController extends AppController
                     }
 
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->MessageReciever->find('all', array('conditions' => $condition_array, 'order' => "MessageReciever.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->MessageReciever->find('all', array('conditions' => $condition_array, 'order' => "MessageReciever.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->MessageReciever->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -231,7 +231,7 @@ class MessagesController extends AppController
                         }
                     }
 
-                    $data_table = $this->Message->find('all', array('conditions' => $condition_array, 'order' => "Message.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->Message->find('all', array('conditions' => $condition_array, 'order' => "Message.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->Message->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -309,7 +309,7 @@ class MessagesController extends AppController
     }
 
 
-    function sendMessage(){
+    function sendMessage($params = array()){
         $loggedUser = $this->Auth->user();
         $user_id = $loggedUser['id'];
 
@@ -362,7 +362,7 @@ class MessagesController extends AppController
                     }
 
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->MessageAddressBook->find('all', array('conditions' => $condition_array, 'order' => "MessageAddressBook.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->MessageAddressBook->find('all', array('conditions' => $condition_array, 'order' => "MessageAddressBook.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->MessageAddressBook->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;

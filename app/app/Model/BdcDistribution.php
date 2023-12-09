@@ -858,6 +858,8 @@ class BdcDistribution extends AppModel
                     'quantity'=>$order['loaded_quantity'],
                     'transporter'=>$order['transporter'],
                     'vehicle_no'=>$order['truck_no'],
+                    'region_id'=>0,
+                    'district_id'=>0,
                     'order_id'=>$order['id'],
                     'row_bg_color' => 'tr_green',
                     'order_status'=>'Complete',
@@ -877,6 +879,21 @@ class BdcDistribution extends AppModel
         else{//It exist already
             return false;
         }
+    }
+
+    function getInvoiceNo($order_id =0){
+        $bdcDistribution = $this->find('first', array(
+            'fields' => array('BdcDistribution.id'),
+            'conditions' => array('BdcDistribution.order_id' => $order_id),
+            'contain' => array('OmcBdcDistribution' => array('fields' => array('OmcBdcDistribution.invoice_number'))),
+            'recursive' => 1
+        ));
+
+       // pr($bdcDistribution);
+        if($bdcDistribution){
+            return $bdcDistribution['OmcBdcDistribution'][0]['invoice_number'];
+        }
+        return '';
     }
 
 }

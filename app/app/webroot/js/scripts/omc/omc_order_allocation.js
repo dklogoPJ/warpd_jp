@@ -59,21 +59,22 @@ var OmcOrder = {
         btn_actions.push({type: 'select', name: 'Order Status', id: 'filter_status', bclass: 'filter', onchange: self.handleGridEvent, options: order_filter});
 
         var col_models = [
-            {display: 'Order Id', name: 'id', width: 50, sortable: false, align: 'left', hide: false},
+            {display: 'ID', name: 'id', width: 50, sortable: false, align: 'left', hide: true},
+            {display: 'Order Id', name: 'omc_customer_order_id', width: 50, sortable: false, align: 'left', hide: false},
             {display: 'Order Date', name: 'order_date', width: 90, sortable: false, align: 'left', hide: false},
             //{display:'Priority', name:'omc_order_priority', width:85, sortable:false, align:'left', hide:false},
             {display: 'Time Elapsed', name: 'time_elapsed', width: 85, sortable: false, align: 'left', hide: false},
             {display: 'Customer', name: 'omc_customer_id', width: 100, sortable: false, align: 'left', hide: false},
-            {display: 'Loading Depot', name: 'depot_id', width: 120, sortable: true, align: 'left', hide: false},
-            {display: 'Product Type', name: 'product_type_id', width: 100, sortable: true, align: 'left', hide: false},
+            {display: 'Loading Depot', name: 'depot_id', width: 190, sortable: true, align: 'left', hide: false},
+            {display: 'Product Type', name: 'product_type_id', width: 140, sortable: true, align: 'left', hide: false},
             {display: 'Order Quantity', name: 'order_quantity', width: 100, sortable: true, align: 'left', hide: false},
+            {display: 'Approved Quantity', name: 'approved_quantity', width: 130, sortable: true, align: 'left', hide: false},
+            {display: 'Loaded Quantity', name: 'loaded_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'loaded_quantity-class', options: volumes}},
             {display: 'Transporter', name: 'transporter', width: 95, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:truckList}},
             {display: 'Truck No.', name: 'truck_no', width: 89, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:numbers}},
-            {display: 'Approved Quantity', name: 'approved_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'approved_quantity-class', options: volumes}},
-            {display: 'Loaded Quantity', name: 'loaded_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form: 'select', validate: 'empty,numeric', defval: '', bclass: 'loaded_quantity-class', options: volumes}},
             {display:'Loading Date', name:'loaded_date', width:80, sortable:false, align:'left', hide:false, editable:{form:'text', validate:'empty', placeholder:'dd-mm-yyyy',bclass:'datepicker', maxlength:'10', defval:jLib.getTodaysDate('mysql_flip')}},
-            {display: 'Received Quantity', name: 'received_quantity', width: 130, sortable: true, align: 'left', hide: false, editable: {form:'text', validate:'', defval:''}},
-            {display: 'GIT Status', name: 'git_status', width: 110, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:git_status}}
+            {display: 'Received Quantity', name: 'received_quantity', width: 130, sortable: true, align: 'left', hide: false}
+            //{display: 'GIT Status', name: 'git_status', width: 110, sortable: true, align: 'left', hide: false, editable: {form:'select', validate:'', defval:'', options:git_status}}
         ];
 
         if(self.connects_with_bdc) {

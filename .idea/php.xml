@@ -13,6 +13,7 @@
   <component name="PhpIncludePathManager">
     <include_path>
       <path value="$PROJECT_DIR$/app_cakephp_2_10/app/Vendor/php_excel/PHPExcel" />
+      <path value="$PROJECT_DIR$/app/app/Vendor/php_excel/PHPExcel" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="5.3.0">
@@ -20,6 +21,12 @@
   </component>
   <component name="PhpStanOptionsConfiguration">
     <option name="transferred" value="true" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/vendors/autoload.php" />
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/app/app/Vendor/autoload.php" />
+    </phpunit_settings>
   </component>
   <component name="PsalmOptionsConfiguration">
     <option name="transferred" value="true" />

@@ -6,7 +6,7 @@ var ActivityLog = {
     init:function () {
         var self = this;
         var columns = Array();
-        columns.push({display:'Activity Date', name:'created', width:80, sortable:true, align:'center', hide:false});
+        columns.push({display:'Activity Date', name:'created', width:160, sortable:true, align:'center', hide:false});
         columns.push({display:'Performed By', name:'user_full_name', width:160, sortable:true, align:'center', hide:false});
         columns.push({display:'Activity', name:'activity', width:100, sortable:true, align:'center', hide:false});
         columns.push({display:'Description', name:'description', width:600, sortable:true, align:'center', hide:false});
@@ -49,7 +49,7 @@ var ActivityLog = {
             useRp:true,
             rp:15,
             showTableToggleBtn:false,
-            height:300,
+            height:410,
             subgrid:{
                 use:false
             }

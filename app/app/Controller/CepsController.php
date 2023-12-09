@@ -95,7 +95,7 @@ class CepsController extends CepsAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -133,7 +133,7 @@ class CepsController extends CepsAppController
                                     $obj['Omc']['name'],
                                     $obj['Depot']['name'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber( $obj['Order']['approved_quantity'],'money',0),
+                                    $this->formatNumber( $obj['Order']['approved_quantity'],'number',0),
                                     $cep_feedback
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
@@ -398,7 +398,7 @@ class CepsController extends CepsAppController
                         )
                     );
 
-                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->Waybill->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -438,7 +438,7 @@ class CepsController extends CepsAppController
                             $bdc_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['bdc_approval']])? $this->waybill_feedback[$obj['Waybill']['bdc_approval']] : 'Not Yet Approved';
                             $cep_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['ceps_approval']])? $this->waybill_feedback[$obj['Waybill']['ceps_approval']] : 'Not Yet Approved';
 
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Waybill']['id'],
                                 'cell' => array(
@@ -584,6 +584,12 @@ class CepsController extends CepsAppController
     function get_attachments($order_id = null, $attachment_type =null){
         $this->autoRender = false;
         $result = $this->__get_attachments($attachment_type,$order_id);
+        $this->attachment_fire_response($result);
+    }
+
+    function delete_attachment($attachment_id = null){
+        $this->autoRender = false;
+        $result = $this->__delete_attachment($attachment_id);
         $this->attachment_fire_response($result);
     }
 

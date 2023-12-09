@@ -11,7 +11,7 @@ class OmcOrdersController extends OmcAppController
 
     var $name = 'OmcOrders';
     # set the model to use
-    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck');
+    var $uses = array('Omc','OmcBdcDistribution', 'OmcCustomer','BdcOmc','Bdc','Order','OmcCustomerOrder','Depot','ProductType','BdcDistribution','Volume','Waybill','FreightRate','DeliveryLocation','Truck', 'OmcCustomerPriceChange','AdditiveCostGeneration');
 
     # Set the layout to use
     var $layout = 'omc_layout';
@@ -104,7 +104,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -160,7 +160,7 @@ class OmcOrdersController extends OmcAppController
 
                                     $obj['Depot']['name'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber( $obj['Order']['order_quantity'],'money',0),
+                                    $this->formatNumber( $obj['Order']['order_quantity'],'number',0),
                                     $obj['Bdc']['name'],
                                     /*$this->mkt_feedback[$obj['Order']['delivery_priority']],*/
                                    // $this->ops_feedback[$obj['Order']['bdc_feedback']],
@@ -295,8 +295,8 @@ class OmcOrdersController extends OmcAppController
         $omc_customers_lists = $this->get_customer_list();
         //Get Bdcs for this Omc
         $bdc_list = $bdclists_data = $this->get_bdc_list();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -328,7 +328,7 @@ class OmcOrdersController extends OmcAppController
            // pr($export_params);
             $start_dt = $this->covertDate($export_params['Export']['exp_startdt'],'mysql').' 00:00:00';
             $end_dt =  $this->covertDate($export_params['Export']['exp_enddt'],'mysql').' 23:59:59';
-            $export_filter_bdc = $export_params['Export']['exp_filter_bdc'];
+            $export_filter_bdc = isset($export_params['Export']['exp_filter_bdc']) ? $export_params['Export']['exp_filter_bdc'] : 0;
             $type = $this->request->data['Export']['export_type'];
             $export_filter_status = isset($export_params['exp_filter_status'])? $export_params['exp_filter_status'] : 'complete_orders';
             $conditions = array(
@@ -477,10 +477,10 @@ class OmcOrdersController extends OmcAppController
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
-                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity'))
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity','OmcCustomerOrder.approved_quantity'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -532,9 +532,14 @@ class OmcOrdersController extends OmcAppController
                                 $loaded_date = $this->covertDate($obj['Order']['loaded_date'],'mysql_flip');
                             }
 
-                            $approved_quantity = '';
-                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'money',0);
                             
+                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
+                            $approved_quantity = $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0);
+
+                            //echo $received_quantity;
+                            //echo $received_quantity;
+                            //pr($obj['Order']);
+                            //exit;
                             if($received_quantity > 0){
                                 $git_status ='Discharged';
                             }else{
@@ -542,29 +547,29 @@ class OmcOrdersController extends OmcAppController
                             }
 
                             //$git_status = '';
-                            if($obj['Order']['approved_quantity']){
-                                $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'money',0);
-                            }
+                            //if($obj['Order']['approved_quantity']){
+                             //   $approved_quantity = $this->formatNumber($obj['Order']['approved_quantity'],'number',0);
+                          //  }
                             $loaded_quantity = '';
                             if($obj['Order']['loaded_quantity']){
-                                $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'money',0);
+                                $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
                             }
 
                             $cell = array(
                                 $obj['Order']['id'],
+                                $obj['Order']['omc_customer_order_id'],
                                 $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
                                 //$obj['Order']['omc_order_priority'],
                                 $order_time_elapsed,
                                 $obj['OmcCustomer']['name'],
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
-                                $this->formatNumber($obj['Order']['order_quantity'],'money',0),
-                                /*,$mkt_feed*/
-                                $obj['Order']['transporter'],
-                                $obj['Order']['truck_no'],
-                                /*$obj['Bdc']['name'],*/
+                                $this->formatNumber($obj['Order']['order_quantity'],'number',0),
                                 $approved_quantity,
                                 $loaded_quantity,
+                                $obj['Order']['transporter'],
+                                $obj['Order']['truck_no'],
+                                /*,$mkt_feed*/
                                 $loaded_date,
                                 $received_quantity,
                                 $git_status,
@@ -635,6 +640,26 @@ class OmcOrdersController extends OmcAppController
 
                     if ($this->Order->save($this->sanitize($data))) {
                         $order_id  = $this->Order->id;
+                        $orders = $this->Order->find('first', array(
+                            'conditions' => array('Order.id' => $order_id),
+                            'recursive' => -1
+                        ));
+
+                        $additive_data = array('AdditiveCostGeneration'=>array(
+                            'omc_id' => $orders['Order']['omc_id'],
+                            'order_id' => $order_id,
+                            'loading_quantity' => $orders['Order']['loaded_quantity'],
+                            'loading_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s'),
+                            'truck_no' => $orders['Order']['truck_no'],
+                            'depot_id' => $orders['Order']['depot_id'],
+                            'omc_customer_id' => $orders['Order']['omc_customer_id'],
+                            'product_type_id' => $orders['Order']['product_type_id'],
+                            'order_date' => $this->covertDate($orders['Order']['loaded_date'],'mysql').' '.date('H:i:s')
+                        
+                        ));
+                       
+                        $this->AdditiveCostGeneration->save($this->sanitize($additive_data));
+                    
                         if($auto_flow){
                             $order_data = $this->Order->find('first', array(
                                 'conditions' => array('Order.id' => $order_id),
@@ -711,8 +736,8 @@ class OmcOrdersController extends OmcAppController
         $omc_customers_lists = $this->get_customer_list();
 
         $bdc_list = $bdclists_data = $this->get_bdc_list();
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -770,7 +795,7 @@ class OmcOrdersController extends OmcAppController
                     /** @var $filter  */
                     $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'incomplete_orders' ;
                     /** Search string */
-                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] :50;
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
@@ -809,7 +834,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name','OmcCustomer.credit_limit','OmcCustomer.credit_days'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -838,6 +863,7 @@ class OmcOrdersController extends OmcAppController
                             }*/
 
                             $depot_id =  $obj['Depot']['id'];
+                            //pr($depot_id);
                             $depot_name = '';
                             if($depot_id > 0){
                                 $depot_name = $obj['Depot']['name'];
@@ -853,12 +879,14 @@ class OmcOrdersController extends OmcAppController
                                     $obj['OmcCustomer']['name'],
                                    // $obj['OmcCustomer']['credit_limit'],
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'number',0),
+                                    $obj['OmcCustomerOrder']['intended_delivery_location'],
+                                    $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
-                                    $marketing_feed,
                                     $approve,
+                                    //$depot_name = $obj['Depot']['name'],
                                     $depot_name,
-                                    $obj['OmcCustomerOrder']['intended_delivery_location']
+                                    $marketing_feed
                                 ),
                                 'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
                                     'order_status'=>$obj['OmcCustomerOrder']['order_status']
@@ -923,6 +951,7 @@ class OmcOrdersController extends OmcAppController
                                     'depot_id'=>$order_customer['OmcCustomerOrder']['depot_id'],
                                     'product_type_id'=>$order_customer['OmcCustomerOrder']['product_type_id'],
                                     'order_quantity'=>$order_customer['OmcCustomerOrder']['order_quantity'],
+                                    //'approved_quantity'=>$order_customer['OmcCustomerOrder']['approved_quantity'],
                                     'omc_customer_order_id'=>$order_customer['OmcCustomerOrder']['id'],
                                     'omc_order_priority'=>$order_customer['OmcCustomerOrder']['delivery_priority'],
                                     'order_status'=>'New From Dealer',
@@ -992,8 +1021,8 @@ class OmcOrdersController extends OmcAppController
          //Get Bdcs for this Omc
          $bdc_list = $this->get_bdc_list('crm');
          $bdclists_data = $this->get_bdc_list();*/
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -1020,10 +1049,11 @@ class OmcOrdersController extends OmcAppController
         $order_filter = $this->order_filter;
 
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+        $volumes = $this->Volume->getVolsList();
 
         $graph_title = $group_by_title.", Orders-Consolidated";
 
-        $this->set(compact('omc_customers_lists', 'products_lists','depot_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+        $this->set(compact('omc_customers_lists', 'products_lists','depot_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));
     }
 
 
@@ -1090,7 +1120,7 @@ class OmcOrdersController extends OmcAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name','OmcCustomer.credit_limit','OmcCustomer.credit_days'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomerOrder->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerOrder.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomerOrder->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1126,9 +1156,10 @@ class OmcOrdersController extends OmcAppController
                                     $this->covertDate($obj['OmcCustomerOrder']['order_date'],'mysql_flip'),
                                     //$order_time_elapsed,
                                     $obj['OmcCustomer']['name'],
-                                    $this->formatNumber($obj['OmcCustomer']['credit_limit'],'money',2),
+                                    $this->formatNumber($obj['OmcCustomer']['credit_limit'],'number',2),
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'money',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['order_quantity'],'number',0),
+                                    $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0),
                                     //$obj['Bdc']['name'],
                                     //$obj['Depot']['name'],
                                     $priority,
@@ -1193,8 +1224,8 @@ class OmcOrdersController extends OmcAppController
          //Get Bdcs for this Omc
          $bdc_list = $this->get_bdc_list('crm');
          $bdclists_data = $this->get_bdc_list();*/
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $group_by = 'monthly';
         $group_by_title = date('F');
 
@@ -1223,8 +1254,11 @@ class OmcOrdersController extends OmcAppController
         $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
 
         $graph_title = $group_by_title.", Orders-Consolidated";
+        $volumes = $this->Volume->getVolsList();
+        
 
-        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback'));
+
+        $this->set(compact('omc_customers_lists', 'products_lists','graph_title','g_data','order_filter','omc_dealer_feedback','omc_dealer_marketing_feedback','volumes'));
     }
 
 
@@ -1288,7 +1322,7 @@ class OmcOrdersController extends OmcAppController
                         'Region'=>array('fields' => array('Region.id', 'Region.name')),
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->BdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "BdcDistribution.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->BdcDistribution->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "BdcDistribution.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->BdcDistribution->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1310,7 +1344,7 @@ class OmcOrdersController extends OmcAppController
                                 $obj['Bdc']['name'],*/
                                 $obj['Depot']['name'],
                                 $obj['ProductType']['name'],
-                                $this->formatNumber( $obj['BdcDistribution']['quantity'],'money',0),
+                                $this->formatNumber( $obj['BdcDistribution']['quantity'],'number',0),
                                 /*$obj['Region']['name'],
                                 $obj['District']['name'],*/
                                 $obj['BdcDistribution']['vehicle_no']
@@ -1334,7 +1368,8 @@ class OmcOrdersController extends OmcAppController
                                     'record_origin'=>$obj['BdcDistribution']['record_origin'],
                                     'order_status'=>$obj['BdcDistribution']['order_status'],
                                     'order_id'=>$obj['BdcDistribution']['order_id'],
-                                    'depot_id'=>$obj['Depot']['id']
+                                    'depot_id'=>$obj['Depot']['id'],
+                                    'product_type_id'=>$obj['BdcDistribution']['product_type_id']
                                 )
                             );
                             if($company_profile['available'] != 'Available'){
@@ -1541,6 +1576,7 @@ class OmcOrdersController extends OmcAppController
                     $gdata = $this->OmcBdcDistribution->find('all',array(
                         'conditions'=>array('OmcBdcDistribution.bdc_distribution_id'=>$_POST['id']),
                         'contain' => array(
+                            'BdcDistribution'=>array('fields' => array('BdcDistribution.id', 'BdcDistribution.product_type_id')),
                             'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
                             'DeliveryLocation'=>array('fields' => array('DeliveryLocation.id', 'DeliveryLocation.name')),
                             'Region'=>array('fields' => array('Region.id', 'Region.name'))
@@ -1550,14 +1586,31 @@ class OmcOrdersController extends OmcAppController
 
                     if($gdata){
                         foreach ($gdata as $obj) {
+                            $unit_price = $obj['OmcBdcDistribution']['unit_price'];
+                            $quantity = $obj['OmcBdcDistribution']['quantity'];
+                            $total_amount = $obj['OmcBdcDistribution']['total_amount'];
+
+                            if(!$unit_price) {
+                                $price = $this->OmcCustomerPriceChange->getProductPumpPrice($obj['OmcBdcDistribution']['omc_customer_id'], $obj['BdcDistribution']['product_type_id']);
+                                if($price && $price != 0) {
+                                    $unit_price = $price;
+                                }
+
+                                if($unit_price) {
+                                    $unit_price = floatval($unit_price);
+                                    $quantity = floatval($quantity);
+                                    $total_amount = $unit_price * $quantity;
+                                }
+                            }
+
                             $return_arr[] = array(
                                 'id' => $obj['OmcBdcDistribution']['id'],
                                 'cell' => array(
                                     $obj['OmcBdcDistribution']['invoice_number'],
                                     $obj['OmcCustomer']['name'],
-                                    $obj['OmcBdcDistribution']['unit_price'],
-                                    $this->formatNumber($obj['OmcBdcDistribution']['quantity'],'money',0),
-                                    $this->formatNumber($obj['OmcBdcDistribution']['total_amount'],'money',0),
+                                    $unit_price,
+                                    $this->formatNumber($quantity,'number',0),
+                                    $this->formatNumber($total_amount,'number',0),
                                     $obj['Region']['name'],
                                     $obj['DeliveryLocation']['name'],
                                     $obj['OmcBdcDistribution']['transporter'],
@@ -1592,12 +1645,13 @@ class OmcOrdersController extends OmcAppController
         $volumes = $this->Volume->getVolsList();
         $truckList = $this->Truck->getTruckList();
         $numbers = $this->Truck->getTruckNo();
-
+        $all_customers_products_prices = $this->OmcCustomerPriceChange->getAllProductsPumpPrices($company_profile['id']);
         $tr_year = date("y");
         $invoice_no = $tr_year.'00001';
+        $inv_no = 'JP-IN/'.(date('y')).'/'. (date('d'));
 
 
-        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no'));
+        $this->set(compact('volumes','company_profile', 'omc_customers_lists','bdc_depot_lists', 'bdc_lists','my_bdc_list_ids', 'products_lists', 'regions_lists', 'district_lists','glbl_region_district','delivery_locations','truckList','numbers','invoice_no', 'all_customers_products_prices','inv_no'));
 
     }
 
@@ -1778,7 +1832,7 @@ class OmcOrdersController extends OmcAppController
                         )
                     );
 
-                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->Waybill->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1797,7 +1851,7 @@ class OmcOrdersController extends OmcAppController
                             $bdc_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['bdc_approval']])? $this->waybill_feedback[$obj['Waybill']['bdc_approval']] : 'Not Yet Approved';
                             $cep_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['ceps_approval']])? $this->waybill_feedback[$obj['Waybill']['ceps_approval']] : 'Not Yet Approved';
 
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Waybill']['id'],
                                 'cell' => array(
@@ -1945,10 +1999,360 @@ class OmcOrdersController extends OmcAppController
         $this->attachment_fire_response($result);
     }
 
+    function delete_attachment($attachment_id = null){
+        $this->autoRender = false;
+        $result = $this->__delete_attachment($attachment_id);
+        $this->attachment_fire_response($result);
+    }
+
     function attach_files(){
         $this->autoRender = false;
         $upload_data = $this->__attach_files();
         $this->attachment_fire_response($upload_data);
     }
+
+
+    function git_status($type = 'get')
+    {
+        $permissions = $this->action_permission;
+        $my_bdc_list = $this->get_bdc_omc_list();//Bdc this Omc is connected with on this system
+        $my_bdc_list_ids = array();
+        foreach($my_bdc_list as $arr){
+            $my_bdc_list_ids[] = $arr['id'];
+        }
+
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+
+            $company_profile = $this->global_company;
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** @var $filter  */
+                    $filter =   isset($_POST['filter']) ? $_POST['filter'] : 0 ;
+                    /** @var $filter  */
+                    $filter_status =   isset($_POST['filter_status']) ? $_POST['filter_status'] : 'incomplete_orders' ;
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $group_depot = ClassRegistry::init('User')->getDepotGroup($authUser['id']);
+                    $condition_array = array(
+                        'Order.omc_id' => $company_profile['id'],
+                        'Order.deleted' => 'n'
+                    );
+                    if($group_depot > 0){
+                        $condition_array['Order.depot_id'] = $group_depot;
+                    }
+                    if($filter != 0){
+                        $condition_array['Order.bdc_id'] = $filter;
+                    }
+                    if($filter_status == 'incomplete_orders'){
+                        $condition_array['NOT'] = array('Order.order_status'=>'Complete');
+                    }
+                    else{
+                        $condition_array['Order.order_status'] = 'Complete';
+                    }
+
+                    if (!empty($search_query)) {
+                        if ($qtype == 'id') {
+                            $condition_array['Order.id'] = $search_query;
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
+
+                    $contain = array(
+                        'Bdc'=>array('fields' => array('Bdc.id', 'Bdc.name')),
+                        'Depot'=>array('fields' => array('Depot.id', 'Depot.name')),
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name')),
+                        'OmcCustomerOrder'=>array('fields' => array('OmcCustomerOrder.id', 'OmcCustomerOrder.received_quantity','OmcCustomerOrder.approved_quantity'))
+                    );
+                    // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $bigger_time = date('Y-m-d H:i:s');
+                            if($obj['Order']['order_status'] == 'Complete'){
+                                $bigger_time = $obj['Order']['bdc_modified'];
+                                if(!$bigger_time){
+                                    if($company_profile['available'] != 'Available'){
+                                        $bigger_time = $obj['Order']['omc_created'];
+                                        if($obj['Order']['omc_modified']){
+                                            $bigger_time = $obj['Order']['omc_modified'];
+                                        }
+                                    }
+                                    else{
+                                        $bigger_time = $obj['Order']['omc_modified'];
+                                    }
+                                }
+
+                                $time_hr = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'hours');
+                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
+                                $order_time_elapsed = $time_hr.' hr(s)';
+                            }
+                            else{
+                                $time_hr = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'hours');
+                                // $time_days = $this->count_time_between_dates($obj['Order']['omc_created'],$bigger_time,'days');
+                                $order_time_elapsed =  $time_hr.' hr(s)';
+                            }
+
+                            //If Orders are being processed by BDC, Omc can't edit that order, unless that order is still blue (New which must be edited with higher clearance right)
+                            $st = $obj['Order']['order_status'];
+                            $edit_row = $obj['Order']['edit_row'];
+                            //debug($st);
+                            if($st == 'New' || $st == 'New From Dealer'){
+
+                            }
+                            else{
+                                $edit_row = 'no';
+                            }
+                            //debug($edit_row);
+                            $ops_feed = isset($this->ops_feedback[$obj['Order']['bdc_feedback']]) ? $this->ops_feedback[$obj['Order']['bdc_feedback']] : '';
+                            //$fna_feed = isset($this->fna_feedback[$obj['Order']['finance_approval']]) ? $this->fna_feedback[$obj['Order']['finance_approval']] : '';
+                            $mkt_feed = isset($this->mkt_feedback[$obj['Order']['delivery_priority']]) ? $this->mkt_feedback[$obj['Order']['delivery_priority']] : '';
+                            $loaded_date = '';
+                            if($obj['Order']['loaded_date']){
+                                $loaded_date = $this->covertDate($obj['Order']['loaded_date'],'mysql_flip');
+                            }
+
+                            $approved_quantity = '';
+                            $received_quantity = $this->formatNumber($obj['OmcCustomerOrder']['received_quantity'],'number',0);
+                         
+
+                            if($received_quantity > 0){
+                                $git_status ='Discharged';
+                            }else{
+                                $git_status ='GIT';
+                            }
+
+                            //$git_status = '';
+                            if($obj['OmcCustomerOrder']['approved_quantity']){
+                                $approved_quantity = $this->formatNumber($obj['OmcCustomerOrder']['approved_quantity'],'number',0);
+                            }
+                            $loaded_quantity = '';
+                            if($obj['Order']['loaded_quantity']){
+                                $loaded_quantity = $this->formatNumber($obj['Order']['loaded_quantity'],'number',0);
+                            }
+                            
+
+                            $cell = array(
+                                $obj['Order']['omc_customer_order_id'],
+                                $this->covertDate($obj['Order']['order_date'],'mysql_flip'),
+                                $order_time_elapsed,
+                                $obj['OmcCustomer']['name'],
+                                $obj['Depot']['name'],
+                                $obj['ProductType']['name'],
+                                $this->formatNumber($obj['Order']['order_quantity'],'number',0),
+                                
+                                $obj['Order']['transporter'],
+                                $obj['Order']['truck_no'],
+                                $approved_quantity,
+                                $loaded_quantity,
+                                $loaded_date,
+                                $received_quantity,
+                                $git_status,
+                                /*$ops_feed */
+                                // $fna_feed,
+                            );
+
+                            if($this->is_connected_to_bdc()) {
+                                if(isset($obj['Bdc']) && isset($obj['Bdc']['name'])) {
+                                    array_splice( $cell, 9, 0, $obj['Bdc']['name']);
+                                } else {
+                                    array_splice( $cell, 9, 0, '---');
+                                }
+                                $cell[] = $ops_feed;
+                            }
+                            $return_arr[] = array(
+                                'id' => $obj['Order']['id'],
+                                'cell' => $cell,
+                                'extra_data' => array(//Sometime u need certain data to be stored on the main tr at the client side like the referencing table id for editing
+                                    'record_origin'=>$obj['Order']['record_origin'],
+                                    'order_status'=>$obj['Order']['order_status'],
+                                    'product_type_id'=>$obj['ProductType']['id'],
+                                    'product_type_name'=>$obj['ProductType']['name'],
+                                    'depot_id'=>$obj['Depot']['id'],
+                                    'depot_name'=>$obj['Depot']['name']
+                                ),
+                                'property'=>array(
+                                    'bg_color'=>$obj['Order']['row_bg_color'],
+                                    'edit_row'=> $edit_row
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if(!in_array('E',$permissions)){
+                        return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                    }
+                    $auto_flow = false;
+                    $bdc_id = isset($_POST['bdc_id']) ? $_POST['bdc_id'] : 0;
+                    $data = array('Order' => $_POST);
+                    /*$data['Order']['order_date'] = $this->covertDate($_POST['order_date'],'mysql').' '.date('H:i:s');*/
+                    $data['Order']['omc_modified'] = date('Y-m-d H:i:s');
+                    $data['Order']['omc_modified_by'] = $authUser['id'];
+                    $data['Order']['edit_row'] = 'no'; //
+                    unset( $data['Order']['extra']);
+                    if(in_array($bdc_id, $my_bdc_list_ids)){
+                        unset( $data['Order']['approved_quantity']);
+                        unset( $data['Order']['loaded_quantity']);
+                        unset( $data['Order']['loaded_date']);
+                        $data['Order']['record_type'] = 'bdc'; //BDC must respond to this order
+                        $auto_flow = false;
+                    }
+                    else{
+                        $data['Order']['row_bg_color'] = 'tr_green';
+                        $data['Order']['order_status'] = 'Complete';
+                        $data['Order']['record_type'] = 'omc'; // omc is not connected with this bdc
+                        $data['Order']['depot_loadding_approval'] = 'Loaded';
+                        $data['Order']['loaded_date'] = $this->covertDate($_POST['loaded_date'],'mysql').' '.date('H:i:s');
+                        $auto_flow = true;
+                    }
+
+                    if ($this->Order->save($this->sanitize($data))) {
+                        $order_id  = $this->Order->id;
+                        if($auto_flow){
+                            $order_data = $this->Order->find('first', array(
+                                'conditions' => array('Order.id' => $order_id),
+                                'recursive' => -1
+                            ));
+                            $order  = $order_data['Order'];
+                            //This Order needs no BDC input so quickly approve his orders and push to distribution
+                            $order['waybill_date'] = '';
+                            $order['waybill_id'] = '';
+                            //Push to BDC distribution
+                            $this->BdcDistribution->addDistribution($order,'omc',$authUser['id']);
+                            $order['bdc_distribution_id'] = $this->BdcDistribution->id;
+                            //Push to OMC distribution
+                            $this->OmcBdcDistribution->addDistribution($order);
+                            //Update OmcCustomerOrder with approved quantity and loaded quantity
+                            $this->OmcCustomerOrder->updateLoadedQtyApprovedQty($order);
+                        }
+                        else{
+                            /** Notify BDC **/
+                            $send_params = array(
+                                'title'=>$company_profile['name'].', Order Allocation',
+                                'content'=>'New order = '.$data['Order']['id'].' has been allocated to you.',
+                                'sender'=>$authUser['id'],
+                                'sender_type'=>'blast',
+                                'entity'=>'bdc',
+                                'entity_id'=>$data['Order']['bdc_id'],
+                                'include_this_entity'=>false,
+                                'msg_type'=>'system'
+                            );
+                            $this->sendMessage($send_params);
+                        }
+                        //Activity Log
+                        $log_description = $this->getLogMessage('AllocateOrder');
+                        $this->logActivity('Order',$log_description);
+
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved', 'id'=>$this->Order->id));
+                        }
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occured.'));
+                    }
+                    //echo debug($data);
+                    break;
+
+                case 'load':
+
+                    break;
+
+                case 'delete':
+                    if(!in_array('D',$permissions)){
+                        return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                    }
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('Order');
+                    $result = $modObj->updateAll(
+                        $this->sanitize(array('Order.deleted' => "'y'")),
+                        $this->sanitize(array('Order.id' => $ids))
+                    );
+                    if ($result) {
+                        echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+
+        $products_lists = $this->get_products();
+        $depot_lists = $this->get_depot_list();
+        $omc_customers_lists = $this->get_customer_list();
+
+        $bdc_list = $bdclists_data = $this->get_bdc_list();
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
+        $group_by = 'monthly';
+        $group_by_title = date('F');
+
+        $bdclists =array(array('name'=>'All','value'=>0));
+        $bdc_depots  =array();
+        foreach($bdclists_data as $arr){
+            $bdclists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+            $bdc_depots[$arr['id']] = $arr;
+        }
+
+        $order_filter = $this->order_filter;
+
+        $g_data =  $this->get_orders($start_dt,$end_dt,$group_by,null);
+
+        $graph_title = $group_by_title.", Orders-Consolidated";
+
+        $volumes = $this->Volume->getVolsList();
+        $truckList = $this->Truck->getTruckList();
+        $numbers = $this->Truck->getTruckNo();
+        $git_status = array(
+            '0'=>array(
+                'id'=>'GIT',
+                'name'=>'GIT'
+            ),
+            '1'=>array(
+                'id'=>'Discharged',
+                'name'=>'Discharged'
+            )
+        );
+
+        $this->set(compact('omc_customers_lists','depot_lists', 'products_lists','bdc_list','graph_title','g_data','bdclists','order_filter','bdc_depots','volumes','my_bdc_list_ids','numbers','truckList','git_status'));
+    }
+
+
+
 
 }

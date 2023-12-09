@@ -29,9 +29,7 @@
  * @link http://book.cakephp.org/view/1358/AJAX
  */
 class TableFormHelper extends AppHelper {
-
-
-    function render_preview($name,$columns = array(),$data=array(),$class='table table-bordered'){
+    function render_preview($name, $columns = array(), $data=array(), $class='table table-bordered'){
         $columns_count = count($columns);
         $table = "<table id='{$name}' width='100%' class='{$class}'>";
             $table .= "<thead>";
@@ -60,7 +58,7 @@ class TableFormHelper extends AppHelper {
     }
 
 
-    function render($name,$columns = array(),$data=array(),$class='table table-bordered'){
+    function render($name, $columns = array(), $data=array(), $class='table table-bordered'){
         $table = "<table id='{$name}' width='100%' class='form-tables {$class}'>";
         $table .= "<thead>";
         $table .= "<tr>";
@@ -106,6 +104,92 @@ class TableFormHelper extends AppHelper {
         $table .= "</table>";
 
         return array('table'=>$table,"fields"=>$fields);
+    }
+
+
+    function renderDailySalesTableForm ($param , $class='table table-bordered') {
+        $table = "<table width='100%' class='form-tables {$class}'>";
+        $table .= "<thead>";
+        $table .= "<tr>";
+
+        foreach($param['headers'] as $column){
+            $table .= "<th>";
+            $table .= $column['name'];
+            $table .= "</th>";
+        }
+        $table .= "</tr>";
+        $table .= "</thead>";
+
+        $table .= "<tbody>";
+        //Render Data here
+        foreach($param['fields'] as $tr_id => $row_columns){
+            $table .= "<tr data-id='{$tr_id}'>";
+            foreach($row_columns as $field){
+                $field_id = $field['id'];
+                $row_id = $field['row_id'];
+                $element_column_id = $field['element_column_id'];
+                $cell_value = $field['value'];
+                if($field['has_attachments']) {
+                    $str = '';
+                    foreach($field['attachments'] as $file){
+                        $link_name = $file['name'];
+                        $link_url = $file['url'];
+                        $link = "<a href='{$link_url}' target='_blank'>{$link_name}</a>";
+                        $str = $str.''.$link.'<br />';
+                    }
+                    if(trim($str) != '') {
+                        $cell_value = trim($str);
+                    }
+                }
+                if(is_numeric($cell_value)){
+                    $cell_value = $this->formatNumber($cell_value,'money',2);
+                }
+                $table .= "<td data-id='{$field_id}' data-row-id='{$row_id}'  data-column-id='{$element_column_id}'>";
+                $table .= $cell_value;
+                $table .= "</td>";
+            }
+            $table .= "</tr>";
+        }
+        $table .= "</tbody>";
+
+        $table .= "</table>";
+
+       return $table;
+    }
+
+
+    function renderDailySalesReport ($param , $class='table table-bordered') {
+        $table = "<table width='100%' class='{$class}'>";
+        $table .= "<thead>";
+        $table .= "<tr>";
+
+        foreach($param['headers'] as $column){
+            $table .= "<th>";
+            $table .= $column;
+            $table .= "</th>";
+        }
+        $table .= "</tr>";
+        $table .= "</thead>";
+        $table .= "<tbody>";
+        //Render Data here
+        foreach($param['fields'] as $row_columns){
+            $table .= "<tr>";
+            foreach($row_columns as $field){
+                $cell_value = $field;
+                if(is_numeric($cell_value)){
+                    $cell_value = $this->formatNumber($cell_value,'money',2);
+                }
+                $table .= "<td>";
+                $table .= $cell_value;
+                $table .= "</td>";
+            }
+            $table .= "</tr>";
+        }
+        $table .= "</tbody>";
+
+        $table .= "</table>";
+
+        return $table;
     }
 
 }

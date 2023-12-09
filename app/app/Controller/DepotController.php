@@ -96,7 +96,7 @@ class DepotController extends DepotAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Order->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Order.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Order->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -126,7 +126,7 @@ class DepotController extends DepotAppController
                             if($depot_feedback == 'Not Loaded'){
                                 $loaded_date = '';
                             }
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Order']['id'],
                                 'cell' => array(
@@ -138,7 +138,7 @@ class DepotController extends DepotAppController
                                     $obj['Omc']['name'],
                                     $obj['Cep']['name']." (Approved)",
                                     $obj['ProductType']['name'],
-                                    $this->formatNumber( $obj['Order']['approved_quantity'],'money',0),
+                                    $this->formatNumber( $obj['Order']['approved_quantity'],'number',0),
                                     $obj['Order']['truck_no'],
                                     $depot_feedback,
                                     $loaded_quantity,
@@ -441,7 +441,7 @@ class DepotController extends DepotAppController
                         )
                     );
 
-                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 2));
+                    $data_table = $this->Waybill->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "Waybill.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 2));
                     $data_table_count = $this->Waybill->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -481,7 +481,7 @@ class DepotController extends DepotAppController
                             $bdc_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['bdc_approval']])? $this->waybill_feedback[$obj['Waybill']['bdc_approval']] : 'Not Yet Approved';
                             $cep_waybill_feedback = isset($this->waybill_feedback[$obj['Waybill']['ceps_approval']])? $this->waybill_feedback[$obj['Waybill']['ceps_approval']] : 'Not Yet Approved';
 
-                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'money',0);
+                            $loaded_quantity = empty($obj['Order']['loaded_quantity']) ? '':$this->formatNumber( $obj['Order']['loaded_quantity'],'number',0);
                             $return_arr[] = array(
                                 'id' => $obj['Waybill']['id'],
                                 'cell' => array(
@@ -627,6 +627,12 @@ class DepotController extends DepotAppController
     function get_attachments($order_id = null, $attachment_type =null){
         $this->autoRender = false;
         $result = $this->__get_attachments($attachment_type,$order_id);
+        $this->attachment_fire_response($result);
+    }
+
+    function delete_attachment($attachment_id = null){
+        $this->autoRender = false;
+        $result = $this->__delete_attachment($attachment_id);
         $this->attachment_fire_response($result);
     }
 

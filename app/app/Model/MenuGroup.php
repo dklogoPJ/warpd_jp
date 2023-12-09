@@ -93,7 +93,7 @@ class MenuGroup extends AppModel
         return $arr;
     }
 
-    function getGroupMenus($type,$group_id,$comp_id){
+    function getGroupMenus($type, $group_id,$comp_id){
         if ($type == 'bdc') {
             $find_id = 'bdc_id';
         }
@@ -139,7 +139,8 @@ class MenuGroup extends AppModel
                     'controller'=>$d['Menu']['controller'],
                     'action'=>$d['Menu']['action'],
                     'icon'=>$d['Menu']['icon'],
-                    'permission'=>$d['MenuGroup']['permission']
+                    'permission'=>$d['MenuGroup']['permission'],
+                    'url_type'=>$d['Menu']['url_type']
                 );
             }
             else{
@@ -148,7 +149,8 @@ class MenuGroup extends AppModel
                     'controller'=>$d['Menu']['controller'],
                     'action'=>$d['Menu']['action'],
                     'icon'=>$d['Menu']['icon'],
-                    'permission'=>$d['MenuGroup']['permission']
+                    'permission'=>$d['MenuGroup']['permission'],
+                    'url_type'=>$d['Menu']['url_type']
                 );
             }
 
@@ -157,5 +159,15 @@ class MenuGroup extends AppModel
         //debug($arr);
 
         return $arr;
+    }
+
+
+    function deleteMenuGroupsByMenuId($menu_id, $user_id) {
+        return $this->updateAll(
+            array('deleted' => "'y'",'modified_by'=>$user_id),
+            array(
+                'MenuGroup.id' => $menu_id,
+            )
+        );
     }
 }

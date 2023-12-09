@@ -5,6 +5,8 @@
       <list>
         <option value="$PROJECT_DIR$/app_cakephp_2_10/tests" />
         <option value="$PROJECT_DIR$/app_cakephp_2_10/app/tests" />
+        <option value="$PROJECT_DIR$/app/app/tests" />
+        <option value="$PROJECT_DIR$/app/tests" />
       </list>
     </option>
   </component>

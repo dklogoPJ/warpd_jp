@@ -262,7 +262,7 @@ class OmcStockController extends OmcAppController
                         'OmcCustomerTank'
                     );
                     $fields = array('OmcCustomer.id', 'OmcCustomer.name');
-                    $data_table = $this->OmcCustomer->find('all', array('fields' => $fields,'conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomer.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomer->find('all', array('fields' => $fields,'conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomer.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomer->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -302,7 +302,7 @@ class OmcStockController extends OmcAppController
                                 }
 
 
-                                //$type_minstocklevel_str .= $dt['type'].'=>'.$this->formatNumber(preg_replace('/,/','',$dt['min_stock_level']),'money',0).' | ';
+                                //$type_minstocklevel_str .= $dt['type'].'=>'.$this->formatNumber(preg_replace('/,/','',$dt['min_stock_level']),'number',0).' | ';
                             }*/
 
                             $return_arr[] = array(
@@ -434,5 +434,21 @@ class OmcStockController extends OmcAppController
 
         $this->set(compact('tanks_types_opt','tank_status','tank_names'));
     }
+
+
+    function additive_stock_wac() {
+
+	}
+
+
+    function additives_doping_ratios() {
+
+	}
+
+
+    function additive_cost_generation() {
+
+	}
+
 
 }

@@ -30,6 +30,10 @@
         cursor: pointer;
     }
 
+    .date-filed-large {
+        width: 130px !important;
+    }
+
     th,td{
         white-space: nowrap !important;
     }
@@ -65,7 +69,7 @@
                     </div>
                     <div class="span2" style="">Record Date:</div>
                     <div class="span2">
-                        <?php echo $this->Form->input('record_dt', array('type'=>'text','id'=>'record_dt', 'class' => 'datepicker', 'required', 'div' => false, 'label' => false)); ?>
+                        <?php echo $this->Form->input('record_dt', array('type'=>'text','id'=>'record_dt', 'class' => 'datepicker date-filed-large', 'required', 'div' => false, 'label' => false)); ?>
                     </div>
 
                     <!--<div class="span2" style="width: 80px;">&nbsp;</div>-->

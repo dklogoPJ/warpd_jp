@@ -41,7 +41,7 @@ var JSObj = {
                 {display:'Id', name:'id', width:50, sortable:true, align:'left', hide:true},
                 {display:'Rate Category', name:'freight_rate_category_id', width:250, sortable:true, align:'center', hide:false, editable:{form:'select', validate:'', defval:'', options:rate_cat_options}},
                 {display:'Distance (km)', name:'distance', width:120, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'empty,onlyNumber', defval:''}},
-                {display:'Rate', name:'rate', width:120, sortable:true, align:'center', hide:false, editable:{form:'text', validate:'empty,decimalNumber', defval:''}}
+                {display:'Rate', name:'rate', width:120, sortable:true, align:'center',format_number:false, hide:false, editable:{form:'text', validate:'empty,decimalNumber', defval:''}}
 
             ],
             formFields:btn_actions,

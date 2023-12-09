@@ -10,7 +10,8 @@ class OmcAdminController extends OmcAppController
 
     var $name = 'OmcAdmin';
     # set the model to use
-    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck');
+    var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct','CustomerCreditSetting',
+                        'LubeSetting','LpgSetting','AdditiveSetup');
     # Set the layout to use
     var $layout = 'omc_layout';
 
@@ -64,7 +65,7 @@ class OmcAdminController extends OmcAppController
 
                     $contain = array('Group');
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->User->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "User.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->User->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -359,7 +360,7 @@ class OmcAdminController extends OmcAppController
                         'Region'=>array('fields' => array('Region.id', 'Region.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomer->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomer.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->OmcCustomer->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomer.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->OmcCustomer->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -372,8 +373,9 @@ class OmcAdminController extends OmcAppController
                                 'cell' => array(
                                     $obj['OmcCustomer']['id'],
                                     $obj['OmcCustomer']['name'],
-                                    /*$obj['Region']['name'],
-                                    $obj['District']['name'],*/
+                                    $obj['OmcCustomer']['owner'],
+                                    $obj['OmcCustomer']['dealer'],
+                                    $obj['OmcCustomer']['station_type'],
                                     $obj['OmcCustomer']['address'],
                                     $obj['OmcCustomer']['telephone'],
                                     $obj['OmcCustomer']['admin_username'],
@@ -466,8 +468,9 @@ class OmcAdminController extends OmcAppController
         $district_lists = $data['district'];
         $glbl_region_district = $data['region_district'];
         //$location_list = $this->get_location_list();
+        $st_type = array('0'=>array('id'=>'COSS','name'=>'COSS'),'1'=>array('id'=>'DOCO','name'=>'DOCO'),'2'=>array('id'=>'DODO','name'=>'DODO'));
 
-        $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list'));
+        $this->set(compact('regions_lists', 'district_lists','glbl_region_district','location_list','st_type'));
 
     }
 
@@ -599,7 +602,7 @@ class OmcAdminController extends OmcAppController
                         'Depot'=>array('fields' => array('Depot.id', 'Depot.name'))
                     );
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'contain'=>$contain,'order' => "Group.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->Group->find('all', array('conditions' => $condition_array,'contain'=>$contain,'order' => "Group.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Group->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1082,7 +1085,7 @@ class OmcAdminController extends OmcAppController
                         $condition_array['ActivityLog.user_id'] = $filter;
                     }
 
-                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->ActivityLog->find('all', array('conditions' => $condition_array,'order' => "ActivityLog.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->ActivityLog->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1093,7 +1096,8 @@ class OmcAdminController extends OmcAppController
                             $return_arr[] = array(
                                 'id' => $obj['ActivityLog']['id'],
                                 'cell' => array(
-                                    $this->covertDate($obj['ActivityLog']['created'],'mysql_flip'),
+                                    //$this->covertDate($obj['ActivityLog']['created'],'mysql_flip'),
+                                    $obj['ActivityLog']['created'],
                                     $obj['ActivityLog']['user_full_name'],
                                     $obj['ActivityLog']['activity'],
                                     $obj['ActivityLog']['description']
@@ -1150,8 +1154,8 @@ class OmcAdminController extends OmcAppController
                     $limit = $rp;
                     $start = ($page - 1) * $rp;
 
-                   
-                    $data_table = $this->Truck->find('all', array('order' => "Truck.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+
+                    $data_table = $this->Truck->find('all', array('order' => "Truck.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->Truck->find('count', array('recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -1188,11 +1192,11 @@ class OmcAdminController extends OmcAppController
                             return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
                         }
                     }
-                    
-                   
+
+
 
                     $data = array('Truck' => $_POST);
-        
+
                     if($_POST['id'] == 0){
                         $data['Truck']['created_by'] = $authUser['id'];
                     }
@@ -1224,6 +1228,626 @@ class OmcAdminController extends OmcAppController
                     break;
             }
         }
+
+    }
+
+
+    function credit_customer_setting($type = 'get')
+    {
+        $company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'CustomerCreditSetting.deleted' => 'n'
+                    );
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+
+                    $data_table = $this->CustomerCreditSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "CustomerCreditSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    $data_table_count = $this->CustomerCreditSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['CustomerCreditSetting']['id'],
+                                'cell' => array(
+                                    $obj['CustomerCreditSetting']['id'],
+                                    $obj['CustomerCreditSetting']['name'],
+                                    $obj['CustomerCreditSetting']['business_type'],
+                                    $obj['OmcCustomer']['name'],
+                                    $obj['CustomerCreditSetting']['territory'],
+                                    $obj['CustomerCreditSetting']['credit_limit'],
+                                    $obj['CustomerCreditSetting']['credit_days'],
+                                    $obj['CustomerCreditSetting']['agreement_sign'],
+                                    $obj['CustomerCreditSetting']['risk_rating']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+
+
+                    $data = array('CustomerCreditSetting' => $_POST);
+
+                    if($_POST['id'] == 0){
+                        $data['CustomerCreditSetting']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['CustomerCreditSetting']['modified_by'] = $authUser['id'];
+                    }
+
+                    if ($this->CustomerCreditSetting->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->CustomerCreditSetting->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                    case 'delete':
+                        $ids = $_POST['ids'];
+                        $modObj = ClassRegistry::init('CustomerCreditSetting');
+                        $result = $modObj->updateAll(
+                            array('CustomerCreditSetting.deleted' => "'y'"),
+                            array('CustomerCreditSetting.id' => $ids)
+                        );
+                        if ($result) {
+                            $modObj = ClassRegistry::init('CustomerCreditSetting');
+                            $modObj->updateAll(
+                                array('CustomerCreditSetting.deleted' => "'y'"),
+                                array('CustomerCreditSetting.id' => $ids)
+                            );
+
+                         echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                        } else {
+                            echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                        }
+                        break;
+            }
+        }
+
+
+        $station_list = $this->get_customer_list();
+        $yes_no = array('0'=>array('id'=>'Yes','name'=>'Yes'),'1'=>array('id'=>'No','name'=>'No'));
+        $risk_rate = array('0'=>array('id'=>'Low','name'=>'Low'),'1'=>array('id'=>'Medium','name'=>'Medium'),'2'=>array('id'=>'High','name'=>'High'));
+
+        $this->set(compact('yes_no','station_list','risk_rate'));
+
+    }
+
+
+    function nct_channel_setup($type = 'get')
+    {
+        //$company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'Nct.deleted' => 'n'
+                    );
+
+
+                    $data_table = $this->Nct->find('all', array('conditions' => $condition_array,'order' => "Nct.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    $data_table_count = $this->Nct->find('count', array('recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['Nct']['id'],
+                                'cell' => array(
+                                    $obj['Nct']['id'],
+                                    $obj['Nct']['name'],
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+                    $data = array('Nct' => $_POST);
+
+                    if($_POST['id'] == 0){
+                        $data['Nct']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['Nct']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['Nct']['omc_id'] = $company_profile['id'];
+
+                    if ($this->Nct->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('Nct');
+                    $result = $modObj->updateAll(
+                        array('Nct.deleted' => "'y'"),
+                        array('Nct.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('Nct');
+                        $modObj->updateAll(
+                            array('Nct.deleted' => "'y'"),
+                            array('Nct.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+    }
+
+
+    function lube_sales_setting($type = 'get')
+    {
+        //$company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'LubeSetting.deleted' => 'n'
+                    );
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                    $data_table = $this->LubeSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LubeSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    $data_table_count = $this->LubeSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['LubeSetting']['id'],
+                                'cell' => array(
+                                    $obj['LubeSetting']['id'],
+                                    $obj['LubeSetting']['station_category'],
+                                    $obj['LubeSetting']['name'],
+                                    $obj['LubeSetting']['unit_volume'],
+                                    $obj['LubeSetting']['total_qty_per_pack'],
+                                    $obj['LubeSetting']['pack_volume'],
+                                    $obj['LubeSetting']['unit_cost_price'],
+                                    $obj['LubeSetting']['unit_selling_price'],
+                                    $obj['LubeSetting']['price_per_ltr']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+                    $data = array('LubeSetting' => $_POST);
+
+                    if($_POST['id'] == 0){
+                        $data['LubeSetting']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['LubeSetting']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['LubeSetting']['omc_customer_id'] = $company_profile['id'];
+
+                    if ($this->LubeSetting->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('LubeSetting');
+                    $result = $modObj->updateAll(
+                        array('LubeSetting.deleted' => "'y'"),
+                        array('LubeSetting.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('LubeSetting');
+                        $modObj->updateAll(
+                            array('LubeSetting.deleted' => "'y'"),
+                            array('LubeSetting.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+    }
+
+
+
+    function lpg_sales_setting($type = 'get')
+    {
+        //$company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'LpgSetting.deleted' => 'n'
+                    );
+
+
+                    $contain = array(
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                    $data_table = $this->LpgSetting->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "LpgSetting.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    $data_table_count = $this->LpgSetting->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['LpgSetting']['id'],
+                                'cell' => array(
+                                    $obj['LpgSetting']['id'],
+                                    $obj['LpgSetting']['name'],
+                                    $obj['LpgSetting']['unit_volume'],
+                                    $obj['LpgSetting']['unit_price'],
+                                    $obj['LpgSetting']['price_per_kg']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+                    $data = array('LpgSetting' => $_POST);
+
+                    if($_POST['id'] == 0){
+                        $data['LpgSetting']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['LpgSetting']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['LpgSetting']['omc_customer_id'] = $company_profile['id'];
+
+                    if ($this->LpgSetting->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('LpgSetting');
+                    $result = $modObj->updateAll(
+                        array('LpgSetting.deleted' => "'y'"),
+                        array('LpgSetting.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('LpgSetting');
+                        $modObj->updateAll(
+                            array('LpgSetting.deleted' => "'y'"),
+                            array('LpgSetting.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+    }
+
+
+    function additive_setup($type = 'get')
+    {
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            $company_profile = $this->global_company;
+
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'asc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array(
+                        'AdditiveSetup.deleted' => 'n'
+                    );
+
+                    $contain = array(
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
+                    );
+
+                    $data_table = $this->AdditiveSetup->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "AdditiveSetup.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
+                    $data_table_count = $this->AdditiveSetup->find('count', array('recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['AdditiveSetup']['id'],
+                                'cell' => array(
+                                    $obj['AdditiveSetup']['id'],
+                                    $obj['AdditiveSetup']['name'],
+                                    $obj['ProductType']['name']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+
+                    $data = array('AdditiveSetup' => $_POST);
+
+                    if($_POST['id'] == 0){
+                        $data['AdditiveSetup']['created_by'] = $authUser['id'];
+                    }
+                    else{
+                        $data['AdditiveSetup']['modified_by'] = $authUser['id'];
+                    }
+
+                    $data['AdditiveSetup']['omc_id'] = $company_profile['id'];
+
+                    if ($this->AdditiveSetup->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            return json_encode(array('code' => 0, 'msg' => 'Data Updated!'));
+                        }
+                        else{
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved!', 'id'=>$this->Nct->id));
+                        }
+                    } else {
+                        return json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+                    break;
+
+                case 'delete':
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('AdditiveSetup');
+                    $result = $modObj->updateAll(
+                        array('AdditiveSetup.deleted' => "'y'"),
+                        array('AdditiveSetup.id' => $ids)
+                    );
+                    if ($result) {
+                        $modObj = ClassRegistry::init('AdditiveSetup');
+                        $modObj->updateAll(
+                            array('AdditiveSetup.deleted' => "'y'"),
+                            array('AdditiveSetup.id' => $ids)
+                        );
+
+                     echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+        $products_lists = $this->get_products();
+
+        $this->set(compact('products_lists'));
 
     }
 

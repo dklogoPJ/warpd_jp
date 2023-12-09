@@ -1,84 +1,63 @@
 <?php
 /**
- *
- * PHP 5
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Layouts
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @package       app.View.Layouts
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+
+$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
+$cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <?php echo $this->Html->charset(); ?>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-	 <!--[if gt IE 8]>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <![endif]-->
+	<?php echo $this->Html->charset(); ?>
 	<title>
-        <?php echo $title_for_layout; ?>
-    </title>
-    <?php
-    echo $this->Html->meta('icon');
-
-    echo $this->Html->css('stylesheets');
-    ?>
-	<!--[if lt IE 8]><?php echo $this->Html->css('ie7') ?><![endif]--> 
+		<?php echo $cakeDescription ?>:
+		<?php echo $this->fetch('title'); ?>
+	</title>
 	<?php
-	echo $this->Html->css('fullcalendar.print.css','stylesheet',array('media'=>'print'));
-    echo $this->Html->css('colorbox/colorbox');
-    echo $this->Html->css('developr-notify');
+		echo $this->Html->meta('icon');
 
+		echo $this->Html->css('cake.generic');
 
-	echo $this->Html->script('jquery-1.7.2.min.js');
-	echo $this->Html->script('jquery-ui-1.8.21.min.js');
-    echo $this->Html->script('plugins/jquery.marquee.min.js');
-    echo $this->Html->script('colorbox/jquery.colorbox-min.js');
-	echo $this->Html->script('plugins/jquery/jquery.mousewheel.min.js');
-	echo $this->Html->script('plugins/cookie/jquery.cookies.2.2.0.min.js');
-	echo $this->Html->script('plugins/bootstrap.min.js');
-    echo $this->Html->script('developr.notify.js');
-	echo $this->Html->script('plugins/sparklines/jquery.sparkline.min.js');
-	echo $this->Html->script('plugins/fullcalendar/fullcalendar.min.js');
-	echo $this->Html->script('plugins/select2/select2.min.js');
-	echo $this->Html->script('plugins/uniform/uniform.js');
-	echo $this->Html->script('plugins/maskedinput/jquery.maskedinput-1.3.min.js');
-	echo $this->Html->script('plugins/validation/languages/jquery.validationEngine-en.js');
-	echo $this->Html->script('plugins/validation/jquery.validationEngine.js');
-	echo $this->Html->script('plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js');
-	echo $this->Html->script('plugins/animatedprogressbar/animated_progressbar.js');
-	echo $this->Html->script('plugins/qtip/jquery.qtip-1.0.0-rc3.min.js');
-	echo $this->Html->script('plugins/cleditor/jquery.cleditor.js');
-	echo $this->Html->script('plugins/fancybox/jquery.fancybox.pack.js');
-	echo $this->Html->script('cookies.js');
-	echo $this->Html->script('actions.js');
-	echo $this->Html->script('plugins.js');
-	echo $this->Html->script('settings.js');
-    //echo $this->Html->script('jquery.treeview.js');
-    echo $this->Html->script('accounting.min.js');
-    echo $scripts_for_layout;
-    ?>
+		echo $this->fetch('meta');
+		echo $this->fetch('css');
+		echo $this->fetch('script');
+	?>
 </head>
 <body>
+	<div id="container">
+		<div id="header">
+			<h1><?php echo $this->Html->link($cakeDescription, 'https://cakephp.org'); ?></h1>
+		</div>
+		<div id="content">
 
-	<div class="wrapper">
-        <?php /*echo $this->element('header'); */?><!--
-        --><?php /*echo $this->element('menu'); */?>
-        <div class="content">
-            <?php /*echo $this->element('breadcrumbs'); */?>
-            <?php echo $this->fetch('content'); ?>
-        </div>
+			<?php echo $this->Flash->render(); ?>
+
+			<?php echo $this->fetch('content'); ?>
+		</div>
+		<div id="footer">
+			<?php echo $this->Html->link(
+					$this->Html->image('cake.power.gif', array('alt' => $cakeDescription, 'border' => '0')),
+					'https://cakephp.org/',
+					array('target' => '_blank', 'escape' => false, 'id' => 'cake-powered')
+				);
+			?>
+			<p>
+				<?php echo $cakeVersion; ?>
+			</p>
+		</div>
 	</div>
-	<?php //echo $this->element('sql_dump'); ?>
-    <?php echo $this->element('footer'); ?>
+	<?php echo $this->element('sql_dump'); ?>
 </body>
 </html>

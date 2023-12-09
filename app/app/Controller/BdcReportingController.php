@@ -24,8 +24,8 @@ class BdcReportingController extends BdcAppController
     function index()
     {
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $product_type = null;
         $default_product_type = 'all';
         $omc = null;
@@ -321,8 +321,8 @@ class BdcReportingController extends BdcAppController
 
     function report_orders(){
         $company_profile = $this->global_company;
-        $start_dt = date('01-m-Y');
-        $end_dt = date('t-m-Y');
+        $start_dt = date('Y-m-01');
+        $end_dt = date('Y-m-t');
         $omc = null;
         $default_omc = 'all';
         $omc_name = '';

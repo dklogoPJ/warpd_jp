@@ -81,7 +81,7 @@ class NpaUppfController extends NpaAppController
                         'Region'=>array('fields' => array('Region.id', 'Region.name'))
                     );
 
-                    $data_table = $this->DeliveryLocation->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "DeliveryLocation.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->DeliveryLocation->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "DeliveryLocation.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->DeliveryLocation->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -427,7 +427,7 @@ class NpaUppfController extends NpaAppController
                         }
                     }
 
-                    $data_table = $this->FreightRateCategory->find('all', array('conditions' => $condition_array,'order' => "FreightRateCategory.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->FreightRateCategory->find('all', array('conditions' => $condition_array,'order' => "FreightRateCategory.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->FreightRateCategory->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -565,7 +565,7 @@ class NpaUppfController extends NpaAppController
                         'FreightRateCategory'=>array('fields' => array('FreightRateCategory.id', 'FreightRateCategory.name'))
                     );
 
-                    $data_table = $this->FreightRate->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "FreightRate.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->FreightRate->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "FreightRate.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->FreightRate->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;

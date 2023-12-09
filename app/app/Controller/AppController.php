@@ -21,6 +21,7 @@
  */
 
 App::uses('Controller', 'Controller');
+App::uses('File', 'Utility');
 
 /**
  * Application Controller
@@ -126,6 +127,9 @@ class AppController extends Controller
 
     public $global_company = array();
 
+    public $active_menu = null;
+    public $user_menus = null;
+
     var $company_modules = array();
 
 
@@ -133,6 +137,13 @@ class AppController extends Controller
     {
         $this->processUserCookie();
         $this->updateUserLoginTime();
+
+        $Menu = ClassRegistry::init('Menu');
+        $this->active_menu = $Menu->getMenuByUrl($this->params['controller'], $this->params['action']);
+
+        if($this->active_menu && $this->active_menu['Menu']['url_type'] === 'proxy'){//if it's proxy then redirect to the actual url using the action as parameter
+            $this->redirect(array('controller' => $this->params['controller'], 'action' => 'index/'.$this->params['action']));
+        }
 
         $User = ClassRegistry::init('User');
         $Bdc = ClassRegistry::init('Bdc');
@@ -149,7 +160,6 @@ class AppController extends Controller
             $company_modules = array();
             if($authUser){
                 $user_type = $authUser['user_type'];
-               //if ses_entity then use it rather than querying from db.
                 if($this->Session->check('ses_entity')){
                     $this->global_company = $this->Session->read('ses_entity');
                 }
@@ -219,8 +229,9 @@ class AppController extends Controller
             }
 
             $controller = $this->params['controller'];
+            $menuTitle = $this->active_menu ? $this->active_menu['Menu']['menu_name'] : '';
 
-            $this->set(compact('authUser','auth_user_view','company_profile','company_modules','controller'));
+            $this->set(compact('authUser','auth_user_view','company_profile','company_modules','controller','menuTitle'));
         }
     }
 
@@ -359,16 +370,17 @@ class AppController extends Controller
     function getMenus($type,$group_id,$comp_id,$validate_access_control)
     {
         $MenuGroup = ClassRegistry::init('MenuGroup');
-        $user_menus = $MenuGroup->getGroupMenus($type,$group_id,$comp_id);
+        $this->user_menus = $MenuGroup->getGroupMenus($type,$group_id,$comp_id);
         //debug($user_menus);
         if($validate_access_control){
-            $this->accessControlValidation($user_menus);
+            $this->accessControlValidation($this->user_menus);
         }
        /* else{
             debug("Don't validate");
             exit;
         }*/
         $permissions = $this->action_permission;
+        $user_menus = $this->user_menus;
         $this->set(compact('user_menus','permissions'));
     }
 
@@ -383,6 +395,9 @@ class AppController extends Controller
             return true;
         }
         if(stristr($controller, 'Common') !== false) {//Skip for Common
+            return true;
+        }
+        if(stristr($controller, 'OmcCustomerDailySales') !== false && stristr($action, 'index') !== false) {//Skip validation
             return true;
         }
         if(stristr($action, 'print_export') !== false) {//Skip for print and export functions
@@ -403,10 +418,19 @@ class AppController extends Controller
         if(stristr($action, 'get_attachments') !== false){
             return true;
         }
+        if(stristr($action, 'delete_attachment') !== false){
+            return true;
+        }
         if(stristr($action, 'add_dsrp_options') !== false){
             return true;
         }
+        if(stristr($action, 'get_dsrp_report') !== false){
+            return true;
+        }
         if(stristr($action, 'view') !== false){
+            return true;
+        }
+        if(stristr($action, 'logout') !== false){
             return true;
         }
 
@@ -416,32 +440,55 @@ class AppController extends Controller
         if(in_array($controller,$con_arr) && in_array($action,$act_arr)){
             return true;
         }
+        //Custom controller skip// TODO we need to re implement this so the controller is only validated if we want to skip all actions
+        $con_arr = array('OmcAdditive');
+        $act_arr = array('additive_stock_inventory1','additive_stock_received2','additive_stock_inventory2','additive_cost_wac');
+        if(in_array($controller,$con_arr) && in_array($action,$act_arr)){
+            return true;
+        }
 
-        foreach($user_menus as $menu){
-            if($is_allowed){
-                break;
-            }
+        if($this->setPermission()){
+            $is_allowed = true;
+        }
+
+        if(!$is_allowed){//if not allowed, redirect to Router
+            $this->redirect(array('controller' => 'Router', 'action' => 'index'));
+        }
+    }
+
+    function setPermission ($custom_action = null) {
+        $action_permissions = $this->getPermissions($custom_action);
+        if($action_permissions) {
+            $this->action_permission = explode(',',$action_permissions);
+            return true;
+        }
+        return false;
+    }
+
+    function getPermissions ($custom_action = null) {
+        $action = $this->params['action'];
+        if($custom_action) {
+            $action = $custom_action;
+        }
+        $controller = $this->params['controller'];
+        $action_permissions = null;
+        foreach($this->user_menus as $menu){
             if(isset($menu['sub'])){
                 foreach($menu['sub'] as $inner_um){
                     if($controller == $inner_um['controller'] && $action == $inner_um['action']){
-                        $is_allowed = true;
-                        $this->action_permission = explode(',',$inner_um['permission']);
-
+                        $action_permissions = $inner_um['permission'];
                         break;
                     }
                 }
             }
             else{
                 if($controller == $menu['controller'] && $action == $menu['action']){
-                    $is_allowed = true;
-                    $this->action_permission = explode(',',$menu['permission']);
+                    $action_permissions = $menu['permission'];
+                    break;
                 }
             }
         }
-
-        if(!$is_allowed){//if not allowed, redirect to Router
-            $this->redirect(array('controller' => 'Router', 'action' => 'index'));
-        }
+        return $action_permissions;
     }
 
 
@@ -915,6 +962,18 @@ class AppController extends Controller
     }
 
 
+    function get_credit_customer_list($cus_ids = null){
+        $customers = $this->CustomerCreditSetting->getCreditCustomerList($cus_ids);
+        return $customers;
+    }
+
+
+    function get_additive_list($additives_ids = null){
+        $additives_type = $this->AdditiveSetup->getAdditiveList($additives_ids);
+        return $additives_type;
+    }
+
+
     function count_time_between_dates($smaller_date, $bigger_date,$count_type='months')
     {
         $d1 = strtotime($smaller_date); //Smaller
@@ -1218,7 +1277,7 @@ class AppController extends Controller
         $comp =   $company_profile['comp_type'].'/'.$company_profile['id'].'/';
         $path = $comp.$type_id;
         $type = $_POST['type'];
-        $save_to = 'Orders/'.$path;
+        $save_to = str_replace(' ', '', $type).'/'.$path;
         if($type == 'Waybill'){
             $save_to = 'Waybills/'.$path;
         }
@@ -1253,14 +1312,16 @@ class AppController extends Controller
             substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
     }
 
-    function __get_attachments($attachment_type,$attachment_type_id = null){
+    function __get_attachments($attachment_type, $attachment_type_id = null) {
         $this->autoRender = false;
         $company_profile = $this->global_company;
-        $attachment_data = $this->Attachment->get_attachments($attachment_type_id,$attachment_type,$company_profile['id']);
+        $attachments_data = $this->Attachment->get_attachments($attachment_type_id,$attachment_type,$company_profile['id']);
         $result = array('file'=>array());
         $webroot_url = $this->get_webroot_url();
         $thumbnail = "thumbnail";
-        foreach($attachment_data as $rec){
+        $delete_base_url = Router::url(array('controller' => $this->params['controller'], 'action' => 'delete_attachment'));
+        foreach($attachments_data as $rec){
+            $attachment_id = $rec['Attachment']['id'];
             $upload_by = $rec['Attachment']['upload_by'];
             $upload_from = $rec['Attachment']['upload_from'];
             $path = $rec['Attachment']['path'];
@@ -1268,9 +1329,10 @@ class AppController extends Controller
             $file_size = $rec['Attachment']['file_size'];
             $file_url = $webroot_url.'/'.$path.'/'.$file_name;
             $thumbnailUrl = $webroot_url.'/'.$path.'/'.$thumbnail.'/'.$file_name;
+            $delete_url = $delete_base_url.'/'.$attachment_id;
             $result['files'][]=array(
                 "deleteType"=> "DELETE",
-                "deleteUrl"=> $thumbnailUrl,
+                "deleteUrl"=> $delete_url,
                 "name"=> $file_name,
                 "size"=> intval($file_size),
                 "thumbnailUrl"=> $thumbnailUrl,
@@ -1283,8 +1345,32 @@ class AppController extends Controller
         return $result;
     }
 
+    function __delete_attachment($attachment_id){
+        $this->autoRender = false;
+        $rec = $this->Attachment->get_attachment($attachment_id);
+        $result = array('message'=>'Files deleted');
+        $thumbnail = "thumbnail";
+        if($rec) {
+            $path = $rec['Attachment']['path'];
+            $file_name = $rec['Attachment']['file_name'];
+            $full_path = WWW_ROOT.'/'.$path.'/'.$file_name;
+            $full_path_thumbnail = WWW_ROOT.'/'.$path.'/'.$thumbnail.'/'.$file_name;
+            $result['full_path'] = $full_path;
+            $result['full_path_thumbnail'] = $full_path_thumbnail;
+            try {
+                $file = new File($full_path,false, 0777);
+                $file_thumbnail = new File($full_path_thumbnail,false, 0777);
+                $result['file_deletion'] =  $file->delete();
+                $result['file_thumbnail_deletion'] =  $file_thumbnail->delete();
+                $this->Attachment->delete_file($attachment_id);
+            } catch (Exception $e){
+                $result['deletion_status'] = $e;
+            }
+        }
+        return $result;
+    }
 
-    function __attach_files(){
+    function __attach_files() {
         $this->autoRender = false;
         $type_id = $_POST['type_id'];
         $type = $_POST['type'];
@@ -1296,12 +1382,13 @@ class AppController extends Controller
         $print_response = false;
         $save_to = $this->attachment_get_upload_dir();
         $upload_data = $this->attachment($print_response);
-        $save_files_to_db  = array();
+        $delete_base_url = Router::url(array('controller' => $this->params['controller'], 'action' => 'delete_attachment'));
         foreach($upload_data['files'] as $key => $file){
             $upload_data['files'][$key]['upload_by'] = $upload_by;
             $upload_data['files'][$key]['upload_from'] = $upload_from;
+            $upload_data['files'][$key]['deleteType'] = "DELETE";
             if(!isset($file['error'])){
-                $save_files_to_db[]= array(
+                $save_files_to_db = array(
                     'type'=>$type,
                     'type_id'=>$type_id,
                     'file_name'=>$file['name'],
@@ -1312,16 +1399,21 @@ class AppController extends Controller
                     'upload_from'=>$upload_from,
                     'upload_from_id'=>$upload_from_id
                 );
+
+                $this->Attachment->create();
+                $saved = $this->Attachment->save($save_files_to_db);
+                $delete_url = $delete_base_url.'/'.$saved['Attachment']['id'];
+                $upload_data['files'][$key]['deleteUrl'] = $delete_url;
+
                 //Activity Log
                 $to_low = strtolower($type);
                 $log_description = $this->getLogMessage('Attachment')." (".$file['name'].") to the $to_low #".$type_id;
                 $this->logActivity($log_activity_type,$log_description);
             }
         }
-        $this->Attachment->saveAll($save_files_to_db);
+       // $this->Attachment->saveAll($save_files_to_db);
         return $upload_data;
     }
-
 
     function getDSRPoptions($index = null){
         $opt = array(

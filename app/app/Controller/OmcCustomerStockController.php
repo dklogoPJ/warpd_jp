@@ -81,7 +81,7 @@ class OmcCustomerStockController extends OmcCustomerAppController
                         'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
                     );*/
                     // $fields = array('User.id', 'User.username', 'User.first_name', 'User.last_name', 'User.group_id', 'User.active');
-                    $data_table = $this->OmcCustomerTank->find('all', array('conditions' => $condition_array,'order' => "OmcCustomerTank.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->OmcCustomerTank->find('all', array('conditions' => $condition_array,'order' => "OmcCustomerTank.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->OmcCustomerTank->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;

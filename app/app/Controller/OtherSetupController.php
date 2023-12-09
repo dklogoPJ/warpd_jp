@@ -74,7 +74,7 @@ class OtherSetupController extends AppController
                         'FreightRateCategory'=>array('fields' => array('FreightRateCategory.id', 'FreightRateCategory.name'))
                     );
 
-                    $data_table = $this->ProductType->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "ProductType.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->ProductType->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "ProductType.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->ProductType->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -236,7 +236,7 @@ class OtherSetupController extends AppController
                         'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name'))
                     );
 
-                    $data_table = $this->PriceChange->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PriceChange.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => 1));
+                    $data_table = $this->PriceChange->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "PriceChange.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => 1));
                     $data_table_count = $this->PriceChange->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;
@@ -418,7 +418,7 @@ class OtherSetupController extends AppController
                         }
                     }
 
-                    $data_table = $this->Region->find('all', array('conditions' => $condition_array,'order' => "Region.$sortname $sortorder", 'limit' => $start . ',' . $limit, 'recursive' => -1));
+                    $data_table = $this->Region->find('all', array('conditions' => $condition_array,'order' => "Region.$sortname $sortorder", 'page' => $page  , 'limit'=> $limit, 'recursive' => -1));
                     $data_table_count = $this->Region->find('count', array('conditions' => $condition_array, 'recursive' => -1));
 
                     $total_records = $data_table_count;

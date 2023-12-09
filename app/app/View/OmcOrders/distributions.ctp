@@ -10,6 +10,8 @@
     var numbers = <?php echo json_encode($numbers);?>;
     var invoice_no = <?php echo json_encode($invoice_no);?>;
     var my_bdc_list_ids = <?php echo json_encode($my_bdc_list_ids); ?>;
+    var inv_no = <?php echo json_encode($inv_no); ?>;
+    var all_customers_products_prices = <?php echo json_encode($all_customers_products_prices); ?>;
     //console.log(delivery_locations)
 </script>
 <div class="workplace">

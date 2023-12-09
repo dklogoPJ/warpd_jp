@@ -108,6 +108,58 @@ class ProductType extends AppModel
             'exclusive' => '',
             'finderQuery' => '',
             'counterQuery' => ''
+        ),
+        'CustomerCredit' => array(
+            'className' => 'CustomerCredit',
+            'foreignKey' => 'product_type_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'AdditiveSetup' => array(
+            'className' => 'AdditiveSetup',
+            'foreignKey' => 'product_type_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'AdditiveCostGeneration' => array(
+            'className' => 'AdditiveCostGeneration',
+            'foreignKey' => 'product_type_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'PerformanceSetting' => array(
+            'className' => 'PerformanceSetting',
+            'foreignKey' => 'product_type_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
         )
     );
 
@@ -124,12 +176,12 @@ class ProductType extends AppModel
 
 
     function getProductList($product_ids = null){
-        $conditions = array('ProductType.deleted' => 'n');
+        $conditions = array('deleted' => 'n');
         if($product_ids != null){
-            $conditions['ProductType.id'] = $product_ids;
+            $conditions['id'] = $product_ids;
         }
         $products_type = $this->find('all', array(
-            'fields' => array('ProductType.id', 'ProductType.name','ProductType.short_name'),
+            'fields' => array('id', 'name','short_name'),
             'conditions' => $conditions,
             'recursive' => -1
         ));
