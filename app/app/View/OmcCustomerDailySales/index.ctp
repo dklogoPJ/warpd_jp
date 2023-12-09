@@ -130,6 +130,8 @@
                             <li><button class="btn btn-info" type="button" id="edit_row_btn">Edit Row</button><!--<a href="javascript:void(0);" id="edit_row_btn" class="grid_menu"><i class="isw-edit"></i>Edit Row</a>--></li>
                             <li><button class="btn btn-inverse" type="button" id="cancel_row_btn">Cancel Editing</button><!--<a href="javascript:void(0);" id="cancel_row_btn" class="grid_menu"><i class="isw-cancel"></i>Cancel Editing</a></li>-->
                             <li><button class="btn btn-success" type="button" id="save_row_btn">Save Row</button><!--<a href="javascript:void(0);" id="save_row_btn" class="grid_menu"><i class="isw-ok"></i>Save Row</a></li>-->
+							<li class="spacer">&nbsp</li>
+                            <li><button class="btn btn-warning" type="button" id="export_btn">Export</button>
                             <?php
                         }
                         ?>
@@ -224,6 +226,12 @@
     <?php
         }
     ?>
+
+	 <?php echo $this->Form->create('Export', array('id' => 'dsrp-export-form', 'target'=>'ExportWindow'));?>
+		<?php echo $this->Form->input('dsrp_form_key', array('type'=>'hidden','id'=>'dsrp_form_key', 'value'=> $form_key)); ?>
+		<?php echo $this->Form->input('dsrp_record_dt', array('type'=>'hidden','id'=>'dsrp_record_dt', 'value'=> $sales_sheet_date)); ?>
+		<?php echo $this->Form->input('dsrp_action_url', array('type'=>'hidden','id'=>'dsrp_action_url', 'value'=> $this->Html->url(array('controller' => 'OmcCustomerDailySales', 'action' => 'export_dsrp')))); ?>
+	 <?php echo $this->Form->end();?>
 
 </div>
 

@@ -112,7 +112,45 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $this->set(compact('permissions','company_profile','all_external_data_sources','previous_day_records','current_day_records','menu_title', 'form_key', 'report_title', 'sales_sheet_id', 'sales_sheet_date', 'sales_sheet_date_range'));
     }
 
-    function get_attachments($id = null, $attachment_type = null){
+	function export_dsrp() {
+		$download = false;
+		$this->autoLayout = false;
+		$company_profile = $this->global_company;;
+		if ($this->request->is('post')) {
+			$form_key = $this->request->data['Export']['dsrp_form_key'];
+			$record_dt = $this->request->data['Export']['dsrp_record_dt'];
+			$export_data = $this->OmcCustomerDailySale->getFormSaleSheet($company_profile['omc_id'], $company_profile['id'], $form_key, $record_dt);
+
+			if ($export_data) {
+				$download = true;
+				$form_name = $export_data['form']['name'];
+				$header_collection = $export_data['headers'];
+				$header = array();
+				$data_collection = $export_data['fields'];
+				$data = array();
+				$filename = $company_profile['name'] . " - $form_name - " . $record_dt;
+
+				foreach ($header_collection as $header_array) {
+					$header[] = $header_array['name'];
+				}
+				foreach ($data_collection as $row_collection) {
+					$row_data_holder = array();
+					foreach ($row_collection as $data_array) {
+						$row_data_holder[] = $data_array['value'];
+					}
+					$data[] = $row_data_holder;
+				}
+
+				$res = $this->convertToExcel($header, $data, $filename);
+				$objPHPExcel = $res['excel_obj'];
+				$filename = $res['filename'];
+			}
+		}
+
+		$this->set(compact('objPHPExcel', 'download', 'filename'));
+	}
+
+	function get_attachments($id = null, $attachment_type = null){
         $this->autoRender = false;
         $result = $this->__get_attachments($attachment_type, $id);
         $this->attachment_fire_response($result);
