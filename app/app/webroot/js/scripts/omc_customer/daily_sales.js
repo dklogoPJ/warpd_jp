@@ -13,6 +13,12 @@ var DailySales = {
             console.log("new location", url);
         });
 
+		$("#export_btn").bind('click',function () {
+			$("#dsrp-export-form").attr('action', $("#dsrp_action_url").val());
+			window.open('', "ExportWindow", "menubar=yes, width=300, height=200,location=no,status=no,scrollbars=yes,resizable=yes");
+			$("#dsrp-export-form").submit();
+		});
+
         self.initNewSalesSheet();
         self.initRowSelect();
         self.initRowMenus();
