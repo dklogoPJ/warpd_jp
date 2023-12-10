@@ -603,7 +603,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
         $company_profile = $this->global_company;
         if ($this->request->is('post')) {
             $export_params = $this->request->data;
-            //pr($this->request->data);
+           // pr($export_params);
             $start_dt = $this->covertDate($export_params['Export']['export_startdt'], 'mysql') . ' 00:00:00';
             $end_dt = $this->covertDate($export_params['Export']['export_enddt'], 'mysql') . ' 23:59:59';
 //pr($end_dt);
@@ -786,7 +786,7 @@ class OmcCustomerOrdersController extends OmcCustomerAppController
                                     $this->covertDate($obj['BdcDistribution']['loading_date'], 'mysql_flip'),
                                     //$this->covertDate($obj['BdcDistribution']['waybill_date'],'mysql_flip'),
                                     $obj['OmcBdcDistribution']['invoice_number'],
-                                    $obj['BdcDistribution']['ProductType']['name'],
+                                    isset($obj['BdcDistribution']['ProductType']) ? $obj['BdcDistribution']['ProductType']['name'] : '',
                                     $this->formatNumber($obj['OmcBdcDistribution']['quantity'], 'number', 0),
                                     // $obj['Region']['name'],
                                     $obj['DeliveryLocation']['name'],

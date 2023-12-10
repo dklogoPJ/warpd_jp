@@ -31,7 +31,7 @@
     <div class="dr"><span></span></div>
 
     <div class="row-fluid" id="export-form">
-        <div class="span3">
+        <div class="span6">
             <div class="head clearfix">
                 <div class="isw-text_document"></div>
                 <h1>Export Data</h1>
@@ -39,27 +39,33 @@
             <?php echo $this->Form->create('Export', array('id' => 'form-export', 'target'=>'ExportWindow' ,'inputDefaults' => array('label' => false,'div' => false)));?>
             <div class="block-fluid">
                 <div class="row-form clearfix" style="border-top-width: 0px; padding: 5px 16px;">
-                    <div class="span5">Start Date:</div>
-                    <div class="span5">
-                        <?php echo $this->Form->input('export_startdt', array('id'=>'export_startdt', 'class' => 'span2 date-masking validate[required]','default'=>date('d-m-Y'),'placeholder'=>'dd-mm-yyyy', 'div' => false, 'label' => false,)); ?>
+                    <div class="span4">Request Start Date:</div>
+                    <div class="span3">
+                        <?php echo $this->Form->input('export_start_dt', array('id'=>'export_start_dt', 'class' => 'span2 date-masking validate[required]','default'=>date('d-m-Y'),'placeholder'=>'dd-mm-yyyy', 'div' => false, 'label' => false,)); ?>
 
                     </div>
-                    <span>Example: 01-12-2012 (dd-mm-yyyy)</span>
+					<div class="span5">
+						<span>Example: 01-12-2012 (dd-mm-yyyy)</span>
+					</div>
                 </div>
 
                 <div class="row-form clearfix" style="border-top-width: 0px; padding: 3px 16px;">
-                    <div class="span5">End Date:</div>
-                    <div class="span5">
-                        <?php echo $this->Form->input('export_enddt', array('id'=>'export_enddt', 'class' => 'span2 date-masking validate[required]','default'=>date('d-m-Y'),'placeholder'=>'dd-mm-yyyy', 'div' => false, 'label' => false,)); ?>
+                    <div class="span4">Request End Date:</div>
+                    <div class="span3">
+                        <?php echo $this->Form->input('export_end_dt', array('id'=>'export_end_dt', 'class' => 'span2 date-masking validate[required]','default'=>date('d-m-Y'),'placeholder'=>'dd-mm-yyyy', 'div' => false, 'label' => false,)); ?>
 
                     </div>
-                    <span>Example: 01-12-2012 (dd-mm-yyyy)</span>
+					<div class="span5">
+						<span>Example: 01-12-2012 (dd-mm-yyyy)</span>
+					</div>
+
                 </div>
 
                 <div class="footer tal">
                     <button class="btn" type="button" id="export-btn">Export</button>
                     <?php echo $this->Form->input('export_type', array('type'=>'hidden','id'=>'export_type', 'value'=>$authUser['user_type'])); ?>
-                    <?php echo $this->Form->input('export_url', array('type'=>'hidden','id'=>'export_url', 'value'=> $this->Html->url(array('controller' => 'OmcDealerOrders', 'action' => 'export_orders')))); ?>
+                    <?php echo $this->Form->input('export_url', array('type'=>'hidden','id'=>'export_url', 'value'=> $this->Html->url(array('controller' => 'OmcCustomer', 'action' => 'export_customer_data')))); ?>
+                    <?php echo $this->Form->input('data_source', array('type'=>'hidden','id'=>'data_source', 'value'=> 'credit_approval')); ?>
                     <?php echo $this->Form->input('action', array('type'=>'hidden','id'=>'action', 'value'=> 'export_me')); ?>
                 </div>
                 <?php echo $this->Form->end();?>

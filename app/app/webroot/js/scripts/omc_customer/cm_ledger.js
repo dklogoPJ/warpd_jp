@@ -70,9 +70,6 @@ var Order = {
             }
         });
 
-
-        
-
         $('input.datepicker').live('focus', function(){
             if (false == $(this).hasClass('hasDatepicker')) {
                 $(this).datepicker({
@@ -128,6 +125,7 @@ var Order = {
     filterGrid:function(json){
         //var bdc_filter = $("#filter_bdc").val();
         var filter_status = $("#filter_status").val();
+		console.log("filter_status:",filter_status);
         $(Order.objGrid).flexOptions({
             params: [
                 //{name: 'filter', value: bdc_filter},
