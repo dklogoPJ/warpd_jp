@@ -27,7 +27,7 @@
                         <?php
                         if(in_array('PX',$permissions)){
                             ?>
-                            <button class="btn btn-success export-me-btn" type="button" id="" data-url="<?php echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'export_shortages')); ?>">Export </button>
+                           <!-- <button class="btn btn-success export-me-btn" type="button" id="" data-url="<?php /*echo $this->Html->url(array('controller' => 'OmcCustomerOrders', 'action' => 'export_shortages')); */?>">Export </button>-->
                         <?php
                         }
                         ?>

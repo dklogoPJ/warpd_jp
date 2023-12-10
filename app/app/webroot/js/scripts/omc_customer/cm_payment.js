@@ -68,8 +68,6 @@ var Order = {
         });
 
 
-        
-
         $('input.datepicker').live('focus', function(){
             if (false == $(this).hasClass('hasDatepicker')) {
                 $(this).datepicker({
