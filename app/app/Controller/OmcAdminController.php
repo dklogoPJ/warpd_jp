@@ -11,7 +11,7 @@ class OmcAdminController extends OmcAppController
     var $name = 'OmcAdmin';
     # set the model to use
     var $uses = array('User','Group','Menu','MenuGroup','OmcCustomerUser','OmcCustomer' ,'OmcUserBdc', 'Depot', 'Omc', 'Bdc', 'BdcOmc', 'OmcPackage','ProductType','Truck','Nct','CustomerCreditSetting',
-                        'LubeSetting','LpgSetting','AdditiveSetup');
+                        'LubeSetting','LpgSetting','AdditiveSetup','OmcCustomerPriceChange');
     # Set the layout to use
     var $layout = 'omc_layout';
 
@@ -1849,6 +1849,208 @@ class OmcAdminController extends OmcAppController
 
         $this->set(compact('products_lists'));
 
+    }
+
+
+
+    function price_change($type = 'get')
+    {
+        $company_profile = $this->global_company;
+        $permissions = $this->action_permission;
+        if ($this->request->is('ajax')) {
+            $this->autoRender = false;
+            $this->autoLayout = false;
+            $authUser = $this->Auth->user();
+            switch ($type) {
+                case 'get' :
+                    /**  Get posted data */
+                    $page = isset($_POST['page']) ? $_POST['page'] : 1;
+                    /** The current page */
+                    $sortname = isset($_POST['sortname']) ? $_POST['sortname'] : 'id';
+                    /** Sort column */
+                    $sortorder = isset($_POST['sortorder']) ? $_POST['sortorder'] : 'desc';
+                    /** Sort order */
+                    $qtype = isset($_POST['qtype']) ? $_POST['qtype'] : '';
+                    /** @var $filter  */
+                    $filter_depot =   isset($_POST['filter_depot']) ? $_POST['filter_depot'] : 0 ;
+                    $filter_region =   isset($_POST['filter_region']) ? $_POST['filter_region'] : 0 ;
+                    $filter_customer =   isset($_POST['filter_customer']) ? $_POST['filter_customer'] : 0 ;
+                    /** Search column */
+                    $search_query = isset($_POST['query']) ? $_POST['query'] : '';
+                    /** Search string */
+                    $rp = isset($_POST['rp']) ? $_POST['rp'] : 10;
+                    $limit = $rp;
+                    $start = ($page - 1) * $rp;
+
+                    $condition_array = array('OmcCustomerPriceChange.deleted' => 'n');
+                    if($filter_customer != 0){
+                        $condition_array['OmcCustomerPriceChange.omc_customer_id'] = $filter_customer;
+                    }
+
+                    if (!empty($search_query)) {
+                        if ($qtype == 'username') {
+                            /*$condition_array = array(
+                                'User.username' => $search_query,
+                                'User.deleted' => 'n'
+                            );*/
+                        }
+                        else {
+                            /* $condition_array = array(
+                                 "User.$qtype LIKE" => $search_query . '%',
+                                 'User.deleted' => 'n'
+                             );*/
+                        }
+                    }
+
+                    $contain = array(
+                        'ProductType'=>array('fields' => array('ProductType.id', 'ProductType.name')),
+                        'OmcCustomer'=>array('fields' => array('OmcCustomer.id', 'OmcCustomer.name'))
+                    );
+
+                    $data_table = $this->OmcCustomerPriceChange->find('all', array('conditions' => $condition_array, 'contain'=>$contain,'order' => "OmcCustomerPriceChange.$sortname $sortorder", 'offset'=>$start,'limit' => $limit, 'recursive' => 1));
+                    $data_table_count = $this->OmcCustomerPriceChange->find('count', array('conditions' => $condition_array, 'recursive' => -1));
+
+                    $total_records = $data_table_count;
+
+                    if ($data_table) {
+                        $return_arr = array();
+                        foreach ($data_table as $obj) {
+                            $return_arr[] = array(
+                                'id' => $obj['OmcCustomerPriceChange']['id'],
+                                'cell' => array(
+                                    $obj['OmcCustomerPriceChange']['id'],
+                                    $obj['OmcCustomer']['name'],
+                                    $obj['ProductType']['name'],
+                                    $obj['OmcCustomerPriceChange']['description'],
+                                    $obj['OmcCustomerPriceChange']['price'],
+                                    $obj['OmcCustomerPriceChange']['unit']
+                                )
+                            );
+                        }
+                        return json_encode(array('success' => true, 'total' => $total_records, 'page' => $page, 'rows' => $return_arr));
+                    }
+                    else {
+                        return json_encode(array('success' => false, 'total' => $total_records, 'page' => $page, 'rows' => array()));
+                    }
+
+                    break;
+
+                case 'save' :
+                    if ($_POST['id'] == 0) {//Mew
+                        if(!in_array('A',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    else{
+                        if(!in_array('E',$permissions)){
+                            return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                        }
+                    }
+                    //check if username does not exist for in this company
+                    $data = array('OmcCustomerPriceChange' => $_POST);
+                    $data['OmcCustomerPriceChange']['modified_by'] = $this->Auth->user('id');
+                    if ($_POST['id'] == 0) {
+                        $data['OmcCustomerPriceChange']['created_by'] = $this->Auth->user('id');
+                        $data['OmcCustomerPriceChange']['omc_customer_id'] =  $_POST['omc_customer_id'];
+                    }
+
+                    if ($this->OmcCustomerPriceChange->save($this->sanitize($data))) {
+                        if($_POST['id'] > 0){
+                            $new_user = $_POST['id'];
+                            $log_description = $this->getLogMessage('ModifyOmcCustomerPriceChange')." (Price Change ID: ".$new_user.")";
+                            $this->logActivity('Administration',$log_description);
+
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved'));
+                        }
+                        else{ //If new pass back extra data if needed.
+                            $new_user = $this->OmcCustomerPriceChange->id;
+                            $log_description = $this->getLogMessage('CreateOmcCustomerPriceChange')." (Price Change ID: ".$new_user.")";
+                            $this->logActivity('Administration',$log_description);
+
+                            return json_encode(array('code' => 0, 'msg' => 'Data Saved.', 'id'=>$this->OmcCustomerPriceChange->id));
+                        }
+                        //echo json_encode(array('success' => 0, 'msg' => 'Data Saved!', 'data' => $dt));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Some errors occurred.'));
+                    }
+
+                    break;
+
+                case 'delete':
+                    if(!in_array('D',$permissions)){
+                        return json_encode(array('code' => 1, 'msg' => 'Access Denied.'));
+                    }
+
+                    $ids = $_POST['ids'];
+                    $modObj = ClassRegistry::init('OmcCustomerPriceChange');
+                    $now = "'".date('Y-m-d H:i:s')."'";
+                    $result = $modObj->updateAll(
+                        $this->sanitize(array('OmcCustomerPriceChange.deleted' => "'y'",'OmcCustomerPriceChange.modified' => "$now",'OmcCustomerPriceChange.modified_by' => $this->Auth->user('id'))),
+                        $this->sanitize(array('OmcCustomerPriceChange.id' => $ids))
+                    );
+                    if ($result) {
+                        echo json_encode(array('code' => 0, 'msg' => 'Data Deleted!'));
+                    } else {
+                        echo json_encode(array('code' => 1, 'msg' => 'Data cannot be deleted'));
+                    }
+                    break;
+            }
+        }
+
+
+        // $product_list_data = $this->get_product_list();
+        $omc_customers_data = $this->get_customer_list();
+        $omc_customers_data = $this->get_customer_list();
+        $omc_customers_lists =array(array('name'=>'All','value'=>0));
+        foreach($omc_customers_data as $arr){
+            $omc_customers_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
+        }
+        $product_list = $this->get_products();
+        // debug($product_list_data);
+        //$product_group_list = array('all'=>'All Product Type');
+        /* $product_list = array();
+         foreach($product_list_data as $arr){
+             $product_list[] = array('name'=>$arr['name'],'id'=>$arr['id']);
+         }*/
+        // debug($product_list);
+        $controller = $this;
+        $this->set(compact('controller', 'product_list','omc_customers_lists','omc_customers_data'));
+    }
+
+    function export_price_change(){
+        $download = false;
+        $company_profile = $this->global_company;
+
+        $export_data = $this->OmcCustomerPriceChange->find('all', array(
+            //'fields'=>array('OmcCustomer.id','OmcCustomer.order_status','BdcDistribution.loading_date','BdcDistribution.waybill_date','BdcDistribution.collection_order_no','BdcDistribution.quantity','BdcDistribution.waybill_id','BdcDistribution.vehicle_no'),
+            'conditions' => array('OmcCustomerPriceChange.omc_customer_id' => $company_profile['id'],'OmcCustomerPriceChange.deleted' => 'n'),
+            'contain'=>array(
+                'ProductType'=>array('fields'=>array('ProductType.id','ProductType.name'))
+            ),
+            'order'=>array('OmcCustomerPriceChange.id'=>'desc'),
+            'recursive' => 1
+        ));
+
+        //debug($export_data);
+        if ($export_data) {
+            $download = true;
+            $list_data = array();
+            foreach ($export_data as $obj) {
+                $list_data[] = array(
+                    $obj['ProductType']['name'],
+                    $obj['OmcCustomerPriceChange']['price']
+                );
+            }
+            $list_headers = array('Product','Price');
+            $filename ="Price Change ".date('Ymdhis');
+            $res = $this->convertToExcel($list_headers,$list_data,$filename);
+            $objPHPExcel = $res['excel_obj'];
+            $filename = $res['filename'];
+        }
+
+        $this->autoLayout = false;
+
+        $this->set(compact('objPHPExcel', 'download', 'filename'));
     }
 
 }
