@@ -477,4 +477,21 @@ class OmcCustomerDailySalesController extends OmcCustomerAppController
         $this->set(compact('permissions','form_data','table_setup','previous_data','control_data','price_change_data','table_total_setup'));
     }
 
+
+
+    function nct_validations($type = 'get')
+    {
+        $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+        $authUser = $this->Auth->user();
+    }
+
+
+    function nct_cummulative_status($type = 'get')
+    {
+        $permissions = $this->action_permission;
+        $company_profile = $this->global_company;
+        $authUser = $this->Auth->user();
+    }
+
 }
