@@ -1997,8 +1997,6 @@ class OmcAdminController extends OmcAppController
             }
         }
 
-
-        // $product_list_data = $this->get_product_list();
         $omc_customers_data = $this->get_customer_list();
         $omc_customers_data = $this->get_customer_list();
         $omc_customers_lists =array(array('name'=>'All','value'=>0));
@@ -2006,6 +2004,7 @@ class OmcAdminController extends OmcAppController
             $omc_customers_lists[] = array('name'=>$arr['name'],'value'=>$arr['id']);
         }
         $product_list = $this->get_products();
+        // $product_list_data = $this->get_product_list();
         // debug($product_list_data);
         //$product_group_list = array('all'=>'All Product Type');
         /* $product_list = array();
@@ -2022,8 +2021,7 @@ class OmcAdminController extends OmcAppController
         $company_profile = $this->global_company;
 
         $export_data = $this->OmcCustomerPriceChange->find('all', array(
-            //'fields'=>array('OmcCustomer.id','OmcCustomer.order_status','BdcDistribution.loading_date','BdcDistribution.waybill_date','BdcDistribution.collection_order_no','BdcDistribution.quantity','BdcDistribution.waybill_id','BdcDistribution.vehicle_no'),
-            'conditions' => array('OmcCustomerPriceChange.omc_customer_id' => $company_profile['id'],'OmcCustomerPriceChange.deleted' => 'n'),
+            'conditions' => array('OmcCustomerPriceChange.deleted' => 'n'),
             'contain'=>array(
                 'ProductType'=>array('fields'=>array('ProductType.id','ProductType.name'))
             ),
@@ -2049,7 +2047,6 @@ class OmcAdminController extends OmcAppController
         }
 
         $this->autoLayout = false;
-
         $this->set(compact('objPHPExcel', 'download', 'filename'));
     }
 
