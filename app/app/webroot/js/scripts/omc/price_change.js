@@ -29,7 +29,7 @@ var JSObj = {
             btn_actions.push({type:'buttom', name:'Export', bclass:'export', onpress:self.handleGridEvent});
             btn_actions.push({separator:true});
         }
-        btn_actions.push({type:'select',name: 'Filter Customer', id: 'filter_customer',bclass: 'filter',onchange:self.handleGridEvent,options:customers});
+        btn_actions.push({type:'select',name: 'Filter Station', id: 'filter_customer',bclass: 'filter',onchange:self.handleGridEvent,options:customers});
         btn_actions.push({separator:true});
 
        // btn_actions.push({type:'select',name: 'Filter Rate Category', id: 'filter_category' ,bclass: 'filter',onchange:self.handleGridEvent,options:filter_rate_cats});
@@ -99,7 +99,7 @@ var JSObj = {
             var url = $("#table-export-url").val();
             window.open(url, "ExportWindow", "menubar=yes, width=400, height=300,location=no,status=no,scrollbars=yes,resizable=yes");
         }
-        else if (com == 'Filter Customer') {
+        else if (com == 'Filter Station') {
             JSObj.filterGrid(json);
         }
 
